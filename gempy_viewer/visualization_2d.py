@@ -554,7 +554,7 @@ class Plot2D:
         elif section_name == 'topography':
             
             import skimage
-            from plot.helpers import add_colorbar
+            from gempy_viewer.helpers import add_colorbar
             topo = self.model._grid.topography
             topo_super_res = skimage.transform.resize(
                 topo.values_2d,

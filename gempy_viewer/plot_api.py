@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 # import gempy as _gempy
 import numpy as np
 import pandas as pn
-from plot.vista import GemPyToVista
+from gempy_viewer.vista import GemPyToVista
 
 # Keep Alex code hidden until we merge it properly
 try:

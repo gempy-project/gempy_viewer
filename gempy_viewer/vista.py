@@ -42,7 +42,7 @@ except ImportError:
     PYVISTA_IMPORT = False
 
 import gempy as gp
-from plot.vista_aux import WidgetsCallbacks, RenderChanges
+from gempy_viewer.vista_aux import WidgetsCallbacks, RenderChanges
 import matplotlib
 
 warnings.filterwarnings("ignore",

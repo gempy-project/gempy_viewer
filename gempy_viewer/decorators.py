@@ -1,4 +1,4 @@
-from plot.vista import GemPyToVista
+from gempy_viewer.vista import GemPyToVista
 from functools import wraps
 
 
