@@ -25,6 +25,8 @@ Created on 23/09/2019
 
 import warnings
 import copy
+from typing import Optional
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
@@ -63,8 +65,8 @@ class Plot2D:
         
         self._color_lot = dict(
             zip(
-                self.model.strurctural_frame.elements_names,
-                self.model.strurctural_frame.elements_colors
+                self.model.structural_frame.elements_names,
+                self.model.structural_frame.elements_colors
             )
         )
         self.axes = list()

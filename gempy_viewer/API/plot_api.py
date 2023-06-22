@@ -31,12 +31,14 @@ from typing import Union, List
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pn
+
+from gempy_viewer.API._plot_2d_sections_api import _plot_regular_grid_section, _plot_section_grid
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 # Keep Alex code hidden until we merge it properly
 try:
     import pyvista as pv
-    from gempy_viewer.DEP._vista import Vista as Vista
+    from gempy_viewer.modules.plot_3d._vista import Vista as Vista
 
     PYVISTA_IMPORT = True
 except ImportError:
@@ -179,81 +181,9 @@ def plot_2d(model, n_axis=None, section_names: list = None,
     p = Plot2D(model, **kwargs)
     p.create_figure(cols=n_columns_, rows=n_rows, **kwargs)
 
-    for e, sn in enumerate(section_names):
-        # Check if a plot that fills all pixels is plotted
-        _is_filled = False
-        assert e < 10, 'Reached maximum of axes'
+    e = _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis, n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve)
 
-        ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + 1
-        temp_ax = p.add_section(section_name=sn, ax_pos=ax_pos, ve=ve, **kwargs)
-        if show_data[e] is True:
-            p.plot_data(temp_ax, section_name=sn, **kwargs)
-        if show_lith[e] is True and model.solutions.lith_block.shape[0] != 0:
-            _is_filled = True
-            p.plot_lith(temp_ax, section_name=sn, **kwargs)
-        elif show_values[e] is True and model.solutions.values_matrix.shape[0] != 0:
-            _is_filled = True
-            p.plot_values(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
-        elif show_block[e] is True and model.solutions.block_matrix.shape[0] != 0:
-            _is_filled = True
-            p.plot_block(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
-        if show_scalar[e] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
-            _is_filled = True
-            p.plot_scalar_field(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
-        if show_boundaries[e] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
-            p.plot_contacts(temp_ax, section_name=sn, **kwargs)
-        if show_topography[e] is True:
-            # Check if anything dense is plot. If not plot dense topography
-            f_c_ = not _is_filled
-            # f_c = kwargs_topography.get('fill_contour', f_c_)
-            if 'fill_contour' not in kwargs_topography:
-                kwargs_topography['fill_contour'] = f_c_
-            p.plot_topography(temp_ax, section_name=sn,  # fill_contour=f_c,
-                              **kwargs_topography)
-            if show_section_traces is True and sn == 'topography':
-                p.plot_section_traces(temp_ax)
-
-        if regular_grid is not None:
-            p.plot_regular_grid(temp_ax, block=regular_grid, section_name=sn,
-                                **kwargs_regular_grid)
-
-        temp_ax.set_aspect(ve)
-
-        # If there are section we need to shift one axis for the perpendicular
-        e = e + 1
-
-    for e2 in range(len(cell_number)):
-        assert (e + e2) < 10, 'Reached maximum of axes'
-
-        ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + e2 + 1
-        temp_ax = p.add_section(cell_number=cell_number[e2],
-                                direction=direction[e2], ax_pos=ax_pos, ve=ve)
-        if show_data[e + e2] is True:
-            p.plot_data(temp_ax, cell_number=cell_number[e2],
-                        direction=direction[e2], **kwargs)
-        if show_lith[e + e2] is True and model.solutions.lith_block.shape[0] != 0:
-            p.plot_lith(temp_ax, cell_number=cell_number[e2],
-                        direction=direction[e2], **kwargs)
-        elif show_values[e + e2] is True and model.solutions.values_matrix.shape[0] != 0:
-            p.plot_values(temp_ax, series_n=series_n[e], cell_number=cell_number[e2],
-                          direction=direction[e2], **kwargs)
-        elif show_block[e + e2] is True and model.solutions.block_matrix.shape[0] != 0:
-            p.plot_block(temp_ax, series_n=series_n[e], cell_number=cell_number[e2],
-                         direction=direction[e2], **kwargs)
-        if show_scalar[e + e2] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
-            p.plot_scalar_field(temp_ax, series_n=series_n[e], cell_number=cell_number[e2],
-                                direction=direction[e2], **kwargs)
-        if show_boundaries[e + e2] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
-            p.plot_contacts(temp_ax, cell_number=cell_number[e2],
-                            direction=direction[e2], **kwargs)
-        if show_topography[e + e2] is True:
-            p.plot_topography(temp_ax, cell_number=cell_number[e2],
-                              direction=direction[e2], **kwargs_topography)
-        if regular_grid is not None:
-            p.plot_regular_grid(temp_ax, block=regular_grid, cell_number=cell_number[e2],
-                                direction=direction[e2], **kwargs_regular_grid)
-
-        temp_ax.set_aspect(ve)
+    _plot_regular_grid_section(cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar, show_topography, show_values, ve)
 
     if show is True:
         p.fig.show()
