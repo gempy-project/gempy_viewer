@@ -25,26 +25,29 @@
 """
 
 import warnings
-# insys.path.append("../../pyvista")
-from copy import deepcopy
 from typing import Union, Dict, List, Iterable, Set, Tuple
 
 import matplotlib.colors as mcolors
 from matplotlib import cm
 import numpy as np
 import pandas as pn
+
+from gempy_viewer.optional_dependencies import require_gempy
+
 try:
     import pyvista as pv
     import pyvistaqt as pvqt
+
     PYVISTA_IMPORT = True
 except ImportError:
     PYVISTA_IMPORT = False
 
-import gempy as gp
+warnings.filterwarnings(
+    action="ignore",
+    message='.*Conversion of the second argument of issubdtype *.',
+    append=True
+)
 
-warnings.filterwarnings("ignore",
-                        message='.*Conversion of the second argument of issubdtype *.',
-                        append=True)
 try:
     import vtk
     from vtk.util.numpy_support import numpy_to_vtk
@@ -53,8 +56,14 @@ try:
 except ImportError:
     VTK_IMPORT = False
 
-
 from logging import debug
+
+try:
+    from gempy.core.solution import Solution
+    from gempy.core.data.geo_model import GeoModel
+except ImportError:
+    Solution = None
+    GeoModel = None
 
 
 class __Vista:
@@ -83,7 +92,7 @@ class __Vista:
         self.vista_topo_actors = {}
         self.vista_surf_actor = {}
 
-        self.real_time =real_time
+        self.real_time = real_time
 
         if plotter_type == 'basic':
             self.p = pv.Plotter(**kwargs)
@@ -99,14 +108,14 @@ class __Vista:
             # Hopefully this removes the colors that exist in surfaces but not in data
             idx_uniq = self.model._surface_points.df['id'].unique()
             # + basement
-            idx = np.append(idx_uniq, idx_uniq.max()+1)
+            idx = np.append(idx_uniq, idx_uniq.max() + 1)
             lith_c = lith_c[idx]
         self._color_lot = lith_c
 
     def set_bounds(self, extent=None, grid=False, location='furthest', **kwargs):
         if extent is None:
             extent = self.extent
-        self.p.show_bounds(bounds=extent,  location=location, grid=grid, **kwargs)
+        self.p.show_bounds(bounds=extent, location=location, grid=grid, **kwargs)
 
     def plot_structured_grid(
             self,
@@ -138,11 +147,11 @@ class __Vista:
 
         self.vista_rgrids_mesh[name] = rg
 
-        actor = self.p.add_mesh(rg,  **kwargs)
+        actor = self.p.add_mesh(rg, **kwargs)
         self.vista_rgrids_actors[name] = actor
         return actor
 
-    def plot_scalar_data(self, regular_grid, data: Union[dict, gp.Solution, str] = 'Default', name='lith'):
+    def plot_scalar_data(self, regular_grid, data: Union[dict, Solution, str] = 'Default', name='lith'):
         """
 
         Args:
@@ -155,8 +164,7 @@ class __Vista:
         """
         if data == 'Default':
             data = self.model.solutions
-
-        if isinstance(data, gp.Solution):
+        if isinstance(data, Solution):
             if name == 'lith':
                 data = {'lith': data.lith_block}
 
@@ -298,7 +306,7 @@ class __Vista:
 
     def call_back_plane_move_changes(self, indices):
         df_changes = self.model._orientations.df.loc[np.atleast_1d(indices)][['X', 'Y', 'Z',
-                                                                             'G_x', 'G_y', 'G_z', 'id']]
+                                                                              'G_x', 'G_y', 'G_z', 'id']]
         for index, new_values_df in df_changes.iterrows():
             new_center = new_values_df[['X', 'Y', 'Z']].values
             new_normal = new_values_df[['G_x', 'G_y', 'G_z']].values
@@ -350,7 +358,6 @@ class __Vista:
 
         select_active = surfaces['isActive']
         for idx, val in surfaces[select_active][['vertices', 'edges', 'color']].dropna().iterrows():
-
             surf = pv.PolyData(val['vertices'], np.insert(val['edges'], 0, 3, axis=1).ravel())
             self.surf_polydata.at[idx] = surf
             self.vista_surf_actor[idx] = self.p.add_mesh(surf, pv.Color(val['color']).float_rgb, **kwargs)
@@ -375,6 +382,8 @@ class __Vista:
         return True
 
     def update_surfaces_real_time(self, delete=True):
+        # TODO (@miguel, Jun 2023): we need a dependency injection here
+        raise NotImplementedError
 
         try:
             gp.compute_model(self.model, sort_surfaces=False, compute_mesh=True)
@@ -386,7 +395,7 @@ class __Vista:
         self.update_surfaces()
         return True
 
-    def plot_topography(self, topography = None, scalars='geo_map', **kwargs):
+    def plot_topography(self, topography=None, scalars='geo_map', **kwargs):
         """
 
         Args:
@@ -414,10 +423,8 @@ class __Vista:
                 arr_ = np.vstack((arr_, rgb))
 
             sel = np.round(self.model.solutions.geological_map[0]).astype(int)[0]
-          #  print(arr_)
-          #  print(sel)
 
-            scalars_val = numpy_to_vtk(arr_[sel-1], array_type=3)
+            scalars_val = numpy_to_vtk(arr_[sel - 1], array_type=3)
             cm = None
             rgb = True
 
@@ -440,7 +447,7 @@ class __Vista:
 class Vista:
     def __init__(
             self,
-            model: gp.Model,
+            model: GeoModel,
             extent: List[float] = None,
             color_lot: pn.DataFrame = None,
             real_time: bool = False,
@@ -506,7 +513,7 @@ class Vista:
                 bool_surf_points = np.zeros(surf_df.shape[0], dtype=bool)
                 bool_surf_points[unique_surf_points - 1] = True
 
-                surf_df['isActive'] = ( surf_df['isActive'] | bool_surf_points)
+                surf_df['isActive'] = (surf_df['isActive'] | bool_surf_points)
 
                 if faults is True:
 
@@ -561,7 +568,7 @@ class Vista:
         )
 
     def plot_surface_points(self, fmt: str = None, render_points_as_spheres=True,
-                            colors= None, **kwargs):
+                            colors=None, **kwargs):
         if fmt is None:
             return self._plot_surface_points_all()
 
@@ -815,7 +822,7 @@ class Vista:
         self.p.add_mesh(mesh, **kwargs)
         return [mesh]
 
-    def set_scalar_data(self, regular_grid, data: Union[dict, gp.Solution, str] = 'Default', name='lith'):
+    def set_scalar_data(self, regular_grid, data: Union[dict, Solution, str] = 'Default', name='lith'):
         """
 
         Args:
@@ -829,7 +836,7 @@ class Vista:
         if data == 'Default':
             data = self.model.solutions
 
-        if isinstance(data, gp.Solution):
+        if isinstance(data, Solution):
             if name == 'lith':
                 data = {'lith': data.lith_block}
 
@@ -851,7 +858,7 @@ class Vista:
             render_topography: bool = False,
             **kwargs,
     ):
-        """Plot interactive 3-D geomodel with three cross sections in subplot.
+        """Plot interactive 3-D geomodel with three cross-sections in subplot.
 
         Args:
             geo_model: Geomodel object with solutions.
@@ -931,11 +938,10 @@ class Vista:
             self._update_surface_polydata()
 
     def _recompute(self, **kwargs):
+        # TODO(miguel jun 2023: here we need a dependency injection
+        raise NotImplementedError
         gp.compute_model(self.model, compute_mesh=True, **kwargs)
-        # self.topo_edges, self.topo_ctrs = tp.topology.compute_topology(
-        #     self.model
-        # )q
-
+        
     def _update_surface_polydata(self):
         surfaces = self.model._surfaces.df
         for surf, (idx, val) in zip(
@@ -1050,7 +1056,9 @@ class Vista:
             node_kwargs (dict, optional): Node plotting options. Defaults to {}.
             edge_kwargs (dict, optional): Edge plotting options. Defaults to {}.
         """
-        lot = gp.assets.topology.get_lot_node_to_lith_id(self.model, centroids)
+        
+        gp_plugins = require_gempy()
+        lot = gp_plugins.assets.topology.get_lot_node_to_lith_id(self.model, centroids)
         centroids_scaled = self._scale_topology_centroids(centroids)
         colors = self._get_color_lot()
         for node, pos in centroids_scaled.items():
@@ -1061,7 +1069,7 @@ class Vista:
             # * Requires topo id to lith id lot
             self.p.add_mesh(
                 mesh,
-                color=colors.iloc[lot[node]-1],
+                color=colors.iloc[lot[node] - 1],
                 **node_kwargs
             )
 
@@ -1085,17 +1093,17 @@ class Vista:
                 pointa=pos1,
                 pointb=pos_mid,
             )
-            self.p.add_mesh(mesh, color=colors.iloc[lot[e1]-1], **ekwargs)
+            self.p.add_mesh(mesh, color=colors.iloc[lot[e1] - 1], **ekwargs)
 
             mesh = pv.Line(
                 pointa=pos_mid,
                 pointb=pos2,
             )
-            self.p.add_mesh(mesh, color=colors.iloc[lot[e2]-1], **ekwargs)
+            self.p.add_mesh(mesh, color=colors.iloc[lot[e2] - 1], **ekwargs)
 
     def plot_topography(
             self,
-            topography = None,
+            topography=None,
             scalars="geomap",
             **kwargs
     ):
@@ -1162,4 +1170,3 @@ class Vista:
         mesh["vol"] = values.flatten()
         contours = mesh.contour(np.linspace(values.min(), values.max(), surfaces_nr + 2))
         self.p.add_mesh(contours, show_scalar_bar=True, label="scalar_field_main")
-
