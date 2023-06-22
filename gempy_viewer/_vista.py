@@ -65,6 +65,8 @@ except ImportError:
     Solution = None
     GeoModel = None
 
+# ? (miguel, Jun 2023) Cannot we depend on gempy? The dependency graph should go in that direction i.e. gempy_viewer depends on gempy
+
 
 class __Vista:
     """

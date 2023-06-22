@@ -38,6 +38,8 @@ plt.style.use(['seaborn-v0_8-white', 'seaborn-v0_8-talk'])
 
 warnings.filterwarnings("ignore", message="No contour levels were found")
 
+import gempy as gp
+
 
 class Plot2D:
     """
@@ -47,11 +49,24 @@ class Plot2D:
         model: gempy.Model object
         cmap: Color map to pass to matplotlib
     """
+    
+    model: gp.GeoModel
+    _color_lot: dict
+    axes: list[plt.Axes]
+    cmap: mcolors.ListedColormap
+    norm: mcolors.Normalize
+    _custom_colormap: bool  
+    
 
-    def __init__(self, model, cmap=None, norm=None, **kwargs):
-        self.model = model
-        self._color_lot = dict(zip(self.model._surfaces.df['surface'],
-                                   self.model._surfaces.df['color']))
+    def __init__(self, model: gp.GeoModel , cmap=None, norm=None, **kwargs):
+        self.model: gp.GeoModel = model
+        
+        self._color_lot = dict(
+            zip(
+                self.model.strurctural_frame.elements_names,
+                self.model.strurctural_frame.elements_colors
+            )
+        )
         self.axes = list()
 
         if cmap is None:
@@ -156,8 +171,6 @@ class Plot2D:
             figsize, textsize, rows, cols)
         self.fig = plt.figure(figsize=figsize, constrained_layout=False)
         self.fig.is_legend = False
-        # TODO make grid variable
-        # self.gs_0 = gridspect.GridSpec(2, 2, figure=self.fig, hspace=.9)
 
         return self.fig, self.axes  # , self.gs_0
 
