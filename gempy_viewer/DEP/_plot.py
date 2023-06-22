@@ -28,8 +28,8 @@
 
 from typing import Set, Tuple, Dict, Union
 import gempy as _gempy
-from ._visualization_2d import PlotData2D, PlotSolution
-from .visualization_3d import GemPyvtkInteract
+from gempy_viewer.DEP._visualization_2d import PlotData2D, PlotSolution
+from gempy_viewer.DEP.visualization_3d import GemPyvtkInteract
 
 
 def plot_data_3D(geo_data, ve=1, **kwargs):

@@ -2,7 +2,7 @@ import pyvistaqt as pvqt
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from gempy_viewer._vista import Vista
+from gempy_viewer.DEP._vista import Vista
 
 
 class MainWindow(QMainWindow):  # QtWidgets.QWidget

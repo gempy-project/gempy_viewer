@@ -37,7 +37,7 @@ import sys
 # This is for sphenix to find the packages
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from gempy.core.solution import Solution
-from gempy_viewer import helpers as plothelp
+from gempy_viewer.modules.plot_2d import helpers as plothelp
 
 sns.set_context('talk')
 plt.style.use(['seaborn-v0_8-white', 'seaborn-v0_8-talk'])

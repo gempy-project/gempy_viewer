@@ -31,18 +31,18 @@ from typing import Union, List
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pn
-from gempy_viewer.vista import GemPyToVista
+from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 # Keep Alex code hidden until we merge it properly
 try:
     import pyvista as pv
-    from ._vista import Vista as Vista
+    from gempy_viewer.DEP._vista import Vista as Vista
 
     PYVISTA_IMPORT = True
 except ImportError:
     PYVISTA_IMPORT = False
 
-from .visualization_2d import Plot2D
+from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 try:
     import mplstereonet

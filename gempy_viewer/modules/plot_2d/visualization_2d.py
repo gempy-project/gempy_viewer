@@ -32,13 +32,13 @@ from matplotlib.ticker import FixedFormatter, FixedLocator
 import matplotlib as mpl
 import scipy.spatial.distance as dd
 import seaborn as sns
+import gempy as gp
 
 sns.set_context('talk')
 plt.style.use(['seaborn-v0_8-white', 'seaborn-v0_8-talk'])
 
 warnings.filterwarnings("ignore", message="No contour levels were found")
 
-import gempy as gp
 
 
 class Plot2D:
@@ -567,7 +567,7 @@ class Plot2D:
         elif section_name == 'topography':
             
             import skimage
-            from gempy_viewer.helpers import add_colorbar
+            from gempy_viewer.modules.plot_2d.helpers import add_colorbar
             topo = self.model._grid.topography
             topo_super_res = skimage.transform.resize(
                 topo.values_2d,
