@@ -11,24 +11,10 @@ from gempy.core.grid import Grid
 
 def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cell_number=None, direction='y',
               legend=True, projection_distance=None, **kwargs):
-    """
-    Plot data--i.e. surface_points and orientations--of a section.
-
-    Args:
-        ax:
-        section_name:
-        cell_number:
-        direction:
-        legend: bool or 'force'
-        projection_distance:
-        **kwargs:
-
-    Returns:
-
-    """
+    
     if projection_distance is None:
         # TODO: This has to be updated to the new location
-        projection_distance = 0.2 * gempy_model._rescaling.df['rescaling factor'].values[0]
+        projection_distance = 0.2 * gempy_model.transform.isometric_scale
 
     # plot_2d.update_colot_lot()
 
@@ -41,9 +27,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
     if section_name is not None:
         Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _plot_section(gempy_model, kwargs, orientations, plot_2d, points, projection_distance, section_name)
-
     else:
-
         Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _plot_regular_grid(cell_number, direction, orientations, plot_2d, points)
 
     select_projected_p = cartesian_point_dist < projection_distance
@@ -70,6 +54,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
         markers = [plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in plot_2d._color_lot.values()]
         ax.legend(markers, plot_2d._color_lot.keys(), numpoints=1)
         plot_2d.fig.is_legend = True
+        
     ax.xaxis.label = temp_label
 
     sel_ori = orientations[select_projected_o]
@@ -79,8 +64,15 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
     ax.quiver(
         sel_ori[x], sel_ori[y], sel_ori[Gx], sel_ori[Gy],
-        pivot="tail", scale_units=min_axis, scale=30, color=sel_ori['surface'].map(plot_2d._color_lot),
-        edgecolor='k', headwidth=8, linewidths=1, zorder=102)
+        pivot="tail",
+        scale_units=min_axis,
+        scale=30,
+        color=sel_ori['surface'].map(plot_2d._color_lot),
+        edgecolor='k',
+        headwidth=8,
+        linewidths=1,
+        zorder=102
+    )
 
     try:
         ax.legend_.set_frame_on(True)

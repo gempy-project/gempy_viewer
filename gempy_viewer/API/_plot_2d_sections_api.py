@@ -1,4 +1,11 @@
-﻿def _plot_regular_grid_section(cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar, show_topography, show_values, ve):
+﻿from gempy_viewer.modules.plot_2d.drawer_2d import plot_data
+
+
+def _plot_regular_grid_section(
+        cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography,
+        model, n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith,
+        show_scalar, show_topography, show_values, ve):
+    
     for e2 in range(len(cell_number)):
         assert (e + e2) < 10, 'Reached maximum of axes'
 
@@ -10,10 +17,17 @@
             ax_pos=ax_pos,
             ve=ve
         )
-        
+
         if show_data[e + e2] is True:
-            p.plot_data(temp_ax, cell_number=cell_number[e2],
-                        direction=direction[e2], **kwargs)
+            plot_data(
+                plot_2d=p,
+                gempy_model=model,
+                ax=temp_ax,
+                cell_number=cell_number[e2],
+                direction=direction[e2],
+                **kwargs
+            )
+
         if show_lith[e + e2] is True and model.solutions.lith_block.shape[0] != 0:
             p.plot_lith(temp_ax, cell_number=cell_number[e2],
                         direction=direction[e2], **kwargs)
