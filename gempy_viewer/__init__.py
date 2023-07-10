@@ -1,5 +1,6 @@
 import sys
 from .API.plot_api import plot_2d, plot_3d
+from .core.plotting_2d_options import Plotting2DOptions
 
 __all__ = ['plot_2d', 'plot_3d']
 

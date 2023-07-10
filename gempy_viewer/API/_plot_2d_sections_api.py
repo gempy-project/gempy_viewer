@@ -3,8 +3,14 @@
         assert (e + e2) < 10, 'Reached maximum of axes'
 
         ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + e2 + 1
-        temp_ax = p.add_section(cell_number=cell_number[e2],
-                                direction=direction[e2], ax_pos=ax_pos, ve=ve)
+        temp_ax = p.add_section(
+            gempy_grid=model.grid,
+            cell_number=cell_number[e2],
+            direction=direction[e2],
+            ax_pos=ax_pos,
+            ve=ve
+        )
+        
         if show_data[e + e2] is True:
             p.plot_data(temp_ax, cell_number=cell_number[e2],
                         direction=direction[e2], **kwargs)
@@ -34,15 +40,20 @@
 
 
 def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis, n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve):
+    e = 0
     for e, sn in enumerate(section_names):
+
+        # region matplotlib configuration
         # Check if a plot that fills all pixels is plotted
         _is_filled = False
         assert e < 10, 'Reached maximum of axes'
 
         ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + 1
         temp_ax = p.add_section(section_name=sn, ax_pos=ax_pos, ve=ve, **kwargs)
-        
+        # endregion 
+
         # TODO: (miguel Jun 2023) can I start to replace these methods for functions one by one? 
+        # region plot methods
         if show_data[e] is True:
             p.plot_data(temp_ax, section_name=sn, **kwargs)
         if show_lith[e] is True and model.solutions.lith_block.shape[0] != 0:
@@ -74,9 +85,10 @@ def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_
             p.plot_regular_grid(temp_ax, block=regular_grid, section_name=sn,
                                 **kwargs_regular_grid)
 
+        # endregion
         temp_ax.set_aspect(ve)
 
         # If there are section we need to shift one axis for the perpendicular
         e = e + 1
-        
+
     return e

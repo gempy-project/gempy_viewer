@@ -32,9 +32,8 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.ticker import FixedFormatter, FixedLocator
 import matplotlib as mpl
-import scipy.spatial.distance as dd
 import seaborn as sns
-import gempy as gp
+from gempy.core.grid import Grid, grid_types
 
 sns.set_context('talk')
 plt.style.use(['seaborn-v0_8-white', 'seaborn-v0_8-talk'])
@@ -42,7 +41,7 @@ plt.style.use(['seaborn-v0_8-white', 'seaborn-v0_8-talk'])
 warnings.filterwarnings("ignore", message="No contour levels were found")
 
 
-
+# TODO: Ideally these class will be dealing just with matplotlib objects. The painting methods will be functions
 class Plot2D:
     """
     Class with functionality to plot 2D gempy sections
@@ -51,37 +50,36 @@ class Plot2D:
         model: gempy.Model object
         cmap: Color map to pass to matplotlib
     """
-    
-    model: gp.GeoModel
+
     _color_lot: dict
     axes: list[plt.Axes]
     cmap: mcolors.ListedColormap
     norm: mcolors.Normalize
-    _custom_colormap: bool  
-    
+    _custom_colormap: bool
 
-    def __init__(self, model: gp.GeoModel , cmap=None, norm=None, **kwargs):
-        self.model: gp.GeoModel = model
-        
-        self._color_lot = dict(
-            zip(
-                self.model.structural_frame.elements_names,
-                self.model.structural_frame.elements_colors
-            )
-        )
+    def __init__(self):
+        # TODO: Moving this to plotting options
+        # self.model: gp.GeoModel = model
+        # 
+        # self._color_lot = dict(
+        #     zip(
+        #         self.model.structural_frame.elements_names,
+        #         self.model.structural_frame.elements_colors
+        #     )
+        # )
         self.axes = list()
 
-        if cmap is None:
-            self.cmap = mcolors.ListedColormap(list(self.model._surfaces.df['color']))
-            self._custom_colormap = False
-        else:
-            self.cmap = cmap
-            self._custom_colormap = True
-
-        if norm is None:
-            self.norm = mcolors.Normalize(vmin=0.5, vmax=len(self.cmap.colors) + 0.5)
-        else:
-            self.norm = norm
+        # if cmap is None:
+        #     self.cmap = mcolors.ListedColormap(list(self.model._surfaces.df['color']))
+        #     self._custom_colormap = False
+        # else:
+        #     self.cmap = cmap
+        #     self._custom_colormap = True
+        # 
+        # if norm is None:
+        #     self.norm = mcolors.Normalize(vmin=0.5, vmax=len(self.cmap.colors) + 0.5)
+        # else:
+        #     self.norm = norm
 
     def update_colot_lot(self, color_dir=None):
         if color_dir is None:
@@ -130,27 +128,30 @@ class Plot2D:
             axname = 'X,Y'
         return labels, axname
 
-    def _slice(self, direction, cell_number=25):
+    @staticmethod
+    def _slice(regular_grid: grid_types.RegularGrid, direction: str, cell_number=25):
         """
         Slice the 3D array (blocks or scalar field) in the specific direction selected in the plot functions
 
         """
-        _a, _b, _c = (slice(0, self.model._grid.regular_grid.resolution[0]),
-                      slice(0, self.model._grid.regular_grid.resolution[1]),
-                      slice(0, self.model._grid.regular_grid.resolution[2]))
+        _a, _b, _c = (
+            slice(0, regular_grid.resolution[0]),
+            slice(0, regular_grid.resolution[1]),
+            slice(0, regular_grid.resolution[2])
+        )
 
         if direction == "x":
-            cell_number = int(self.model._grid.regular_grid.resolution[0] / 2) if cell_number == 'mid' else cell_number
+            cell_number = int(regular_grid.resolution[0] / 2) if cell_number == 'mid' else cell_number
             _a, x, y, Gx, Gy = cell_number, "Y", "Z", "G_y", "G_z"
-            extent_val = self.model._grid.regular_grid.extent[[2, 3, 4, 5]]
+            extent_val = regular_grid.extent[[2, 3, 4, 5]]
         elif direction == "y":
-            cell_number = int(self.model._grid.regular_grid.resolution[1] / 2) if cell_number == 'mid' else cell_number
+            cell_number = int(regular_grid.resolution[1] / 2) if cell_number == 'mid' else cell_number
             _b, x, y, Gx, Gy = cell_number, "X", "Z", "G_x", "G_z"
-            extent_val = self.model._grid.regular_grid.extent[[0, 1, 4, 5]]
+            extent_val = regular_grid.extent[[0, 1, 4, 5]]
         elif direction == "z":
-            cell_number = int(self.model._grid.regular_grid.resolution[2] / 2) if cell_number == 'mid' else cell_number
+            cell_number = int(regular_grid.resolution[2] / 2) if cell_number == 'mid' else cell_number
             _c, x, y, Gx, Gy = cell_number, "X", "Y", "G_x", "G_y"
-            extent_val = self.model._grid.regular_grid.extent[[0, 1, 2, 3]]
+            extent_val = regular_grid.extent[[0, 1, 2, 3]]
         else:
             raise AttributeError(str(direction) + "must be a cartesian direction, i.e. xyz")
         return _a, _b, _c, extent_val, x, y, Gx, Gy
@@ -176,11 +177,11 @@ class Plot2D:
 
         return self.fig, self.axes  # , self.gs_0
 
-    def add_section(self, section_name=None, cell_number=None, direction='y', ax=None, ax_pos=111,
+    def add_section(self, gempy_grid: Grid, section_name=None, cell_number=None, direction='y', ax=None, ax_pos=111,
                     ve=1., **kwargs):
 
         extent_val = kwargs.get('extent', None)
-        self.update_colot_lot()
+        # self.update_colot_lot()
 
         if ax is None:
             ax = self.fig.add_subplot(ax_pos)
@@ -190,13 +191,12 @@ class Plot2D:
                 ax.set_title('Geological map')
                 ax.set_xlabel('X')
                 ax.set_ylabel('Y')
-                extent_val = self.model._grid.topography.extent
+                extent_val = gempy_grid.topography.extent
             else:
 
-                dist = self.model._grid.sections.df.loc[section_name, 'dist']
+                dist = gempy_grid.sections.df.loc[section_name, 'dist']
 
-                extent_val = [0, dist,
-                              self.model._grid.regular_grid.extent[4], self.model._grid.regular_grid.extent[5]]
+                extent_val = [0, dist, gempy_grid.regular_grid.extent[4], gempy_grid.regular_grid.extent[5]]
 
                 labels, axname = self._make_section_xylabels(section_name, len(ax.get_xticklabels()) - 2)
                 pos_list = np.linspace(0, dist, len(labels))
@@ -205,7 +205,7 @@ class Plot2D:
                 ax.set(title=section_name, xlabel=axname, ylabel='Z')
 
         elif cell_number is not None:
-            _a, _b, _c, extent_val, x, y = self._slice(direction, cell_number)[:-2]
+            _a, _b, _c, extent_val, x, y = self._slice(gempy_grid.regular_grid, direction, cell_number)[:-2]  # * This requires the grid object
             ax.set_xlabel(x)
             ax.set_ylabel(y)
             ax.set(title='Cell Number: ' + str(cell_number) + ' Direction: ' + str(direction))
@@ -292,7 +292,7 @@ class Plot2D:
 
         elif cell_number is not None or block is not None:
             _a, _b, _c, _, x, y = self._slice(direction, cell_number)[:-2]
-            
+
             plot_block = block.reshape(self.model._grid.regular_grid.resolution)
             image = plot_block[_a, _b, _c].T
         else:
@@ -369,135 +369,7 @@ class Plot2D:
         ax.contourf(image, cmap='autumn', extent=extent_val, zorder=7, alpha=.8,
                     **kwargs)
 
-    def plot_data(self, ax, section_name=None, cell_number=None, direction='y',
-                  legend=True,
-                  projection_distance=None, **kwargs):
-        """
-        Plot data--i.e. surface_points and orientations--of a section.
-
-        Args:
-            ax:
-            section_name:
-            cell_number:
-            direction:
-            legend: bool or 'force'
-            projection_distance:
-            **kwargs:
-
-        Returns:
-
-        """
-        if projection_distance is None:
-            projection_distance = 0.2 * self.model._rescaling.df['rescaling factor'].values[0]
-
-        self.update_colot_lot()
-
-        points = self.model._surface_points.df.copy()
-        orientations = self.model._orientations.df.copy()
-        section_name, cell_number, direction = self._check_default_section(ax, section_name, cell_number, direction)
-
-        if section_name is not None:
-            if section_name == 'topography':
-                topo_comp = kwargs.get('topo_comp', 5000)
-                decimation_aux = int(self.model._grid.topography.values.shape[0] / topo_comp)
-                tpp = self.model._grid.topography.values[::decimation_aux + 1, :]
-                
-                cdist_sp = dd.cdist(tpp, self.model._surface_points.df[['X', 'Y', 'Z']])
-                cartesian_point_dist = (cdist_sp < projection_distance).sum(axis=0).astype(bool)
-
-                cdist_ori = dd.cdist(tpp, self.model._orientations.df[['X', 'Y', 'Z']])
-                cartesian_ori_dist = (cdist_ori < projection_distance).sum(axis=0).astype(bool)
-
-                x, y, Gx, Gy = 'X', 'Y', 'G_x', 'G_y'
-            else:
-                # Project points:
-                shift = np.asarray(self.model._grid.sections.df.loc[section_name, 'start'])
-                end_point = np.atleast_2d(np.asarray(self.model._grid.sections.df.loc[section_name, 'stop']) - shift)
-                A_rotate = np.dot(end_point.T, end_point) / self.model._grid.sections.df.loc[section_name, 'dist'] ** 2
-
-                perpe_sqdist = ((np.dot(A_rotate, (points[['X', 'Y']]).T).T - points[['X', 'Y']]) ** 2).sum(axis=1)
-                cartesian_point_dist = np.sqrt(perpe_sqdist)
-
-                cartesian_ori_dist = np.sqrt(((np.dot(
-                    A_rotate, (orientations[['X', 'Y']]).T).T - orientations[['X', 'Y']]) ** 2).sum(axis=1))
-
-                # This are the coordinates of the data projected on the section
-                cartesian_point = np.dot(A_rotate, (points[['X', 'Y']] - shift).T).T
-                cartesian_ori = np.dot(A_rotate, (orientations[['X', 'Y']] - shift).T).T
-
-                # Since we plot only the section we want the norm of those coordinates
-                points['X'] = np.linalg.norm(cartesian_point, axis=1)
-                orientations['X'] = np.linalg.norm(cartesian_ori, axis=1)
-                x, y, Gx, Gy = 'X', 'Z', 'G_x', 'G_z'
-
-        else:
-
-            if cell_number is None:
-                cell_number = int(self.model._grid.regular_grid.resolution[0] / 2)
-            elif cell_number == 'mid':
-                cell_number = int(self.model._grid.regular_grid.resolution[0] / 2)
-
-            if direction == 'x' or direction == 'X':
-                arg_ = 0
-                dx = self.model._grid.regular_grid.dx
-                dir = 'X'
-            elif direction == 'y' or direction == 'Y':
-                arg_ = 2
-                dx = self.model._grid.regular_grid.dy
-                dir = 'Y'
-            elif direction == 'z' or direction == 'Z':
-                arg_ = 4
-                dx = self.model._grid.regular_grid.dz
-                dir = 'Z'
-            else:
-                raise AttributeError('Direction must be x, y, z')
-
-            _loc = self.model._grid.regular_grid.extent[arg_] + dx * cell_number
-            cartesian_point_dist = points[dir] - _loc
-            cartesian_ori_dist = orientations[dir] - _loc
-
-            x, y, Gx, Gy = self._slice(direction)[4:]
-
-        select_projected_p = cartesian_point_dist < projection_distance
-        select_projected_o = cartesian_ori_dist < projection_distance
-
-        # Hack to keep the right X label:
-        temp_label = copy.copy(ax.xaxis.label)
-
-        points_df = points[select_projected_p]
-        
-        _colors = points_df['surface'].map(self._color_lot)
-        points_df['colors'] = _colors
-
-        points_df.plot.scatter(x=x, y=y, ax=ax,
-                               c=_colors,
-                               s=70, 
-                               zorder=102,
-                               edgecolors='white',
-                               colorbar=False
-                               )
-        
-        if self.fig.is_legend is False and legend is True or legend == 'force':
-            markers = [plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in self._color_lot.values()]
-            ax.legend(markers, self._color_lot.keys(), numpoints=1)
-            self.fig.is_legend = True
-        ax.xaxis.label = temp_label
-
-        sel_ori = orientations[select_projected_o]
-
-        aspect = np.subtract(*ax.get_ylim()) / np.subtract(*ax.get_xlim())
-        min_axis = 'width' if aspect < 1 else 'height'
-
-        ax.quiver(sel_ori[x], sel_ori[y], sel_ori[Gx], sel_ori[Gy],
-                  pivot="tail", scale_units=min_axis, scale=30, color=sel_ori['surface'].map(self._color_lot),
-                  edgecolor='k', headwidth=8, linewidths=1, zorder=102)
-
-        try:
-            ax.legend_.set_frame_on(True)
-            ax.legend_.set_zorder(10000)
-        except AttributeError:
-            pass
-
+  
     def calculate_p1p2(self, direction, cell_number):
 
         if direction == 'y':
@@ -567,7 +439,7 @@ class Plot2D:
             ax.fill(xy[:, 0], xy[:, 1], 'k', zorder=10)
 
         elif section_name == 'topography':
-            
+
             import skimage
             from gempy_viewer.modules.plot_2d.helpers import add_colorbar
             topo = self.model._grid.topography
@@ -751,19 +623,19 @@ class Plot2D:
             r2 = res[1]
 
         nkw = {
-            "marker": "o",
-            "color": "black",
+            "marker"    : "o",
+            "color"     : "black",
             "markersize": 20,
-            "alpha": 0.75
+            "alpha"     : 0.75
         }
         if node_kwargs is not None:
             nkw.update(node_kwargs)
 
         tkw = {
-            "color": "white",
-            "size": 10,
-            "ha": "center",
-            "va": "center",
+            "color" : "white",
+            "size"  : 10,
+            "ha"    : "center",
+            "va"    : "center",
             "weight": "ultralight",
             "family": "monospace"
         }
@@ -772,7 +644,7 @@ class Plot2D:
 
         lkw = {
             "linewidth": 0.75,
-            "color": "black"
+            "color"    : "black"
         }
         if edge_kwargs is not None:
             lkw.update(edge_kwargs)
