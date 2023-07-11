@@ -1,4 +1,4 @@
-﻿from gempy_viewer.modules.plot_2d.drawer_2d import plot_data
+﻿from gempy_viewer.modules.plot_2d.drawer_input_2d import plot_data
 
 
 def _plot_regular_grid_section(

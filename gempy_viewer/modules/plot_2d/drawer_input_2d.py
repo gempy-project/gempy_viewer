@@ -12,11 +12,9 @@ from gempy.core.grid import Grid
 
 def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cell_number=None, direction='y',
               legend=True, projection_distance=None, **kwargs):
-    
     if projection_distance is None:
         # TODO: This has to be updated to the new location
         projection_distance = 0.2 * gempy_model.transform.isometric_scale
-
 
     # TODO: This are not here 
     points = gempy_model.surface_points.df.copy()
@@ -33,17 +31,17 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     else:
         cartesian_ori_dist, cartesian_point_dist = _plot_regular_grid(
             regular_grid=gempy_model.grid.regular_grid,
-            cell_number= cell_number,
-            direction= direction,
+            cell_number=cell_number,
+            direction=direction,
             orientations=orientations,
-            points= points
+            points=points
         )
 
         x, y, Gx, Gy = plot_2d._slice(
             regular_grid=gempy_model.grid.regular_grid,
             direction=direction
         )[4:]
-    
+
     select_projected_p = cartesian_point_dist < projection_distance
     select_projected_o = cartesian_ori_dist < projection_distance
 
@@ -52,24 +50,32 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
     # region plot points
     points_df = points[select_projected_p]
-    # 
-    # _colors = points_df['surface'].map(plot_2d._color_lot)
-    # points_df['colors'] = _colors
 
-    points_df.plot.scatter(
-        x=x, y=y, ax=ax,
-        c=np.array(gempy_model.structural_frame.surface_points_colors)[select_projected_p],
-        s=70,
-        zorder=102,
-        edgecolors='white',
-        colorbar=False
-    )
+    # ? The following code is the old one using pandas
+    # TODO: Get rid of pandas completely
+    if False:
+        points_df.plot.scatter(
+            x=x, y=y, ax=ax,
+            c=np.array(gempy_model.structural_frame.surface_points_colors)[select_projected_p],
+            s=70,
+            zorder=102,
+            edgecolors='white',
+            colorbar=False
+        )
+    else:
+        x_values = points_df[x]
+        y_values = points_df[y]
+        colors = np.array(gempy_model.structural_frame.surface_points_colors)[select_projected_p]
+        ax.scatter(
+            x_values,
+            y_values,
+            c=colors,
+            s=70,
+            edgecolors='white',
+            zorder=102
+        )
+
     # endregion
-    
-    
-    # BUG: Revive this part once surface_points is fixed
-    return 
-    
     # region plot orientations
 
     sel_ori = orientations[select_projected_o]
@@ -92,7 +98,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     # endregion
 
     # region others
-    
+
     if plot_2d.fig.is_legend is False and legend is True or legend == 'force':
         markers = [plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in plot_2d._color_lot.values()]
         ax.legend(markers, plot_2d._color_lot.keys(), numpoints=1)
@@ -105,15 +111,14 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
         ax.legend_.set_zorder(10000)
     except AttributeError:
         pass
-    
+
     # endregion
 
 
 def _plot_regular_grid(regular_grid: RegularGrid, cell_number, direction, orientations, points):
-    
     if cell_number is None or cell_number == "mid":
         cell_number = int(regular_grid.resolution[0] / 2)
-        
+
     if direction == 'x' or direction == 'X':
         arg_ = 0
         dx = regular_grid.dx
@@ -128,11 +133,11 @@ def _plot_regular_grid(regular_grid: RegularGrid, cell_number, direction, orient
         dir = 'Z'
     else:
         raise AttributeError('Direction must be x, y, z')
-    
+
     _loc = regular_grid.extent[arg_] + dx * cell_number
     cartesian_point_dist = points[dir] - _loc
     cartesian_ori_dist = orientations[dir] - _loc
-    
+
     return cartesian_ori_dist, cartesian_point_dist
 
 
