@@ -88,7 +88,8 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
         pivot="tail",
         scale_units=min_axis,
         scale=30,
-        color=sel_ori['surface'].map(plot_2d._color_lot),
+        # color=sel_ori['surface'].map(plot_2d._color_lot),
+        color=np.array(gempy_model.structural_frame.orientations_colors)[select_projected_o],
         edgecolor='k',
         headwidth=8,
         linewidths=1,
@@ -100,8 +101,11 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     # region others
 
     if plot_2d.fig.is_legend is False and legend is True or legend == 'force':
-        markers = [plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in plot_2d._color_lot.values()]
-        ax.legend(markers, plot_2d._color_lot.keys(), numpoints=1)
+        ax.legend(
+            handles=[plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in gempy_model.structural_frame.elements_colors],
+            labels=gempy_model.structural_frame.elements_names,
+            numpoints=1
+        )
         plot_2d.fig.is_legend = True
 
     ax.xaxis.label = temp_label
