@@ -19,7 +19,8 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
 
     # TODO: This are not here 
-    points = gempy_model.structural_frame.surface_points.xyz
+    points = gempy_model.surface_points.df.copy()
+    orientations = gempy_model.orientations.df.copy()
 
     # TODO: This is a weird check to do this deep
     section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
@@ -51,13 +52,13 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
     # region plot points
     points_df = points[select_projected_p]
-
-    _colors = points_df['surface'].map(plot_2d._color_lot)
-    points_df['colors'] = _colors
+    # 
+    # _colors = points_df['surface'].map(plot_2d._color_lot)
+    # points_df['colors'] = _colors
 
     points_df.plot.scatter(
         x=x, y=y, ax=ax,
-        c=_colors,
+        c=gempy_model.structural_frame.elements_colors,
         s=70,
         zorder=102,
         edgecolors='white',
@@ -71,7 +72,6 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     
     # region plot orientations
 
-    orientations = gempy_model.orientations.df.copy()
     sel_ori = orientations[select_projected_o]
 
     aspect = np.subtract(*ax.get_ylim()) / np.subtract(*ax.get_xlim())
