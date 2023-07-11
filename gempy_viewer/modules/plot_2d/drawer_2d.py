@@ -58,7 +58,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
     points_df.plot.scatter(
         x=x, y=y, ax=ax,
-        c=gempy_model.structural_frame.elements_colors,
+        c=np.array(gempy_model.structural_frame.surface_points_colors)[select_projected_p],
         s=70,
         zorder=102,
         edgecolors='white',
