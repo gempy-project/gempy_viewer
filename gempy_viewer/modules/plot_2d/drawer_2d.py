@@ -4,6 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import scipy.spatial.distance as dd
 
+from gempy.core.grid_modules.grid_types import RegularGrid
 from .visualization_2d import Plot2D
 from gempy import GeoModel
 from gempy.core.grid import Grid
@@ -16,26 +17,39 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
         # TODO: This has to be updated to the new location
         projection_distance = 0.2 * gempy_model.transform.isometric_scale
 
-    # plot_2d.update_colot_lot()
 
     # TODO: This are not here 
-    points = gempy_model.surface_points.df.copy()
-    orientations = gempy_model.orientations.df.copy()
+    points = gempy_model.structural_frame.surface_points.xyz
 
     # TODO: This is a weird check to do this deep
     section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
 
     if section_name is not None:
-        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _plot_section(gempy_model, kwargs, orientations, plot_2d, points, projection_distance, section_name)
+        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _plot_section(
+            gempy_model, kwargs, orientations,
+            plot_2d, points, projection_distance,
+            section_name)
     else:
-        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _plot_regular_grid(cell_number, direction, orientations, plot_2d, points)
+        cartesian_ori_dist, cartesian_point_dist = _plot_regular_grid(
+            regular_grid=gempy_model.grid.regular_grid,
+            cell_number= cell_number,
+            direction= direction,
+            orientations=orientations,
+            points= points
+        )
 
+        x, y, Gx, Gy = plot_2d._slice(
+            regular_grid=gempy_model.grid.regular_grid,
+            direction=direction
+        )[4:]
+    
     select_projected_p = cartesian_point_dist < projection_distance
     select_projected_o = cartesian_ori_dist < projection_distance
 
     # Hack to keep the right X label:
     temp_label = copy.copy(ax.xaxis.label)
 
+    # region plot points
     points_df = points[select_projected_p]
 
     _colors = points_df['surface'].map(plot_2d._color_lot)
@@ -49,14 +63,15 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
         edgecolors='white',
         colorbar=False
     )
+    # endregion
+    
+    
+    # BUG: Revive this part once surface_points is fixed
+    return 
+    
+    # region plot orientations
 
-    if plot_2d.fig.is_legend is False and legend is True or legend == 'force':
-        markers = [plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in plot_2d._color_lot.values()]
-        ax.legend(markers, plot_2d._color_lot.keys(), numpoints=1)
-        plot_2d.fig.is_legend = True
-        
-    ax.xaxis.label = temp_label
-
+    orientations = gempy_model.orientations.df.copy()
     sel_ori = orientations[select_projected_o]
 
     aspect = np.subtract(*ax.get_ylim()) / np.subtract(*ax.get_xlim())
@@ -74,37 +89,51 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
         zorder=102
     )
 
+    # endregion
+
+    # region others
+    
+    if plot_2d.fig.is_legend is False and legend is True or legend == 'force':
+        markers = [plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in plot_2d._color_lot.values()]
+        ax.legend(markers, plot_2d._color_lot.keys(), numpoints=1)
+        plot_2d.fig.is_legend = True
+
+    ax.xaxis.label = temp_label
+
     try:
         ax.legend_.set_frame_on(True)
         ax.legend_.set_zorder(10000)
     except AttributeError:
         pass
+    
+    # endregion
 
 
-def _plot_regular_grid(cell_number, direction, orientations, plot_2d, points):
-    if cell_number is None:
-        cell_number = int(plot_2d.model._grid.regular_grid.resolution[0] / 2)
-    elif cell_number == 'mid':
-        cell_number = int(plot_2d.model._grid.regular_grid.resolution[0] / 2)
+def _plot_regular_grid(regular_grid: RegularGrid, cell_number, direction, orientations, points):
+    
+    if cell_number is None or cell_number == "mid":
+        cell_number = int(regular_grid.resolution[0] / 2)
+        
     if direction == 'x' or direction == 'X':
         arg_ = 0
-        dx = plot_2d.model._grid.regular_grid.dx
+        dx = regular_grid.dx
         dir = 'X'
     elif direction == 'y' or direction == 'Y':
         arg_ = 2
-        dx = plot_2d.model._grid.regular_grid.dy
+        dx = regular_grid.dy
         dir = 'Y'
     elif direction == 'z' or direction == 'Z':
         arg_ = 4
-        dx = plot_2d.model._grid.regular_grid.dz
+        dx = regular_grid.dz
         dir = 'Z'
     else:
         raise AttributeError('Direction must be x, y, z')
-    _loc = plot_2d.model._grid.regular_grid.extent[arg_] + dx * cell_number
+    
+    _loc = regular_grid.extent[arg_] + dx * cell_number
     cartesian_point_dist = points[dir] - _loc
     cartesian_ori_dist = orientations[dir] - _loc
-    x, y, Gx, Gy = plot_2d._slice(direction)[4:]
-    return Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y
+    
+    return cartesian_ori_dist, cartesian_point_dist
 
 
 def _plot_section(gempy_model, kwargs, orientations, plot_2d, points, projection_distance, section_name):
