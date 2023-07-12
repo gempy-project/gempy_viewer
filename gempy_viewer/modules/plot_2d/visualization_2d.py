@@ -71,7 +71,7 @@ class Plot2D:
 
     @staticmethod
     def get_geo_model_cmap(elements_colors: list[str]):
-        return mcolors.ListedColormap(elements_colors) 
+        return mcolors.ListedColormap(elements_colors).reversed()
     
     @staticmethod
     def get_geo_model_norm(number_elements: int):
@@ -84,7 +84,7 @@ class Plot2D:
         self._color_lot = color_dir
         if self._custom_colormap is False:
             self.cmap = mcolors.ListedColormap(list(self.model._surfaces.df['color']))
-            self.norm = mcolors.Normalize(vmin=-0.5, vmax=len(self.cmap.colors) + 0.5)
+            self.norm = mcolors.Normalize(vmin=0.5, vmax=len(self.cmap.colors) + 0.5)
 
     @staticmethod
     def remove(ax):
