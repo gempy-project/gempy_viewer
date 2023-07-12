@@ -1,5 +1,5 @@
-﻿from gempy_viewer.modules.plot_2d.drawer_input_2d import plot_data
-from gempy_viewer.modules.plot_2d.drawer_regular_grid_2d import plot_regular_grid
+﻿from ..modules.plot_2d.drawer_input_2d import plot_data
+from ..modules.plot_2d.drawer_regular_grid_2d import plot_regular_grid
 
 
 def _plot_regular_grid_section(
@@ -38,13 +38,6 @@ def _plot_regular_grid_section(
                 cell_number=cell_number[e2],
                 direction=direction[e2],
             )
-            # p.plot_lith(
-            #     ax=temp_ax,
-            #     cell_number=cell_number[e2],
-            #     direction=direction[e2],
-            #     **kwargs
-            # )
-            
         elif show_values[e + e2] is True and model.solutions.raw_arrays.values_matrix.shape[0] != 0:
             p.plot_values(temp_ax, series_n=series_n[e], cell_number=cell_number[e2],
                           direction=direction[e2], **kwargs)
