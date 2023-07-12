@@ -51,11 +51,11 @@ class Plot2D:
         cmap: Color map to pass to matplotlib
     """
 
-    _color_lot: dict
+    # _color_lot: dict
     axes: list[plt.Axes]
-    cmap: mcolors.ListedColormap
-    norm: mcolors.Normalize
-    _custom_colormap: bool
+    # custom_cmap: Optional[mcolors.ListedColormap]
+    # norm: Optional[mcolors.Normalize]
+    # _custom_colormap: bool
 
     def __init__(self):
         # TODO: Moving this to plotting options
@@ -69,18 +69,14 @@ class Plot2D:
         # )
         self.axes = list()
 
-        # if cmap is None:
-        #     self.cmap = mcolors.ListedColormap(list(self.model._surfaces.df['color']))
-        #     self._custom_colormap = False
-        # else:
-        #     self.cmap = cmap
-        #     self._custom_colormap = True
-        # 
-        # if norm is None:
-        #     self.norm = mcolors.Normalize(vmin=0.5, vmax=len(self.cmap.colors) + 0.5)
-        # else:
-        #     self.norm = norm
-
+    @staticmethod
+    def get_geo_model_cmap(elements_colors: list[str]):
+        return mcolors.ListedColormap(elements_colors) 
+    
+    @staticmethod
+    def get_geo_model_norm(number_elements: int):
+        return mcolors.Normalize(vmin=0.5, vmax=number_elements + 0.5)
+    
     def update_colot_lot(self, color_dir=None):
         if color_dir is None:
             color_dir = dict(zip(self.model._surfaces.df['surface'], self.model._surfaces.df['color']))
@@ -129,7 +125,7 @@ class Plot2D:
         return labels, axname
 
     @staticmethod
-    def _slice(regular_grid: grid_types.RegularGrid, direction: str, cell_number=25):
+    def slice(regular_grid: grid_types.RegularGrid, direction: str, cell_number=25):
         """
         Slice the 3D array (blocks or scalar field) in the specific direction selected in the plot functions
 
@@ -205,7 +201,7 @@ class Plot2D:
                 ax.set(title=section_name, xlabel=axname, ylabel='Z')
 
         elif cell_number is not None:
-            _a, _b, _c, extent_val, x, y = self._slice(gempy_grid.regular_grid, direction, cell_number)[:-2]  # * This requires the grid object
+            _a, _b, _c, extent_val, x, y = self.slice(gempy_grid.regular_grid, direction, cell_number)[:-2]  # * This requires the grid object
             ax.set_xlabel(x)
             ax.set_ylabel(y)
             ax.set(title='Cell Number: ' + str(cell_number) + ' Direction: ' + str(direction))
@@ -245,6 +241,7 @@ class Plot2D:
 
         return section_name, cell_number, direction
 
+    # ! DEP: Use drawer_regular_grid_2d
     def plot_regular_grid(self, ax, section_name=None, cell_number=None, direction='y',
                           block: np.ndarray = None, resolution=None, **kwargs):
         """Generic function to plot all regular data
@@ -291,7 +288,7 @@ class Plot2D:
                 image = self.model.solutions.sections[0][l0:l1].reshape(shape[0], shape[1]).T
 
         elif cell_number is not None or block is not None:
-            _a, _b, _c, _, x, y = self._slice(direction, cell_number)[:-2]
+            _a, _b, _c, _, x, y = self.slice(direction, cell_number)[:-2]
 
             plot_block = block.reshape(self.model._grid.regular_grid.resolution)
             image = plot_block[_a, _b, _c].T
@@ -352,7 +349,7 @@ class Plot2D:
                 image = self.model.solutions.sections[1][series_n][l0:l1].reshape(shape).T
 
         elif cell_number is not None or block is not None:
-            _a, _b, _c, _, x, y = self._slice(direction, cell_number)[:-2]
+            _a, _b, _c, _, x, y = self.slice(direction, cell_number)[:-2]
             if block is None:
                 _block = self.model.solutions.scalar_field_matrix[series_n]
             else:
@@ -554,7 +551,7 @@ class Plot2D:
                     c_id = c_id2
 
         elif cell_number is not None or block is not None:
-            _slice = self._slice(direction, cell_number)[:3]
+            _slice = self.slice(direction, cell_number)[:3]
             shape = self.model._grid.regular_grid.resolution
             c_id = 0  # * color id startpoint
 

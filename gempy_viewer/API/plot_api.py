@@ -181,6 +181,8 @@ def plot_2d(model, n_axis=None, section_names: list = None,
     p = Plot2D()
     p.create_figure(cols=n_columns_, rows=n_rows, **kwargs)  # * This creates fig and axes
 
+    # TODO: This is a mess: Extract the loop to a function and split the functions in several chunks according to 
+    # TODO: the arguments
     e = _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis,
     n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries,
     show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve)

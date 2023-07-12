@@ -1,11 +1,11 @@
 ﻿from gempy_viewer.modules.plot_2d.drawer_input_2d import plot_data
+from gempy_viewer.modules.plot_2d.drawer_regular_grid_2d import plot_regular_grid
 
 
 def _plot_regular_grid_section(
         cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography,
         model, n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith,
         show_scalar, show_topography, show_values, ve):
-    
     for e2 in range(len(cell_number)):
         assert (e + e2) < 10, 'Reached maximum of axes'
 
@@ -28,19 +28,33 @@ def _plot_regular_grid_section(
                 **kwargs
             )
 
-        if show_lith[e + e2] is True and model.solutions.lith_block.shape[0] != 0:
-            p.plot_lith(temp_ax, cell_number=cell_number[e2],
-                        direction=direction[e2], **kwargs)
-        elif show_values[e + e2] is True and model.solutions.values_matrix.shape[0] != 0:
+        if show_lith[e + e2] is True and model.solutions.raw_arrays.lith_block.shape[0] != 0:
+            plot_regular_grid(
+                plot_2d=p,
+                gempy_model=model,
+                ax=temp_ax,
+                block=model.solutions.raw_arrays.lith_block,
+                resolution=model.grid.regular_grid.resolution,
+                cell_number=cell_number[e2],
+                direction=direction[e2],
+            )
+            # p.plot_lith(
+            #     ax=temp_ax,
+            #     cell_number=cell_number[e2],
+            #     direction=direction[e2],
+            #     **kwargs
+            # )
+            
+        elif show_values[e + e2] is True and model.solutions.raw_arrays.values_matrix.shape[0] != 0:
             p.plot_values(temp_ax, series_n=series_n[e], cell_number=cell_number[e2],
                           direction=direction[e2], **kwargs)
-        elif show_block[e + e2] is True and model.solutions.block_matrix.shape[0] != 0:
+        elif show_block[e + e2] is True and model.solutions.raw_arrays.block_matrix.shape[0] != 0:
             p.plot_block(temp_ax, series_n=series_n[e], cell_number=cell_number[e2],
                          direction=direction[e2], **kwargs)
-        if show_scalar[e + e2] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
+        if show_scalar[e + e2] is True and model.solutions.raw_arrays.scalar_field_matrix.shape[0] != 0:
             p.plot_scalar_field(temp_ax, series_n=series_n[e], cell_number=cell_number[e2],
                                 direction=direction[e2], **kwargs)
-        if show_boundaries[e + e2] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
+        if show_boundaries[e + e2] is True and model.solutions.raw_arrays.scalar_field_matrix.shape[0] != 0:
             p.plot_contacts(temp_ax, cell_number=cell_number[e2],
                             direction=direction[e2], **kwargs)
         if show_topography[e + e2] is True:

@@ -24,12 +24,12 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
 
     if section_name is not None:
-        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _plot_section(
+        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_section(
             gempy_model, kwargs, orientations,
             plot_2d, points, projection_distance,
             section_name)
     else:
-        cartesian_ori_dist, cartesian_point_dist = _plot_regular_grid(
+        cartesian_ori_dist, cartesian_point_dist = _projection_params_regular_grid(
             regular_grid=gempy_model.grid.regular_grid,
             cell_number=cell_number,
             direction=direction,
@@ -37,10 +37,10 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
             points=points
         )
 
-        x, y, Gx, Gy = plot_2d._slice(
+        _, _, _, _, x, y, Gx, Gy = plot_2d.slice(
             regular_grid=gempy_model.grid.regular_grid,
             direction=direction
-        )[4:]
+        )
 
     select_projected_p = cartesian_point_dist < projection_distance
     select_projected_o = cartesian_ori_dist < projection_distance
@@ -52,8 +52,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     points_df = points[select_projected_p]
 
     # ? The following code is the old one using pandas
-    # TODO: Get rid of pandas completely
-    if False:
+    if False:  # TODO: Get rid of pandas completely
         points_df.plot.scatter(
             x=x, y=y, ax=ax,
             c=np.array(gempy_model.structural_frame.surface_points_colors)[select_projected_p],
@@ -88,7 +87,6 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
         pivot="tail",
         scale_units=min_axis,
         scale=30,
-        # color=sel_ori['surface'].map(plot_2d._color_lot),
         color=np.array(gempy_model.structural_frame.orientations_colors)[select_projected_o],
         edgecolor='k',
         headwidth=8,
@@ -119,7 +117,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     # endregion
 
 
-def _plot_regular_grid(regular_grid: RegularGrid, cell_number, direction, orientations, points):
+def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, direction, orientations, points):
     if cell_number is None or cell_number == "mid":
         cell_number = int(regular_grid.resolution[0] / 2)
 
@@ -145,9 +143,10 @@ def _plot_regular_grid(regular_grid: RegularGrid, cell_number, direction, orient
     return cartesian_ori_dist, cartesian_point_dist
 
 
-def _plot_section(gempy_model, kwargs, orientations, plot_2d, points, projection_distance, section_name):
+def _projection_params_section(gempy_model, kwargs, orientations, plot_2d, points, projection_distance, section_name):
     if section_name == 'topography':
-        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _plot_topography(gempy_model, kwargs, orientations, points, projection_distance)
+        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_topography(gempy_model, kwargs,
+                                                                                               orientations, points, projection_distance)
     else:
         # Project points:
         shift = np.asarray(plot_2d.model._grid.sections.df.loc[section_name, 'start'])
@@ -171,7 +170,7 @@ def _plot_section(gempy_model, kwargs, orientations, plot_2d, points, projection
     return Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y
 
 
-def _plot_topography(gempy_model, kwargs, orientations, points, projection_distance):
+def _projection_params_topography(gempy_model, kwargs, orientations, points, projection_distance):
     topo_comp = kwargs.get('topo_comp', 5000)
     grid: Grid = gempy_model.grid
     decimation_aux = int(grid.topography.values.shape[0] / topo_comp)
