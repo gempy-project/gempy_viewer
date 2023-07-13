@@ -8,16 +8,18 @@ def _plot_regular_grid_section(
         show_scalar, show_topography, show_values, ve):
     for e2 in range(len(cell_number)):
         assert (e + e2) < 10, 'Reached maximum of axes'
-
-        ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + e2 + 1
+        
+        # region prepare axis
         temp_ax = p.add_section(
             gempy_grid=model.grid,
             cell_number=cell_number[e2],
             direction=direction[e2],
-            ax_pos=ax_pos,
+            ax_pos=((round(n_axis / 2 + 0.1)) * 100 + n_columns + e + e2 + 1),
             ve=ve
         )
-
+        # endregion
+        
+        # region plot data
         if show_data[e + e2] is True:
             plot_data(
                 plot_2d=p,
@@ -27,7 +29,12 @@ def _plot_regular_grid_section(
                 direction=direction[e2],
                 **kwargs
             )
-
+        if show_topography[e + e2] is True:
+            p.plot_topography(temp_ax, cell_number=cell_number[e2],
+                              direction=direction[e2], **kwargs_topography)
+        # endregion
+        
+        # region plot solutions
         if show_lith[e + e2] is True and model.solutions.raw_arrays.lith_block.shape[0] != 0:
             plot_regular_grid(
                 plot_2d=p,
@@ -50,13 +57,14 @@ def _plot_regular_grid_section(
         if show_boundaries[e + e2] is True and model.solutions.raw_arrays.scalar_field_matrix.shape[0] != 0:
             p.plot_contacts(temp_ax, cell_number=cell_number[e2],
                             direction=direction[e2], **kwargs)
-        if show_topography[e + e2] is True:
-            p.plot_topography(temp_ax, cell_number=cell_number[e2],
-                              direction=direction[e2], **kwargs_topography)
+            
+        # endregion
+        # region passed regular grid
+        # ? This here is funny
         if regular_grid is not None:
             p.plot_regular_grid(temp_ax, block=regular_grid, cell_number=cell_number[e2],
                                 direction=direction[e2], **kwargs_regular_grid)
-
+        # endregion
         temp_ax.set_aspect(ve)
 
 

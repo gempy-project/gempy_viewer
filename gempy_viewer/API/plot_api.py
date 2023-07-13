@@ -55,7 +55,7 @@ except ImportError:
 
 
 def plot_2d(model, n_axis=None, section_names: list = None,
-            cell_number: int = None, direction: str = 'y',
+            cell_number: int = None, direction: Union[str | list[str]] = 'y',
             show_data: Union[bool, list] = True,
             show_results: Union[bool, list] = True,
             show_lith: Union[bool, list] = True,
@@ -144,7 +144,7 @@ def plot_2d(model, n_axis=None, section_names: list = None,
     if n_axis is None:
         n_axis = len(section_names) + len(cell_number)
 
-    if show_results is False:
+    if show_results is False or model.solutions is None:
         show_lith = False
         show_values = False
         show_block = False
