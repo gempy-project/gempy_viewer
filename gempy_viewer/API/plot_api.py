@@ -54,8 +54,11 @@ except ImportError:
     mplstereonet_import = False
 
 
-def plot_2d(model, n_axis=None, section_names: list = None,
-            cell_number: int = None, direction: Union[str | list[str]] = 'y',
+def plot_2d(model,
+            n_axis=None,
+            section_names: list = None,
+            cell_number: Union[int | list[int]] = None,
+            direction: Union[str | list[str]] = 'y',
             show_data: Union[bool, list] = True,
             show_results: Union[bool, list] = True,
             show_lith: Union[bool, list] = True,
@@ -184,8 +187,8 @@ def plot_2d(model, n_axis=None, section_names: list = None,
     # TODO: This is a mess: Extract the loop to a function and split the functions in several chunks according to 
     # TODO: the arguments
     e = _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis,
-    n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries,
-    show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve)
+                           n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries,
+                           show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve)
 
     _plot_regular_grid_section(cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar, show_topography, show_values, ve)
 
@@ -439,22 +442,22 @@ def plot_topology(geo_model, edges, centroids, direction="y", scale=True,
         r2 = res[1]
 
     tkw = {
-        "color": "white",
-        "fontsize": 13,
-        "ha": "center",
-        "va": "center",
-        "weight": "ultralight",
-        "family": "monospace",
-        "verticalalignment": "center",
+        "color"              : "white",
+        "fontsize"           : 13,
+        "ha"                 : "center",
+        "va"                 : "center",
+        "weight"             : "ultralight",
+        "family"             : "monospace",
+        "verticalalignment"  : "center",
         "horizontalalignment": "center",
-        "bbox": dict(boxstyle='round', facecolor='black', alpha=1),
+        "bbox"               : dict(boxstyle='round', facecolor='black', alpha=1),
     }
     if label_kwargs is not None:
         tkw.update(label_kwargs)
 
     lkw = {
         "linewidth": 1,
-        "color": "black"
+        "color"    : "black"
     }
     if edge_kwargs is not None:
         lkw.update(edge_kwargs)
