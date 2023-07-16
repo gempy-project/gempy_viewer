@@ -100,7 +100,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
     if plot_2d.fig.is_legend is False and legend is True or legend == 'force':
         ax.legend(
-            handles=[plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in gempy_model.structural_frame.elements_colors],
+            handles=[plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in gempy_model.structural_frame.elements_colors][::-1],
             labels=gempy_model.structural_frame.elements_names,
             numpoints=1
         )
