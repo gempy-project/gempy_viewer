@@ -65,7 +65,7 @@ def plot_2d(model,
             show_values: Union[bool, list] = False,
             show_block: Union[bool, list] = False,
             show_scalar: Union[bool, list] = False,
-            show_boundaries: Union[bool, list] = True,
+            show_boundaries: Union[bool, list] = False,  # BUG: This should be True, I just change it while refactoring 
             show_topography: Union[bool, list] = False,
             show_section_traces: Union[bool, list] = True,
             series_n: Union[int, List[int]] = 0,
