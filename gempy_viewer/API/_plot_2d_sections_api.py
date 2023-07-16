@@ -1,4 +1,5 @@
-﻿from ..modules.plot_2d.drawer_scalar_field_2d import plot_scalar_field
+﻿from ..modules.plot_2d.drawer_contours_2d import plot_contacts
+from ..modules.plot_2d.drawer_scalar_field_2d import plot_scalar_field
 from ..modules.plot_2d.drawer_input_2d import plot_data
 from ..modules.plot_2d.drawer_regular_grid_2d import plot_regular_grid
 
@@ -65,8 +66,18 @@ def _plot_regular_grid_section(
             )
             
         if show_boundaries[e + e2] is True and model.solutions.raw_arrays.scalar_field_matrix.shape[0] != 0:
-            p.plot_contacts(temp_ax, cell_number=cell_number[e2],
-                            direction=direction[e2], **kwargs)
+            # p.plot_contacts(temp_ax, cell_number=cell_number[e2],
+            #                 direction=direction[e2], **kwargs)
+            
+            plot_contacts(
+                plot_2d=p,
+                gempy_model=model,
+                ax=temp_ax,
+                resolution=model.grid.regular_grid.resolution,
+                cell_number=cell_number[e2],
+                direction=direction[e2],
+                only_faults=False
+            )
             
         # endregion
         # region passed regular grid
