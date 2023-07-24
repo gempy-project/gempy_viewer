@@ -28,8 +28,7 @@ def _plot_regular_grid_section(
                 gempy_model=model,
                 ax=temp_ax,
                 cell_number=cell_number[e2],
-                direction=direction[e2],
-                **kwargs
+                direction=direction[e2]
             )
         if show_topography[e + e2] is True:
             p.plot_topography(temp_ax, cell_number=cell_number[e2],
@@ -114,8 +113,7 @@ def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_
                 plot_2d=p,
                 gempy_model=model,
                 ax=temp_ax,
-                section_name=sn,
-                **kwargs
+                section_name=sn
             )
         if show_lith[e] is True and model.solutions.lith_block.shape[0] != 0:
             _is_filled = True

@@ -1,12 +1,4 @@
-﻿def require_gempy():
-    try:
-        import gempy as gp
-    except ImportError:
-        raise ImportError("The gempy package is required to run this function.")
-    return gp
-
-
-def require_gempy_plugins():
+﻿def require_gempy_plugins():
     try:
         import gempy.plugins
     except ImportError:
@@ -14,10 +6,18 @@ def require_gempy_plugins():
     return gempy.plugins
 
 
-def require_gempy_viewer():
+def require_pyvista():
     try:
-        import gempy_viewer
+        import pyvista as pv
     except ImportError:
-        raise ImportError("The gempy_viewer package is required to run this function.")
-    return gempy_viewer
+        raise ImportError("The pyvista package is required to run this function.")
+    return pv
+
+
+def require_skimage():
+    try:
+        import skimage
+    except ImportError:
+        raise ImportError("The skimage package is required to run this function.")
+    return skimage
     

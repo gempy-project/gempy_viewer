@@ -12,7 +12,7 @@ from gempy.core.grid import Grid
 
 
 def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cell_number=None, direction='y',
-              legend=True, projection_distance=None, **kwargs):
+              legend=True, projection_distance=None):
     if projection_distance is None:
         # TODO: This has to be updated to the new location
         projection_distance = 0.2 * gempy_model.transform.isometric_scale
@@ -27,7 +27,6 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     if section_name is not None:
         Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_section(
             grid=gempy_model.grid,
-            kwargs=kwargs,
             orientations=orientations,
             points=points,
             projection_distance=projection_distance,
@@ -148,15 +147,14 @@ def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, dire
     return cartesian_ori_dist, cartesian_point_dist
 
 
-def _projection_params_section(grid: Grid, kwargs: dict, orientations: 'pd.DataFrame', points: 'pd.DataFrame',
+def _projection_params_section(grid: Grid, orientations: 'pd.DataFrame', points: 'pd.DataFrame',
                                projection_distance: float, section_name: str):
     if section_name == 'topography':
         Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_topography(
             topography=grid.topography,
-            kwargs=kwargs,
             orientations=orientations,
             points=points,
-            projection_distance=projection_distance
+            projection_distance=projection_distance,
         )
     else:
         # Project points:
@@ -182,17 +180,16 @@ def _projection_params_section(grid: Grid, kwargs: dict, orientations: 'pd.DataF
     return Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y
 
 
-def _projection_params_topography(topography: Topography, kwargs, orientations, points, projection_distance):
-    topo_comp = kwargs.get('topo_comp', 5000)
-    decimation_aux = int(topography.values.shape[0] / topo_comp)
+def _projection_params_topography(topography: Topography, orientations, points, projection_distance, topography_compression: int = 5000):
+    decimation_aux = int(topography.values.shape[0] / topography_compression)
     tpp = topography.values[::decimation_aux + 1, :]
     cdist_sp = dd.cdist(
         XA=tpp,
-        XB=points.df[['X', 'Y', 'Z']])
+        XB=points[['X', 'Y', 'Z']])
     cartesian_point_dist = (cdist_sp < projection_distance).sum(axis=0).astype(bool)
     cdist_ori = dd.cdist(
         XA=tpp,
-        XB=orientations.df[['X', 'Y', 'Z']]
+        XB=orientations[['X', 'Y', 'Z']]
     )
     cartesian_ori_dist = (cdist_ori < projection_distance).sum(axis=0).astype(bool)
     x, y, Gx, Gy = 'X', 'Y', 'G_x', 'G_y'

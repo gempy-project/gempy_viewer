@@ -34,7 +34,7 @@ from matplotlib.ticker import FixedFormatter, FixedLocator
 import matplotlib as mpl
 import seaborn as sns
 from gempy.core.grid import Grid, grid_types
-from gempy.core.grid_modules.grid_types import Sections
+from gempy.core.grid_modules.grid_types import Sections, RegularGrid
 
 sns.set_context('talk')
 plt.style.use(['seaborn-v0_8-white', 'seaborn-v0_8-talk'])
@@ -373,28 +373,28 @@ class Plot2D:
         ax.contourf(image, cmap='autumn', extent=extent_val, zorder=7, alpha=.8,
                     **kwargs)
 
-  
-    def calculate_p1p2(self, direction, cell_number):
-
+    @staticmethod
+    def calculate_p1p2(regular_grid: RegularGrid, direction, cell_number):
         if direction == 'y':
-            cell_number = int(self.model._grid.regular_grid.resolution[1] / 2) if cell_number == 'mid' else cell_number
+            cell_number = int(regular_grid.resolution[1] / 2) if cell_number == 'mid' else cell_number
 
-            y = self.model._grid.regular_grid.extent[2] + self.model._grid.regular_grid.dy * cell_number
-            p1 = [self.model._grid.regular_grid.extent[0], y]
-            p2 = [self.model._grid.regular_grid.extent[1], y]
+            y = regular_grid.extent[2] + regular_grid.dy * cell_number
+            p1 = [regular_grid.extent[0], y]
+            p2 = [regular_grid.extent[1], y]
 
         elif direction == 'x':
-            cell_number = int(self.model._grid.regular_grid.resolution[0] / 2) if cell_number == 'mid' else cell_number
+            cell_number = int(regular_grid.resolution[0] / 2) if cell_number == 'mid' else cell_number
 
-            x = self.model._grid.regular_grid.extent[0] + self.model._grid.regular_grid.dx * cell_number
-            p1 = [x, self.model._grid.regular_grid.extent[2]]
-            p2 = [x, self.model._grid.regular_grid.extent[3]]
+            x = regular_grid.extent[0] + regular_grid.dx * cell_number
+            p1 = [x, regular_grid.extent[2]]
+            p2 = [x, regular_grid.extent[3]]
 
         else:
             raise NotImplementedError
         return p1, p2
 
-    def _slice_topo_4_sections(self, p1, p2, resx, method='interp2d'):
+    @staticmethod
+    def _slice_topo_4_sections(grid: Grid, p1, p2, resx, method='interp2d'):
         """
         Slices topography along a set linear section
 
@@ -408,8 +408,8 @@ class Plot2D:
         Returns:
             :return: returns x,y,z values of the topography along the section
         """
-        xy = self.model._grid.sections.calculate_line_coordinates_2points(p1, p2, resx)
-        z = self.model._grid.sections.interpolate_zvals_at_xy(xy, self.model._grid.topography, method)
+        xy = grid.sections.calculate_line_coordinates_2points(p1, p2, resx)
+        z = grid.sections.interpolate_zvals_at_xy(xy, grid.topography, method)
         return xy[:, 0], xy[:, 1], z
 
     def plot_topography(self, ax, fill_contour=False,
@@ -417,6 +417,8 @@ class Plot2D:
                         section_name=None,
                         cell_number=None, direction='y', block=None, **kwargs):
 
+        warnings.warn('This method is deprecated. Use plot_topography_2d instead', DeprecationWarning)
+        
         hillshade = kwargs.get('hillshade', True)
         azdeg = kwargs.get('azdeg', 0)
         altdeg = kwargs.get('altdeg', 0)
@@ -500,6 +502,7 @@ class Plot2D:
 
     def plot_contacts(self, ax, section_name=None, cell_number=None, direction='y', block=None,
                       only_faults=False, **kwargs):
+        warnings.warn('This method is deprecated. Use plot_contacts_2d instead', DeprecationWarning)
         self.update_colot_lot()
         section_name, cell_number, direction = self._check_default_section(ax, section_name, cell_number, direction)
 
