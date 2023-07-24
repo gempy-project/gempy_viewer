@@ -66,9 +66,6 @@ def _plot_regular_grid_section(
             )
             
         if show_boundaries[e + e2] is True and model.solutions.raw_arrays.scalar_field_matrix.shape[0] != 0:
-            # p.plot_contacts(temp_ax, cell_number=cell_number[e2],
-            #                 direction=direction[e2], **kwargs)
-            
             plot_contacts(
                 plot_2d=p,
                 gempy_model=model,

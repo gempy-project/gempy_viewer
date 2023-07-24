@@ -190,7 +190,9 @@ def plot_2d(model,
                            n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries,
                            show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve)
 
-    _plot_regular_grid_section(cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar, show_topography, show_values, ve)
+    _plot_regular_grid_section(cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography, model,
+                               n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar,
+                               show_topography, show_values, ve)
 
     if show is True:
         p.fig.show()

@@ -5,9 +5,8 @@ from gempy import GeoModel
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
-def plot_contacts(plot_2d: Plot2D, gempy_model: GeoModel, ax: matplotlib.axes.Axes ,  resolution: iter,
+def plot_contacts(plot_2d: Plot2D, gempy_model: GeoModel, ax: matplotlib.axes.Axes, resolution: iter,
                   section_name=None, cell_number=None, direction='y', only_faults: bool = False, **kwargs):
-
     extent_val = [*ax.get_xlim(), *ax.get_ylim()]
     section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
 
@@ -16,8 +15,7 @@ def plot_contacts(plot_2d: Plot2D, gempy_model: GeoModel, ax: matplotlib.axes.Ax
     #     contour_idx = list(self.model._faults.df[self.model._faults.df['isFault'] == True].index)
     # else:
     #     contour_idx = list(self.model._surfaces.df.index)
-        
-        
+
     zorder = kwargs.get('zorder', 100)
 
     if section_name is not None:
@@ -32,7 +30,7 @@ def plot_contacts(plot_2d: Plot2D, gempy_model: GeoModel, ax: matplotlib.axes.Ax
 
         shape = resolution
         c_id = 0  # * color id startpoint
-        all_colors = gempy_model.structural_frame.elements_colors
+        all_colors = gempy_model.structural_frame.elements_colors_contacts
 
         for e, block in enumerate(gempy_model.solutions.raw_arrays.scalar_field_matrix):
             _scalar_field_per_surface = np.where(gempy_model.solutions.raw_arrays.scalar_field_at_surface_points[e] != 0)
@@ -42,11 +40,17 @@ def plot_contacts(plot_2d: Plot2D, gempy_model: GeoModel, ax: matplotlib.axes.Ax
             color_list = all_colors[c_id:c_id2]
 
             image = block.reshape(shape)[_a, _b, _c].T
-            ax.contour(image, 0, levels=np.sort(level),
-                       colors=color_list,
-                       linestyles='solid', origin='lower',
-                       extent=extent_val, zorder=zorder - (e + len(level))
-                       )
+            ax.contour(
+                image,
+                0,
+                levels=np.sort(level),
+                colors=color_list[::-1],
+                linestyles='solid',
+                origin='lower',
+                extent=extent_val,
+                zorder=zorder - (e + len(level))
+            )
+            
             c_id = c_id2
 
 
