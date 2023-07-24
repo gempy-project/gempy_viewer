@@ -14,7 +14,7 @@ def one_fault_model_no_interp() -> GeoModel:
 
     geo_data = gp.create_geomodel(
         project_name='fault',
-        extent=[0, 1000, 0, 1000, 0, 1000],
+        extent=[0, 2000, 0, 2000, 0, 1000],
         resolution=[50, 5, 50],
         importer_helper= ImporterHelper(
             path_to_surface_points=path_to_data + "model5_surface_points.csv",
