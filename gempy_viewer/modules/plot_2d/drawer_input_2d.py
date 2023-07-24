@@ -4,7 +4,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import scipy.spatial.distance as dd
 
-from gempy.core.grid_modules.grid_types import RegularGrid
+from gempy.core.grid_modules.grid_types import RegularGrid, Sections
+from gempy.core.grid_modules.topography import Topography
 from .visualization_2d import Plot2D
 from gempy import GeoModel
 from gempy.core.grid import Grid
@@ -25,9 +26,13 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
     if section_name is not None:
         Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_section(
-            gempy_model, kwargs, orientations,
-            plot_2d, points, projection_distance,
-            section_name)
+            grid=gempy_model.grid,
+            kwargs=kwargs,
+            orientations=orientations,
+            points=points,
+            projection_distance=projection_distance,
+            section_name=section_name
+        )
     else:
         cartesian_ori_dist, cartesian_point_dist = _projection_params_regular_grid(
             regular_grid=gempy_model.grid.regular_grid,
@@ -143,15 +148,22 @@ def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, dire
     return cartesian_ori_dist, cartesian_point_dist
 
 
-def _projection_params_section(gempy_model, kwargs, orientations, plot_2d, points, projection_distance, section_name):
+def _projection_params_section(grid: Grid, kwargs: dict, orientations: 'pd.DataFrame', points: 'pd.DataFrame',
+                               projection_distance: float, section_name: str):
     if section_name == 'topography':
-        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_topography(gempy_model, kwargs,
-                                                                                               orientations, points, projection_distance)
+        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_topography(
+            topography=grid.topography,
+            kwargs=kwargs,
+            orientations=orientations,
+            points=points,
+            projection_distance=projection_distance
+        )
     else:
         # Project points:
-        shift = np.asarray(plot_2d.model._grid.sections.df.loc[section_name, 'start'])
-        end_point = np.atleast_2d(np.asarray(plot_2d.model._grid.sections.df.loc[section_name, 'stop']) - shift)
-        A_rotate = np.dot(end_point.T, end_point) / plot_2d.model._grid.sections.df.loc[section_name, 'dist'] ** 2
+        sections: Sections = grid.sections
+        shift = np.asarray(sections.df.loc[section_name, 'start'])
+        end_point = np.atleast_2d(np.asarray(sections.df.loc[section_name, 'stop']) - shift)
+        A_rotate = np.dot(end_point.T, end_point) / sections.df.loc[section_name, 'dist'] ** 2
 
         perpe_sqdist = ((np.dot(A_rotate, (points[['X', 'Y']]).T).T - points[['X', 'Y']]) ** 2).sum(axis=1)
         cartesian_point_dist = np.sqrt(perpe_sqdist)
@@ -170,11 +182,10 @@ def _projection_params_section(gempy_model, kwargs, orientations, plot_2d, point
     return Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y
 
 
-def _projection_params_topography(gempy_model, kwargs, orientations, points, projection_distance):
+def _projection_params_topography(topography: Topography, kwargs, orientations, points, projection_distance):
     topo_comp = kwargs.get('topo_comp', 5000)
-    grid: Grid = gempy_model.grid
-    decimation_aux = int(grid.topography.values.shape[0] / topo_comp)
-    tpp = grid.topography.values[::decimation_aux + 1, :]
+    decimation_aux = int(topography.values.shape[0] / topo_comp)
+    tpp = topography.values[::decimation_aux + 1, :]
     cdist_sp = dd.cdist(
         XA=tpp,
         XB=points.df[['X', 'Y', 'Z']])

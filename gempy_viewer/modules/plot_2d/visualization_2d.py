@@ -34,6 +34,7 @@ from matplotlib.ticker import FixedFormatter, FixedLocator
 import matplotlib as mpl
 import seaborn as sns
 from gempy.core.grid import Grid, grid_types
+from gempy.core.grid_modules.grid_types import Sections
 
 sns.set_context('talk')
 plt.style.use(['seaborn-v0_8-white', 'seaborn-v0_8-talk'])
@@ -91,7 +92,8 @@ class Plot2D:
         while len(ax.collections) != 0:
             list(map(lambda x: x.remove(), ax.collections))
 
-    def _make_section_xylabels(self, section_name, n=5):
+    @staticmethod
+    def _make_section_xylabels(sections: Sections, section_name, n=5):
         """
         @elisa heim
         Setting the axis labels to any combination of vertical crossections
@@ -108,10 +110,10 @@ class Plot2D:
         elif n < 0:
             n = 3
 
-        j = np.where(self.model._grid.sections.names == section_name)[0][0]
-        startend = list(self.model._grid.sections.section_dict.values())[j]
+        j = np.where(sections.names == section_name)[0][0]
+        startend = list(sections.section_dict.values())[j]
         p1, p2 = startend[0], startend[1]
-        xy = self.model._grid.sections.calculate_line_coordinates_2points(p1, p2, n)
+        xy = sections.calculate_line_coordinates_2points(p1, p2, n)
         if len(np.unique(xy[:, 0])) == 1:
             labels = xy[:, 1].astype(int)
             axname = 'Y'
@@ -194,7 +196,12 @@ class Plot2D:
 
                 extent_val = [0, dist, gempy_grid.regular_grid.extent[4], gempy_grid.regular_grid.extent[5]]
 
-                labels, axname = self._make_section_xylabels(section_name, len(ax.get_xticklabels()) - 2)
+                labels, axname = self._make_section_xylabels(
+                    sections=gempy_grid.sections,
+                    section_name=section_name,
+                    n=len(ax.get_xticklabels()) - 2
+                )
+                
                 pos_list = np.linspace(0, dist, len(labels))
                 ax.xaxis.set_major_locator(FixedLocator(nbins=len(labels), locs=pos_list))
                 ax.xaxis.set_major_formatter(FixedFormatter((labels)))

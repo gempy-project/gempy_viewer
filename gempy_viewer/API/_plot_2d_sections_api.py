@@ -96,13 +96,27 @@ def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_
         assert e < 10, 'Reached maximum of axes'
 
         ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + 1
-        temp_ax = p.add_section(section_name=sn, ax_pos=ax_pos, ve=ve, **kwargs)
+        temp_ax = p.add_section(
+            gempy_grid=model.grid,
+            section_name=sn,
+            ax_pos=ax_pos,
+            ve=ve,
+            **kwargs
+        )
         # endregion 
 
         # TODO: (miguel Jun 2023) can I start to replace these methods for functions one by one? 
         # region plot methods
         if show_data[e] is True:
-            p.plot_data(temp_ax, section_name=sn, **kwargs)
+            # p.plot_data(temp_ax, section_name=sn, **kwargs)
+
+            plot_data(
+                plot_2d=p,
+                gempy_model=model,
+                ax=temp_ax,
+                section_name=sn,
+                **kwargs
+            )
         if show_lith[e] is True and model.solutions.lith_block.shape[0] != 0:
             _is_filled = True
             p.plot_lith(temp_ax, section_name=sn, **kwargs)
