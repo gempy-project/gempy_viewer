@@ -1,4 +1,5 @@
-﻿from ..modules.plot_2d.drawer_contours_2d import plot_contacts
+﻿from ..modules.plot_2d.drawer_topography_2d import plot_topography
+from ..modules.plot_2d.drawer_contours_2d import plot_contacts
 from ..modules.plot_2d.drawer_scalar_field_2d import plot_scalar_field
 from ..modules.plot_2d.drawer_input_2d import plot_data
 from ..modules.plot_2d.drawer_regular_grid_2d import plot_regular_grid
@@ -130,13 +131,16 @@ def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_
         if show_boundaries[e] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
             p.plot_contacts(temp_ax, section_name=sn, **kwargs)
         if show_topography[e] is True:
-            # Check if anything dense is plot. If not plot dense topography
-            f_c_ = not _is_filled
-            # f_c = kwargs_topography.get('fill_contour', f_c_)
-            if 'fill_contour' not in kwargs_topography:
-                kwargs_topography['fill_contour'] = f_c_
-            p.plot_topography(temp_ax, section_name=sn,  # fill_contour=f_c,
-                              **kwargs_topography)
+            plot_topography(
+                plot_2d=p,
+                gempy_model=model,
+                ax=temp_ax,
+                fill_contour=kwargs_topography.get('fill_contour', True),
+                section_name=sn,
+                **kwargs_topography
+            )
+            # p.plot_topography(temp_ax, section_name=sn,  # fill_contour=f_c,
+            #                   **kwargs_topography)
             if show_section_traces is True and sn == 'topography':
                 p.plot_section_traces(temp_ax)
 

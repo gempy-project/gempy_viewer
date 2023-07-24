@@ -3,7 +3,7 @@
 import numpy as np
 
 from gempy import GeoModel, Grid
-from modules.plot_2d.visualization_2d import Plot2D
+from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 from gempy.core.grid_modules.grid_types import Sections, RegularGrid
 from optional_dependencies import require_skimage
@@ -40,7 +40,7 @@ def plot_topography(
             grid=grid,
             p1=p1,
             p2=p2,
-            resolution=grid.topography.resolution[0])
+            resx=grid.topography.resolution[0])
 
         pseudo_x = np.linspace(0, sections.df.loc[section_name, 'dist'], z.shape[0])
         a = np.vstack((pseudo_x, z)).T
