@@ -34,7 +34,19 @@ class TestPlot2DInputData:
         )
     
     def test_plot_2d_topography(self, one_fault_model_no_interp):
-        raise NotImplementedError
+        gp.set_topography_from_random(
+            grid=one_fault_model_no_interp.grid,
+            fractal_dimension=1.2,
+            d_z=np.array([600, 2000]),
+            topography_resolution=np.array([60, 60])
+        )
+        
+        gpv.plot_2d(
+            model=one_fault_model_no_interp,
+            section_names=['topography'],
+            show_topography=True,
+            show_section_traces=False, # TODO: Test this one
+        )
     
     def test_plot_2d_test_labels(self, one_fault_model_no_interp):
         geo_model = one_fault_model_no_interp
