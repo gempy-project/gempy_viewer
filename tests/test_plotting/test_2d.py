@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 import gempy_viewer as gpv
+import gempy as gp
+
+# TODO: - [ ] Test sections
+# TODO: - [ ] Refactor plotting 2d
 
 
 class TestPlot2DInputData:
@@ -12,6 +16,25 @@ class TestPlot2DInputData:
     def test_plot_2d_data_default_all_none(self, one_fault_model_no_interp):
         gpv.plot_2d(one_fault_model_no_interp, show_data=True, show_results=False)
 
+    def test_plot_2d_data_cross_section(self, one_fault_model_no_interp):
+        geo_model = one_fault_model_no_interp
+        section_dict = {'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
+                        'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
+        
+        gp.set_section_grid(
+            grid=geo_model.grid,
+            section_dict=section_dict
+        )
+        
+        gpv.plot_2d(
+            model=geo_model,
+            section_names=['section_SW-NE', 'section_NW-SE'],
+            show_section_traces=False # TODO: Test this one
+        )
+    
+    def test_plot_2d_topography(self, one_fault_model_no_interp):
+        raise NotImplementedError
+    
     def test_plot_2d_test_labels(self, one_fault_model_no_interp):
         geo_model = one_fault_model_no_interp
         section_dict = {'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
