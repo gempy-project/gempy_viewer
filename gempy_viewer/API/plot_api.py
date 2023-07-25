@@ -22,19 +22,18 @@
 
     @author: Alex Schaaf, Elisa Heim, Miguel de la Varga
 """
-import dataclasses
 # This is for sphenix to find the packages
 # sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
 from typing import Union, List
-import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pn
 
+from gempy_viewer.API._plot_2d_sections_api import plot_section
+from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D
-from gempy_viewer.API._plot_2d_sections_api import _plot_regular_grid_section, _plot_section_grid
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator
 
@@ -55,44 +54,6 @@ try:
     mplstereonet_import = True
 except ImportError:
     mplstereonet_import = False
-
-
-@dataclasses.dataclass
-class DataToShow:
-    n_axis: int
-    show_data: Union[bool, list] = True
-    show_results: Union[bool, list] = True
-    show_surfaces: Union[bool, list] = True
-    show_lith: Union[bool, list] = True
-    show_scalar: Union[bool, list] = False
-    show_boundaries: Union[bool, list] = True
-    show_topography: Union[bool, list] = False
-    show_section_traces: Union[bool, list] = True
-    show_values: Union[bool, list] = False
-    show_block: Union[bool, list] = False
-    
-    def __post_init__(self):
-        if self.show_results is False:
-            show_lith = False
-            show_values = False
-            show_block = False
-            show_scalar = False
-            show_boundaries = False
-
-        if type(self.show_data) is bool:
-            self.show_data = [self.show_data] * self.n_axis
-        if type(self.show_lith) is bool:
-            self.show_lith = [self.show_lith] * self.n_axis
-        if type(self.show_values) is bool:
-            self.show_values = [self.show_values] * self.n_axis
-        if type(self.show_block) is bool:
-            self.show_block = [self.show_block] * self.n_axis
-        if type(self.show_scalar) is bool:
-            self.show_scalar = [self.show_scalar] * self.n_axis
-        if type(self.show_boundaries) is bool:
-            self.show_boundaries = [self.show_boundaries] * self.n_axis
-        if type(self.show_topography) is bool:
-            self.show_topography = [self.show_topography] * self.n_axis
 
 
 def plot_2d(model,
@@ -222,6 +183,11 @@ def plot_2d(model,
     # TODO: Add cartesian axis to the section iterator
     
     # TODO: Drawers
+    plot_section(
+        gempy_model=model,
+        sections_data=section_data_list,
+        data_to_show=data_to_show
+    )
     
     # ===============   
     # TODO: This is a mess: Extract the loop to a function and split the functions in several chunks according to 

@@ -174,15 +174,17 @@ def _projection_params_section(grid: Grid, orientations: 'pd.DataFrame', points:
         end_point = np.atleast_2d(np.asarray(sections.df.loc[section_name, 'stop']) - shift)
         A_rotate = np.dot(end_point.T, end_point) / sections.df.loc[section_name, 'dist'] ** 2
 
-        perpe_sqdist = ((np.dot(A_rotate, (points[['X', 'Y']]).T).T - points[['X', 'Y']]) ** 2).sum(axis=1)
+        points_x_y = points[['X', 'Y']]
+        orientations_x_y = orientations[['X', 'Y']]
+    
+        perpe_sqdist = ((np.dot(A_rotate, (points_x_y).T).T - points_x_y) ** 2).sum(axis=1)
         cartesian_point_dist = np.sqrt(perpe_sqdist)
-
-        cartesian_ori_dist = np.sqrt(((np.dot(
-            A_rotate, (orientations[['X', 'Y']]).T).T - orientations[['X', 'Y']]) ** 2).sum(axis=1))
+        perpe_sqdist = ((np.dot(A_rotate, (orientations_x_y).T).T - orientations_x_y) ** 2).sum(axis=1)
+        cartesian_ori_dist = np.sqrt(perpe_sqdist)
 
         # These are the coordinates of the data projected on the section
-        cartesian_point = np.dot(A_rotate, (points[['X', 'Y']] - shift).T).T
-        cartesian_ori = np.dot(A_rotate, (orientations[['X', 'Y']] - shift).T).T
+        cartesian_point = np.dot(A_rotate, (points_x_y - shift).T).T
+        cartesian_ori = np.dot(A_rotate, (orientations_x_y - shift).T).T
 
         # Since we plot only the section we want the norm of those coordinates
         points['X'] = np.linalg.norm(cartesian_point, axis=1)

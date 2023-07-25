@@ -5,7 +5,7 @@ import pytest
 import gempy_viewer as gpv
 import gempy as gp
 
-# TODO: - [ ] Test sections
+# TODO: - [x] Test sections
 # TODO: - [ ] Refactor plotting 2d
 
 
@@ -30,7 +30,6 @@ class TestPlot2DInputData:
             model=geo_model,
             section_names=['section_SW-NE', 'section_NW-SE'],
             show_section_traces=False, # TODO: Test this one
-            projection_distance=1000,
         )
     
     def test_plot_2d_topography(self, one_fault_model_no_interp):

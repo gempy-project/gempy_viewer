@@ -1,7 +1,6 @@
 ﻿from gempy import GeoModel
 from gempy_viewer.core.section_data_2d import SectionData2D
-from ..modules.plot_2d.visualization_2d import Plot2D
-from .plot_api import DataToShow
+from gempy_viewer.core.data_to_show import DataToShow
 from ..modules.plot_2d.drawer_traces_2d import plot_section_traces
 from ..modules.plot_2d.drawer_topography_2d import plot_topography
 from ..modules.plot_2d.drawer_contours_2d import plot_contacts
@@ -112,8 +111,8 @@ def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data
                 ax=temp_ax,
                 surface_points_colors=gempy_model.structural_frame.surface_points_colors,
                 orientations_colors=gempy_model.structural_frame.orientations_colors,
-                orientations=gempy_model.surface_points.df.copy().orientations,
-                points=gempy_model.surface_points.df.copy().surface_points,
+                orientations=gempy_model.orientations.df.copy(),
+                points=gempy_model.surface_points.df.copy(),
                 slicer_data=section_data.slicer_data
             )
             # plot_data(
@@ -165,7 +164,7 @@ def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data
         # If there are section we need to shift one axis for the perpendicular
         e = e + 1
 
-    return e
+    return 
 
 
 def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis,
