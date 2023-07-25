@@ -1,7 +1,8 @@
 ﻿import numpy as np
 
+from gempy import Grid
 from gempy.core.grid_modules import grid_types
-from gempy.core.grid_modules.grid_types import Sections
+from gempy.core.grid_modules.grid_types import Sections, RegularGrid
 
 
 def slice_cross_section(regular_grid: grid_types.RegularGrid, direction: str, cell_number=25):
@@ -64,3 +65,58 @@ def make_section_xylabels(sections: Sections, section_name, n=5):
                   range(xy[:, 0].shape[0])]
         axname = 'X,Y'
     return labels, axname
+
+
+def check_default_section(ax, section_name, cell_number, direction):
+    if section_name is None:
+        try:
+            section_name = ax.section_name
+        except AttributeError:
+            pass
+    if cell_number is None:
+        try:
+            cell_number = ax.cell_number
+            direction = ax.direction
+        except AttributeError:
+            pass
+
+    return section_name, cell_number, direction
+
+
+def slice_topo_4_sections(grid: Grid, p1, p2, resx, method='interp2d'):
+    """
+    Slices topography along a set linear section
+
+    Args:
+        :param p1: starting point (x,y) of the section
+        :param p2: end point (x,y) of the section
+        :param resx: resolution of the defined section
+        :param method: interpolation method, 'interp2d' for cubic scipy.interpolate.interp2d
+                                         'spline' for scipy.interpolate.RectBivariateSpline
+
+    Returns:
+        :return: returns x,y,z values of the topography along the section
+    """
+    xy = grid.sections.calculate_line_coordinates_2points(p1, p2, resx)
+    z = grid.sections.interpolate_zvals_at_xy(xy, grid.topography, method)
+    return xy[:, 0], xy[:, 1], z
+
+
+def calculate_p1p2(regular_grid: RegularGrid, direction, cell_number):
+    if direction == 'y':
+        cell_number = int(regular_grid.resolution[1] / 2) if cell_number == 'mid' else cell_number
+
+        y = regular_grid.extent[2] + regular_grid.dy * cell_number
+        p1 = [regular_grid.extent[0], y]
+        p2 = [regular_grid.extent[1], y]
+
+    elif direction == 'x':
+        cell_number = int(regular_grid.resolution[0] / 2) if cell_number == 'mid' else cell_number
+
+        x = regular_grid.extent[0] + regular_grid.dx * cell_number
+        p1 = [x, regular_grid.extent[2]]
+        p2 = [x, regular_grid.extent[3]]
+
+    else:
+        raise NotImplementedError
+    return p1, p2

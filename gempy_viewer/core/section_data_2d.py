@@ -1,5 +1,6 @@
 ﻿from dataclasses import dataclass
 from enum import auto, Enum
+from typing import Optional
 
 from matplotlib.axes import Axes
 
@@ -17,3 +18,4 @@ class SectionData2D:
     section_type: SectionType
     slicer_data: SlicerData
     ax: Axes
+    section_name: Optional[str]

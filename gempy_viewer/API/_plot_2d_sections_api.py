@@ -37,7 +37,6 @@ def _plot_regular_grid_section(
             )
         if show_topography[e + e2] is True:
             plot_topography(
-                plot_2d=p,
                 gempy_model=model,
                 ax=temp_ax,
                 fill_contour=kwargs_topography.get('fill_contour', True),
@@ -100,7 +99,8 @@ def _plot_regular_grid_section(
         temp_ax.set_aspect(ve)
 
 
-def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow):
+def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
+                 kwargs_topography: dict):
     for e, section_data in enumerate(sections_data):
         temp_ax = section_data.ax
 
@@ -115,12 +115,7 @@ def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data
                 points=gempy_model.surface_points.df.copy(),
                 slicer_data=section_data.slicer_data
             )
-            # plot_data(
-            #     plot_2d=plot_2d,
-            #     gempy_model=model,
-            #     ax=temp_ax,
-            #     section_name=sn
-            # )
+            
         # if data_to_show.show_lith[e] is True: 
         #     _is_filled = True
         #     # p.plot_lith(temp_ax, section_name=sn, **kwargs)
@@ -135,25 +130,22 @@ def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data
         #     p.plot_scalar_field(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
         # if show_boundaries[e] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
         #     p.plot_contacts(temp_ax, section_name=sn, **kwargs)
-        # if show_topography[e] is True:
-        #     plot_topography(
-        #         plot_2d=p,
-        #         gempy_model=model,
-        #         ax=temp_ax,
-        #         fill_contour=kwargs_topography.get('fill_contour', True),
-        #         section_name=sn,
-        #         **kwargs_topography
-        #     )
-        #     # p.plot_topography(temp_ax, section_name=sn,  # fill_contour=f_c,
-        #     #                   **kwargs_topography)
-        #     if show_section_traces is True and sn == 'topography':
-        #         plot_section_traces(
-        #             gempy_model=model,
-        #             ax=temp_ax,
-        #             section_names=section_names,
-        #         )
-        #         # p.plot_section_traces(temp_ax)
-        # 
+        if data_to_show.show_topography[e] is True:
+            plot_topography(
+                gempy_model=gempy_model,
+                ax=temp_ax,
+                fill_contour=kwargs_topography.get('fill_contour', True),
+                section_name=section_data.section_name,
+                **kwargs_topography
+            )
+            
+            if data_to_show.show_section_traces is True and section_data.section_name == 'topography':
+                plot_section_traces(
+                    gempy_model=gempy_model,
+                    ax=temp_ax,
+                    section_names=[section_data.section_name for section_data in sections_data],
+                )
+
         # if regular_grid is not None:
         #     p.plot_regular_grid(temp_ax, block=regular_grid, section_name=sn,
         #                         **kwargs_regular_grid)
@@ -216,7 +208,6 @@ def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_
             p.plot_contacts(temp_ax, section_name=sn, **kwargs)
         if show_topography[e] is True:
             plot_topography(
-                plot_2d=p,
                 gempy_model=model,
                 ax=temp_ax,
                 fill_contour=kwargs_topography.get('fill_contour', True),

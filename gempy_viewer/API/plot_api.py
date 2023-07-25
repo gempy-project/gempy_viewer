@@ -193,14 +193,14 @@ def plot_2d(model,
         projection_distance=kwargs.get('projection_distance', 0.2 * model.transform.isometric_scale)
     )
     
-    # merge the two lists
     section_data_list.extend(orthogonal_section_data_list)
     
     # TODO: Drawers
     plot_section(
         gempy_model=model,
         sections_data=section_data_list,
-        data_to_show=data_to_show
+        data_to_show=data_to_show,
+        kwargs_topography=kwargs_topography,
     )
     
     # ===============   

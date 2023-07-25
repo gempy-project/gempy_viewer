@@ -6,11 +6,11 @@ from gempy import GeoModel, Grid
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 from gempy.core.grid_modules.grid_types import Sections, RegularGrid
+from gempy_viewer.modules.plot_2d.plot_2d_utils import check_default_section, slice_topo_4_sections, calculate_p1p2
 from optional_dependencies import require_skimage
 
 
 def plot_topography(
-        plot_2d: Plot2D,
         gempy_model: GeoModel,
         ax,
         fill_contour=False,
@@ -26,7 +26,7 @@ def plot_topography(
     altdeg = kwargs.get('altdeg', 0)
     cmap = kwargs.get('cmap', 'terrain')
 
-    section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
+    section_name, cell_number, direction = check_default_section(ax, section_name, cell_number, direction)
 
     grid: Grid = gempy_model.grid
     regular_grid: RegularGrid = grid.regular_grid
@@ -35,7 +35,7 @@ def plot_topography(
         sections: Sections = grid.sections
         p1 = sections.df.loc[section_name, 'start']
         p2 = sections.df.loc[section_name, 'stop']
-        x, y, z = plot_2d._slice_topo_4_sections(
+        x, y, z = slice_topo_4_sections(
             grid=grid,
             p1=p1,
             p2=p2,
@@ -81,7 +81,7 @@ def plot_topography(
                       cmap='gray')
 
     elif cell_number is not None or block is not None:
-        p1, p2 = plot_2d.calculate_p1p2(
+        p1, p2 = calculate_p1p2(
             regular_grid=regular_grid,
             direction=direction,
             cell_number=cell_number
@@ -91,7 +91,7 @@ def plot_topography(
         resy = regular_grid.resolution[1]
 
         try:
-            x, y, z = plot_2d._slice_topo_4_sections(
+            x, y, z = slice_topo_4_sections(
                 grid=grid,
                 p1=p1,
                 p2=p2,
