@@ -1,11 +1,14 @@
 ﻿import copy
 
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 import scipy.spatial.distance as dd
 
+from gempy_viewer.core.slicer_data import SlicerData
 from gempy.core.grid_modules.grid_types import RegularGrid, Sections
 from gempy.core.grid_modules.topography import Topography
+from .plot_2d_utils import slice_cross_section
 from .visualization_2d import Plot2D
 from gempy import GeoModel
 from gempy.core.grid import Grid
@@ -25,7 +28,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
 
     if section_name is not None:
-        Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_section(
+        slicer_data: SlicerData = _projection_params_section(
             grid=gempy_model.grid,
             orientations=orientations,
             points=points,
@@ -33,75 +36,28 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
             section_name=section_name
         )
     else:
-        cartesian_ori_dist, cartesian_point_dist = _projection_params_regular_grid(
+        slicer_data: SlicerData = _projection_params_regular_grid(
             regular_grid=gempy_model.grid.regular_grid,
             cell_number=cell_number,
             direction=direction,
             orientations=orientations,
-            points=points
+            points=points,
+            projection_distance=projection_distance
         )
 
-        _, _, _, _, x, y, Gx, Gy = plot_2d.slice(
-            regular_grid=gempy_model.grid.regular_grid,
-            direction=direction
-        )
-
-    select_projected_p = cartesian_point_dist < projection_distance
-    select_projected_o = cartesian_ori_dist < projection_distance
-
-    # Hack to keep the right X label:
+    # ! Hack to keep the right X label. I think this has to be here before the plot
     temp_label = copy.copy(ax.xaxis.label)
-
-    # region plot points
-    points_df = points[select_projected_p]
-
-    # ? The following code is the old one using pandas
-    if False:  # TODO: Get rid of pandas completely
-        points_df.plot.scatter(
-            x=x, y=y, ax=ax,
-            c=np.array(gempy_model.structural_frame.surface_points_colors)[select_projected_p],
-            s=70,
-            zorder=102,
-            edgecolors='white',
-            colorbar=False
-        )
-    else:
-        x_values = points_df[x]
-        y_values = points_df[y]
-        colors = np.array(gempy_model.structural_frame.surface_points_colors)[select_projected_p]
-        ax.scatter(
-            x_values,
-            y_values,
-            c=colors,
-            s=70,
-            edgecolors='white',
-            zorder=102
-        )
-
-    # endregion
-    # region plot orientations
-
-    sel_ori = orientations[select_projected_o]
-
-    aspect = np.subtract(*ax.get_ylim()) / np.subtract(*ax.get_xlim())
-    min_axis = 'width' if aspect < 1 else 'height'
-
-    ax.quiver(
-        sel_ori[x], sel_ori[y], sel_ori[Gx], sel_ori[Gy],
-        pivot="tail",
-        scale_units=min_axis,
-        scale=30,
-        color=np.array(gempy_model.structural_frame.orientations_colors)[select_projected_o],
-        edgecolor='k',
-        headwidth=8,
-        linewidths=1,
-        zorder=102
+    
+    _draw_data(
+        ax=ax, 
+        surface_points_colors=gempy_model.structural_frame.surface_points_colors,
+        orientations_colors=gempy_model.structural_frame.orientations_colors,
+        orientations=orientations,
+        points=points,
+        slicer_data=slicer_data
     )
-
-    # endregion
-
+    
     # region others
-
     if plot_2d.fig.is_legend is False and legend is True or legend == 'force':
         ax.legend(
             handles=[plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in gempy_model.structural_frame.elements_colors][::-1],
@@ -111,17 +67,56 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
         plot_2d.fig.is_legend = True
 
     ax.xaxis.label = temp_label
-
     try:
         ax.legend_.set_frame_on(True)
         ax.legend_.set_zorder(10000)
     except AttributeError:
         pass
-
     # endregion
 
 
-def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, direction, orientations, points):
+# TODO: This could be public and the slice just a class yes!
+def _draw_data(ax, surface_points_colors: list[str], orientations_colors: list[str],
+               orientations: pd.DataFrame, points: pd.DataFrame, slicer_data: SlicerData):
+    
+    _draw_surface_points(ax, points, slicer_data, surface_points_colors)
+    _draw_orientations(ax, orientations, orientations_colors, slicer_data)
+
+
+def _draw_orientations(ax, orientations, orientations_colors, slicer_data):
+    sel_ori = orientations[slicer_data.select_projected_o]
+    aspect = np.subtract(*ax.get_ylim()) / np.subtract(*ax.get_xlim())
+    min_axis = 'width' if aspect < 1 else 'height'
+    ax.quiver(
+        sel_ori[slicer_data.x],
+        sel_ori[slicer_data.y],
+        sel_ori[slicer_data.Gx],
+        sel_ori[slicer_data.Gy],
+        pivot="tail",
+        scale_units=min_axis,
+        scale=30,
+        color=np.array(orientations_colors)[slicer_data.select_projected_o],
+        edgecolor='k',
+        headwidth=8,
+        linewidths=1,
+        zorder=102
+    )
+
+
+def _draw_surface_points(ax, points, slicer_data, surface_points_colors):
+    points_df = points[slicer_data.select_projected_p]
+    ax.scatter(
+        points_df[slicer_data.x],
+        points_df[slicer_data.y],
+        c=(np.array(surface_points_colors)[slicer_data.select_projected_p]),
+        s=70,
+        edgecolors='white',
+        zorder=102
+    )
+
+
+def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, direction, orientations, points,
+                                    projection_distance) -> SlicerData:
     if cell_number is None or cell_number == "mid":
         cell_number = int(regular_grid.resolution[0] / 2)
 
@@ -144,11 +139,27 @@ def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, dire
     cartesian_point_dist = points[dir] - _loc
     cartesian_ori_dist = orientations[dir] - _loc
 
-    return cartesian_ori_dist, cartesian_point_dist
+    _, _, _, _, x, y, Gx, Gy = slice_cross_section(
+        regular_grid=regular_grid,
+        direction=direction
+    )
+    select_projected_p = cartesian_point_dist < projection_distance
+    select_projected_o = cartesian_ori_dist < projection_distance
+    
+    slice_data = SlicerData(
+        x=x,
+        y=y,
+        Gx=Gx,
+        Gy=Gy,
+        select_projected_p=select_projected_p,
+        select_projected_o=select_projected_o,
+    )
+
+    return slice_data
 
 
 def _projection_params_section(grid: Grid, orientations: 'pd.DataFrame', points: 'pd.DataFrame',
-                               projection_distance: float, section_name: str):
+                               projection_distance: float, section_name: str) -> SlicerData:
     if section_name == 'topography':
         Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y = _projection_params_topography(
             topography=grid.topography,
@@ -177,7 +188,20 @@ def _projection_params_section(grid: Grid, orientations: 'pd.DataFrame', points:
         points['X'] = np.linalg.norm(cartesian_point, axis=1)
         orientations['X'] = np.linalg.norm(cartesian_ori, axis=1)
         x, y, Gx, Gy = 'X', 'Z', 'G_x', 'G_z'
-    return Gx, Gy, cartesian_ori_dist, cartesian_point_dist, x, y
+
+    select_projected_p = cartesian_point_dist < projection_distance
+    select_projected_o = cartesian_ori_dist < projection_distance
+
+    slicer_data = SlicerData(
+        x=x,
+        y=y,
+        Gx=Gx,
+        Gy=Gy,
+        select_projected_p=select_projected_p,
+        select_projected_o=select_projected_o
+    )
+
+    return slicer_data
 
 
 def _projection_params_topography(topography: Topography, orientations, points, projection_distance, topography_compression: int = 5000):

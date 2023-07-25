@@ -1,6 +1,3 @@
-from mpl_toolkits import axes_grid1
-import matplotlib.pyplot as plt
-
 
 def add_colorbar(im=None, axes=None, cs=None, label = None, aspect=30, location="right", pad_fraction=1, **kwargs):
     """
