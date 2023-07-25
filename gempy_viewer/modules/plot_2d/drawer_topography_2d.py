@@ -20,7 +20,6 @@ def plot_topography(
         direction='y',
         block=None,
         **kwargs):
-    warnings.warn('This method is deprecated. Use plot_topography_2d instead', DeprecationWarning)
 
     hillshade = kwargs.get('hillshade', True)
     azdeg = kwargs.get('azdeg', 0)
@@ -96,7 +95,7 @@ def plot_topography(
                 grid=grid,
                 p1=p1,
                 p2=p2,
-                resolution=resx
+                resx=resx
             )
 
             if direction == 'x':

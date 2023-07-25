@@ -48,38 +48,83 @@ class TestPlot2DInputData:
             show_section_traces=False, # TODO: Test this one
         )
     
-    def test_plot_2d_test_labels(self, one_fault_model_no_interp):
-        geo_model = one_fault_model_no_interp
-        section_dict = {'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
-                        'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
-        geo_model.set_section_grid(section_dict)
-        geo_model.set_topography(fd=1.2, d_z=np.array([600, 2000]), resolution=np.array([60, 60]))
+    def test_plot_2d_topography_and_sections(self, one_fault_model_no_interp):
+        gp.set_section_grid(
+            grid=one_fault_model_no_interp.grid,
+            section_dict={'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
+                            'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
+        )
+        
+        gp.set_topography_from_random(
+            grid=one_fault_model_no_interp.grid,
+            fractal_dimension=1.2,
+            d_z=np.array([600, 2000]),
+            topography_resolution=np.array([60, 60])
+        )
+        
+        gpv.plot_2d(
+            model=one_fault_model_no_interp,
+            section_names=['section_SW-NE', 'section_NW-SE', 'topography'],
+            show_topography=True,
+            show_section_traces=True  # TODO: Test this one
+        )
+    
+    def test_plot_2d_all_together(self, one_fault_model_no_interp):
+        gp.set_section_grid(
+            grid=one_fault_model_no_interp.grid,
+            section_dict={'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
+                          'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
+        )
 
-        gp.plot_2d(
-            model=geo_model,
-            section_names=['section_NW-SE', 'section_NW-SE', 'topography'],
+        gp.set_topography_from_random(
+            grid=one_fault_model_no_interp.grid,
+            fractal_dimension=1.2,
+            d_z=np.array([600, 2000]),
+            topography_resolution=np.array([60, 60])
+        )
+
+        gpv.plot_2d(
+            model=one_fault_model_no_interp,
+            section_names=['section_SW-NE', 'section_NW-SE', 'topography'],
             direction=['x'], cell_number=['mid'],
             show_topography=True,
-            show_section_traces=True
+            show_section_traces=True  # TODO: Test this one
         )
-        plt.show()
+        
+        
 
-        gp.plot_2d(geo_model,
-                   section_names=['section_NW-SE', 'section_NW-SE', 'topography'],
-                   direction=['x'], cell_number=['mid'],
-                   show_topography=True,
-                   projection_distance=100)
-        plt.show()
-
-        gp.plot_2d(geo_model,
-                   section_names=['section_NW-SE', 'section_NW-SE', 'topography'],
-                   direction=['x'], cell_number=['mid'],
-                   show_topography=True,
-                   projection_distance=1000)
-        plt.show()
-
-        # gp.plot.plot_section_traces(geo_model)
-        plt.show()
+    # def test_plot_2d_test_labels(self, one_fault_model_no_interp):
+    #     geo_model = one_fault_model_no_interp
+    #     section_dict = {'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
+    #                     'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
+    #     geo_model.set_section_grid(section_dict)
+    #     geo_model.set_topography(fd=1.2, d_z=np.array([600, 2000]), resolution=np.array([60, 60]))
+    # 
+    #     gp.plot_2d(
+    #         model=geo_model,
+    #         section_names=['section_NW-SE', 'section_NW-SE', 'topography'],
+    #         direction=['x'], cell_number=['mid'],
+    #         show_topography=True,
+    #         show_section_traces=True
+    #     )
+    #     plt.show()
+    # 
+    #     gp.plot_2d(geo_model,
+    #                section_names=['section_NW-SE', 'section_NW-SE', 'topography'],
+    #                direction=['x'], cell_number=['mid'],
+    #                show_topography=True,
+    #                projection_distance=100)
+    #     plt.show()
+    # 
+    #     gp.plot_2d(geo_model,
+    #                section_names=['section_NW-SE', 'section_NW-SE', 'topography'],
+    #                direction=['x'], cell_number=['mid'],
+    #                show_topography=True,
+    #                projection_distance=1000)
+    #     plt.show()
+    # 
+    #     # gp.plot.plot_section_traces(geo_model)
+    #     plt.show()
 
 
 class TestPlot2DSolutions:

@@ -1,4 +1,5 @@
-﻿from ..modules.plot_2d.drawer_topography_2d import plot_topography
+﻿from ..modules.plot_2d.drawer_traces_2d import plot_section_traces
+from ..modules.plot_2d.drawer_topography_2d import plot_topography
 from ..modules.plot_2d.drawer_contours_2d import plot_contacts
 from ..modules.plot_2d.drawer_scalar_field_2d import plot_scalar_field
 from ..modules.plot_2d.drawer_input_2d import plot_data
@@ -32,8 +33,18 @@ def _plot_regular_grid_section(
                 direction=direction[e2]
             )
         if show_topography[e + e2] is True:
-            p.plot_topography(temp_ax, cell_number=cell_number[e2],
-                              direction=direction[e2], **kwargs_topography)
+            plot_topography(
+                plot_2d=p,
+                gempy_model=model,
+                ax=temp_ax,
+                fill_contour=kwargs_topography.get('fill_contour', True),
+                cell_number=cell_number[e2],
+                direction=direction[e2],
+                **kwargs_topography
+            )
+
+            # p.plot_topography(temp_ax, cell_number=cell_number[e2],
+            #                   direction=direction[e2], **kwargs_topography)
         # endregion
         
         # region plot solutions
@@ -142,7 +153,12 @@ def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_
             # p.plot_topography(temp_ax, section_name=sn,  # fill_contour=f_c,
             #                   **kwargs_topography)
             if show_section_traces is True and sn == 'topography':
-                p.plot_section_traces(temp_ax)
+                plot_section_traces(
+                    gempy_model=model,
+                    ax=temp_ax,
+                    section_names=section_names,
+                )
+                # p.plot_section_traces(temp_ax)
 
         if regular_grid is not None:
             p.plot_regular_grid(temp_ax, block=regular_grid, section_name=sn,
