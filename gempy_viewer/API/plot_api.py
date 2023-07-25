@@ -22,18 +22,21 @@
 
     @author: Alex Schaaf, Elisa Heim, Miguel de la Varga
 """
-
+import dataclasses
 # This is for sphenix to find the packages
 # sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
 from typing import Union, List
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pn
 
+from gempy_viewer.core.section_data_2d import SectionData2D
 from gempy_viewer.API._plot_2d_sections_api import _plot_regular_grid_section, _plot_section_grid
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
+from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator
 
 # Keep Alex code hidden until we merge it properly
 try:
@@ -54,20 +57,49 @@ except ImportError:
     mplstereonet_import = False
 
 
+@dataclasses.dataclass
+class DataToShow:
+    n_axis: int
+    show_data: Union[bool, list] = True
+    show_results: Union[bool, list] = True
+    show_surfaces: Union[bool, list] = True
+    show_lith: Union[bool, list] = True
+    show_scalar: Union[bool, list] = False
+    show_boundaries: Union[bool, list] = True
+    show_topography: Union[bool, list] = False
+    show_section_traces: Union[bool, list] = True
+    show_values: Union[bool, list] = False
+    show_block: Union[bool, list] = False
+    
+    def __post_init__(self):
+        if self.show_results is False:
+            show_lith = False
+            show_values = False
+            show_block = False
+            show_scalar = False
+            show_boundaries = False
+
+        if type(self.show_data) is bool:
+            self.show_data = [self.show_data] * self.n_axis
+        if type(self.show_lith) is bool:
+            self.show_lith = [self.show_lith] * self.n_axis
+        if type(self.show_values) is bool:
+            self.show_values = [self.show_values] * self.n_axis
+        if type(self.show_block) is bool:
+            self.show_block = [self.show_block] * self.n_axis
+        if type(self.show_scalar) is bool:
+            self.show_scalar = [self.show_scalar] * self.n_axis
+        if type(self.show_boundaries) is bool:
+            self.show_boundaries = [self.show_boundaries] * self.n_axis
+        if type(self.show_topography) is bool:
+            self.show_topography = [self.show_topography] * self.n_axis
+
+
 def plot_2d(model,
             n_axis=None,
             section_names: list = None,
             cell_number: Union[int | list[int]] = None,
             direction: Union[str | list[str]] = 'y',
-            show_data: Union[bool, list] = True,
-            show_results: Union[bool, list] = True,
-            show_lith: Union[bool, list] = True,
-            show_values: Union[bool, list] = False,
-            show_block: Union[bool, list] = False,
-            show_scalar: Union[bool, list] = False,
-            show_boundaries: Union[bool, list] = True,
-            show_topography: Union[bool, list] = False,
-            show_section_traces: Union[bool, list] = True,
             series_n: Union[int, List[int]] = 0,
             ve=1,
             block=None,
@@ -91,12 +123,6 @@ def plot_2d(model,
         section_names (list): Names of predefined custom section traces
         cell_number (list): Position of the array to plot
         direction (str): Cartesian direction to be plotted (xyz)
-        show_data (bool): Show original input data. Defaults to True.
-        show_results (bool): If False, override show lith, show_calar, show_values
-        show_lith (bool): Show lithological block volumes. Defaults to True.
-        show_scalar (bool): Show scalar field isolines. Defaults to False.
-        show_boundaries (bool): Show surface boundaries as lines. Defaults to True.
-        show_topography (bool): Show topography on plot. Defaults to False.
         series_n (int): number of the scalar field.
         ve (float): vertical exageration
         regular_grid (numpy.ndarray): Numpy array of the size of model.grid.regular_grid
@@ -106,15 +132,21 @@ def plot_2d(model,
             * azdeg (float): azimuth of sun for hillshade
             * altdeg (float): altitude in degrees of sun for hillshade
 
-
     Keyword Args:
         legend (bool): If True plot legend. Default True
         show (bool): Call matplotlib show
+        show_data (bool): Show original input data. Defaults to True.
+        show_results (bool): If False, override show lith, show_calar, show_values
+        show_lith (bool): Show lithological block volumes. Defaults to True.
+        show_scalar (bool): Show scalar field isolines. Defaults to False.
+        show_boundaries (bool): Show surface boundaries as lines. Defaults to True.
+        show_topography (bool): Show topography on plot. Defaults to False.
 
     Returns:
         :class:`gempy.plot.visualization_2d.Plot2D`: Plot2D object
 
     """
+    
     if kwargs_regular_grid is None:
         kwargs_regular_grid = dict()
     if kwargs_topography is None:
@@ -147,29 +179,24 @@ def plot_2d(model,
     if n_axis is None:
         n_axis = len(section_names) + len(cell_number)
 
-    if show_results is False or model.solutions is None:
-        show_lith = False
-        show_values = False
-        show_block = False
-        show_scalar = False
-        show_boundaries = False
-
-    if type(show_data) is bool:
-        show_data = [show_data] * n_axis
-    if type(show_lith) is bool:
-        show_lith = [show_lith] * n_axis
-    if type(show_values) is bool:
-        show_values = [show_values] * n_axis
-    if type(show_block) is bool:
-        show_block = [show_block] * n_axis
-    if type(show_scalar) is bool:
-        show_scalar = [show_scalar] * n_axis
-    if type(show_boundaries) is bool:
-        show_boundaries = [show_boundaries] * n_axis
-    if type(show_topography) is bool:
-        show_topography = [show_topography] * n_axis
     if type(series_n) is int:
         series_n = [series_n] * n_axis
+
+    # * Grab from kwargs all the show arguments and create the proper class. This is for backwards compatibility
+    can_show_results = model.solutions is not None and model.solutions.lith_block.shape[0] != 0
+    data_to_show = DataToShow(
+        n_axis=n_axis,
+        show_data=kwargs.get('show_data', True),
+        show_results=kwargs.get('show_results', can_show_results),
+        show_surfaces=kwargs.get('show_surfaces', True),
+        show_lith=kwargs.get('show_lith', True),
+        show_scalar=kwargs.get('show_scalar', False),
+        show_boundaries=kwargs.get('show_boundaries', True),
+        show_topography=kwargs.get('show_topography', False),
+        show_section_traces=kwargs.get('show_section_traces', True),
+        show_values=kwargs.get('show_values', False),
+        show_block=kwargs.get('show_block', False)
+    )
 
     # init e
     e = 0
@@ -183,21 +210,35 @@ def plot_2d(model,
 
     p = Plot2D()
     p.create_figure(cols=n_columns_, rows=n_rows, **kwargs)  # * This creates fig and axes
-
+    section_data_list: list[SectionData2D] = sections_iterator(
+        plot_2d=p,
+        gempy_model=model,
+        sections_names=section_names,
+        n_axis=n_axis,
+        n_columns=n_columns,
+        ve=ve,
+        projection_distance=kwargs.get('projection_distance', 0.2 * model.transform.isometric_scale)
+    )
+    # TODO: Add cartesian axis to the section iterator
+    
+    # TODO: Drawers
+    
+    # ===============   
     # TODO: This is a mess: Extract the loop to a function and split the functions in several chunks according to 
     # TODO: the arguments
-    e = _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis,
-                           n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries,
-                           show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve)
-
-    _plot_regular_grid_section(cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography, model,
-                               n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar,
-                               show_topography, show_values, ve)
+    # e = _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis,
+    #                        n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries,
+    #                        show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve)
+    # 
+    # _plot_regular_grid_section(cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography, model,
+    #                            n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar,
+    #                            show_topography, show_values, ve)
 
     if show is True:
         p.fig.show()
 
     return p
+
 
 
 def plot_3d(model, plotter_type='basic',
