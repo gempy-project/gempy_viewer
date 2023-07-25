@@ -201,6 +201,7 @@ def plot_2d(model,
         gempy_model=model,
         sections_data=section_data_list,
         data_to_show=data_to_show,
+        series_n=series_n,
         kwargs_topography=kwargs_topography,
     )
     

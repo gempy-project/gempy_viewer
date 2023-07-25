@@ -102,8 +102,11 @@ class TestPlot2DSolutions:
         gpv.plot_2d(
             model=one_fault_model_topo_solution,
             section_names=['section_SW-NE', 'section_NW-SE', 'topography'],
-            direction=['x', 'y'], cell_number=['mid', 'mid'],
-            show_lith=[False, False, False, True, True],
+            direction=['x', 'y', 'y'], cell_number=['mid', 'mid', 'mid'],
+            show_lith=[False, False, False, True, True , True],
+            show_boundaries=[False, False, False, True, True, True],
+            show_scalar=[False, False, False, False, True, True],
+            series_n=[0, 0, 0, 0, 0, 1],
             show_topography=True,
             show_section_traces=True  # TODO: Test this one
         )

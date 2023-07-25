@@ -1,28 +1,47 @@
 ﻿import numpy as np
 
+from gempy_viewer.core.slicer_data import SlicerData
 from gempy import GeoModel, Grid
 from gempy_engine.core.data.legacy_solutions import LegacySolution
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
-def plot_scalar_field(plot_2d: Plot2D, gempy_model: GeoModel, ax, block: np.ndarray, resolution: iter,
-                      section_name=None, cell_number=None, direction='y', series_n: int = 0, **kwargs):
+def plot_regular_grid_scalar_field(ax, slicer_data: SlicerData, block: np.ndarray, resolution: iter, **kwargs):
     extent_val = [*ax.get_xlim(), *ax.get_ylim()]
-    section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
 
-    if section_name is not None:
-        image = _prepare_section_image(gempy_model, section_name, series_n=series_n)
-    elif cell_number is not None or block is not None:
-        _a, _b, _c, _, x, y, _, _ = plot_2d.slice(
-            regular_grid=gempy_model.grid.regular_grid,
-            direction=direction,
-            cell_number=cell_number
-        )
+    plot_block = block.reshape(resolution)
+    image = plot_block[
+        slicer_data.regular_grid_x_idx,
+        slicer_data.regular_grid_y_idx,
+        slicer_data.regular_grid_z_idx
+    ].T
 
-        plot_block = block.reshape(resolution)
-        image = plot_block[_a, _b, _c].T
-    else:
-        raise AttributeError
+
+    ax.contour(
+        image,
+        cmap='autumn',
+        extent=extent_val,
+        zorder=8,
+        **kwargs
+    )
+    if 'N' in kwargs:
+        kwargs.pop('N')
+    ax.contourf(
+        image,
+        cmap='autumn',
+        extent=extent_val,
+        zorder=7,
+        alpha=.8,
+        **kwargs
+    )
+
+    return ax
+
+
+def plot_section_scalar_field(gempy_model: GeoModel, ax, section_name=None, series_n: int = 0, **kwargs):
+    extent_val = [*ax.get_xlim(), *ax.get_ylim()]
+
+    image = _prepare_section_image(gempy_model, section_name, series_n=series_n)
 
     ax.contour(
         image,

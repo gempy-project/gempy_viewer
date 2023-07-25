@@ -1,4 +1,5 @@
 ﻿import copy
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -14,8 +15,9 @@ from gempy import GeoModel
 from gempy.core.grid import Grid
 
 
-def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cell_number=None, direction='y',
+def _plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cell_number=None, direction='y',
               legend=True, projection_distance=None):
+    warnings.warn('This function is deprecated. Use plot_data instead', DeprecationWarning)
     if projection_distance is None:
         # TODO: This has to be updated to the new location
         projection_distance = 0.2 * gempy_model.transform.isometric_scale
@@ -48,7 +50,7 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
     # ! Hack to keep the right X label. I think this has to be here before the plot
     temp_label = copy.copy(ax.xaxis.label)
     
-    _draw_data(
+    draw_data(
         ax=ax, 
         surface_points_colors=gempy_model.structural_frame.surface_points_colors,
         orientations_colors=gempy_model.structural_frame.orientations_colors,
@@ -76,8 +78,8 @@ def plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cel
 
 
 # TODO: This could be public and the slice just a class yes!
-def _draw_data(ax, surface_points_colors: list[str], orientations_colors: list[str],
-               orientations: pd.DataFrame, points: pd.DataFrame, slicer_data: SlicerData):
+def draw_data(ax, surface_points_colors: list[str], orientations_colors: list[str],
+              orientations: pd.DataFrame, points: pd.DataFrame, slicer_data: SlicerData):
     
     _draw_surface_points(ax, points, slicer_data, surface_points_colors)
     _draw_orientations(ax, orientations, orientations_colors, slicer_data)
