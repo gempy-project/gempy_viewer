@@ -95,6 +95,18 @@ class TestPlot2DInputData:
 class TestPlot2DSolutions:
     def test_plot_2d_solutions_default(self, one_fault_model_topo_solution):
         _: Plot2D = gpv.plot_2d(one_fault_model_topo_solution)
+
+
+    def test_plot_2d_all_together(self, one_fault_model_topo_solution):
+
+        gpv.plot_2d(
+            model=one_fault_model_topo_solution,
+            section_names=['section_SW-NE', 'section_NW-SE', 'topography'],
+            direction=['x', 'y'], cell_number=['mid', 'mid'],
+            show_lith=[False, False, False, True, True],
+            show_topography=True,
+            show_section_traces=True  # TODO: Test this one
+        )
         
     @pytest.fixture(scope='module')
     def section_model(self, one_fault_model_topo_solution):

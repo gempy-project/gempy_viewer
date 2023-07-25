@@ -18,6 +18,20 @@ def one_fault_model_no_interp() -> GeoModel:
 @pytest.fixture(scope='session')
 def one_fault_model_topo_solution() -> GeoModel:
     one_fault_model = _one_fault_model_generator()
+
+    gp.set_section_grid(
+        grid=one_fault_model.grid,
+        section_dict={'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
+                      'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
+    )
+
+    gp.set_topography_from_random(
+        grid=one_fault_model.grid,
+        fractal_dimension=1.2,
+        d_z=np.array([600, 2000]),
+        topography_resolution=np.array([60, 60])
+    )
+    
     gp.compute_model(one_fault_model)
     return one_fault_model
 

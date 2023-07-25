@@ -143,8 +143,9 @@ def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data
         # if show_scalar[e] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
         #     _is_filled = True
         #     p.plot_scalar_field(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
-        # if show_boundaries[e] is True and model.solutions.scalar_field_matrix.shape[0] != 0:
-        #     p.plot_contacts(temp_ax, section_name=sn, **kwargs)
+        if data_to_show.show_boundaries[e] is True:
+            # p.plot_contacts(temp_ax, section_name=sn, **kwargs)
+            pass
         if data_to_show.show_topography[e] is True:
             plot_topography(
                 gempy_model=gempy_model,
