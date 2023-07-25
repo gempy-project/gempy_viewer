@@ -19,3 +19,5 @@ class SectionData2D:
     slicer_data: SlicerData
     ax: Axes
     section_name: Optional[str]
+    cell_number: Optional[int]
+    direction: Optional[str]

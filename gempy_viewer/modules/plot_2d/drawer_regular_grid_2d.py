@@ -1,39 +1,46 @@
 ﻿import numpy as np
+import matplotlib.colors as mcolors
 
+from gempy_viewer.core.slicer_data import SlicerData
 from gempy import GeoModel, Grid
 from gempy_engine.core.data.legacy_solutions import LegacySolution
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
+from gempy_viewer.modules.plot_2d.plot_2d_utils import check_default_section, get_geo_model_cmap, get_geo_model_norm
 
 
-def plot_regular_grid(plot_2d: Plot2D, gempy_model: GeoModel, ax, block: np.ndarray, resolution: iter, section_name=None, cell_number=None,
-                      direction='y', **kwargs):
+# TODO: This name seems bad. This is plotting area basically?
+def plot_regular_grid_area(ax, slicer_data: SlicerData, block: np.ndarray, resolution: iter,
+                      cmap: mcolors.Colormap, norm: mcolors.Normalize):
     
-    extent_val = [*ax.get_xlim(), *ax.get_ylim()]
-    section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
-
-    if section_name is not None:
-        image = _prepare_section_image(gempy_model, section_name)
-    elif cell_number is not None or block is not None:
-        _a, _b, _c, _, x, y, _, _ = plot_2d.slice(
-            regular_grid=gempy_model.grid.regular_grid,
-            direction=direction,
-            cell_number=cell_number
-        )
-        
-        plot_block = block.reshape(resolution)
-        image = plot_block[_a, _b, _c].T
-    else:
-        raise AttributeError
+    plot_block = block.reshape(resolution)
+    image = plot_block[
+        slicer_data.regular_grid_x_idx,
+        slicer_data.regular_grid_y_idx,
+        slicer_data.regular_grid_z_idx].T
 
     ax.imshow(
         image,
         origin='lower',
         zorder=-100,
-        cmap=plot_2d.get_geo_model_cmap(gempy_model.structural_frame.elements_colors),
-        norm=plot_2d.get_geo_model_norm(gempy_model.structural_frame.number_of_elements),
-        extent=extent_val
+        cmap=cmap,
+        norm=norm,
+        extent=[*ax.get_xlim(), *ax.get_ylim()]
     )
     
+    return ax
+
+
+def plot_section_area(gempy_model: GeoModel, ax, section_name: str, cmap: mcolors.Colormap, norm: mcolors.Normalize):
+    image = _prepare_section_image(gempy_model, section_name)
+    ax.imshow(
+        image,
+        origin='lower',
+        zorder=-100,
+        cmap=cmap,
+        norm=norm,
+        extent=[*ax.get_xlim(), *ax.get_ylim()]
+    )
+
     return ax
 
 

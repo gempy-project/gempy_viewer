@@ -44,7 +44,9 @@ def sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, sections_names: li
             section_type=SectionType.SECTION,
             slicer_data=slicer_data,
             ax=temp_ax,
-            section_name=sec_name
+            section_name=sec_name,
+            cell_number=None,
+            direction=None
         )
 
         section_data_list.append(section_data_2d)
@@ -85,8 +87,9 @@ def orthogonal_sections_iterator(initial_axis: int, plot_2d: Plot2D, gempy_model
             section_type=SectionType.ORTHOGONAL,
             slicer_data=slicer_data,
             ax=temp_ax,
-            section_name=None
-            
+            section_name=None,
+            cell_number=cell_number[e],
+            direction=direction[e]
         )
 
         section_data_list.append(section_data_2d)

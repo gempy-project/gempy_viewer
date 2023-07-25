@@ -1,12 +1,13 @@
 ﻿from gempy import GeoModel
-from gempy_viewer.core.section_data_2d import SectionData2D
+from gempy_viewer.core.section_data_2d import SectionData2D, SectionType
 from gempy_viewer.core.data_to_show import DataToShow
+from ..modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
 from ..modules.plot_2d.drawer_traces_2d import plot_section_traces
 from ..modules.plot_2d.drawer_topography_2d import plot_topography
 from ..modules.plot_2d.drawer_contours_2d import plot_contacts
 from ..modules.plot_2d.drawer_scalar_field_2d import plot_scalar_field
 from ..modules.plot_2d.drawer_input_2d import plot_data, _draw_data
-from ..modules.plot_2d.drawer_regular_grid_2d import plot_regular_grid
+from ..modules.plot_2d.drawer_regular_grid_2d import plot_section_area, plot_regular_grid_area
 
 
 def _plot_regular_grid_section(
@@ -52,13 +53,9 @@ def _plot_regular_grid_section(
         # region plot solutions
         if show_lith[e + e2] is True and model.solutions.raw_arrays.lith_block.shape[0] != 0:
             plot_regular_grid(
-                plot_2d=p,
-                gempy_model=model,
                 ax=temp_ax,
                 block=model.solutions.raw_arrays.lith_block,
                 resolution=model.grid.regular_grid.resolution,
-                cell_number=cell_number[e2],
-                direction=direction[e2],
             )
         elif show_values[e + e2] is True and model.solutions.raw_arrays.values_matrix.shape[0] != 0:
             p.plot_values(temp_ax, series_n=series_n[e], cell_number=cell_number[e2],
@@ -116,9 +113,27 @@ def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data
                 slicer_data=section_data.slicer_data
             )
             
-        # if data_to_show.show_lith[e] is True: 
-        #     _is_filled = True
-        #     # p.plot_lith(temp_ax, section_name=sn, **kwargs)
+        if data_to_show.show_lith[e] is True: 
+            _is_filled = True
+            match section_data.section_type:
+                case SectionType.SECTION:
+                    plot_section_area(
+                        gempy_model=gempy_model,
+                        ax=temp_ax,
+                        section_name=section_data.section_name,
+                        cmap=get_geo_model_cmap(gempy_model.structural_frame.elements_colors),
+                        norm=get_geo_model_norm(gempy_model.structural_frame.number_of_elements),
+                    )   
+                    pass
+                case SectionType.ORTHOGONAL:
+                    plot_regular_grid_area(
+                        ax=temp_ax,
+                        slicer_data=section_data.slicer_data,
+                        block=gempy_model.solutions.raw_arrays.lith_block, # * Only used for orthogonal sections
+                        resolution=gempy_model.grid.regular_grid.resolution,
+                        cmap=get_geo_model_cmap(gempy_model.structural_frame.elements_colors),
+                        norm=get_geo_model_norm(gempy_model.structural_frame.number_of_elements),
+                    )
         # elif data_to_show.show_values[e] is True: # and model.solutions.values_matrix.shape[0] != 0:
         #     _is_filled = True
         #     p.plot_values(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)

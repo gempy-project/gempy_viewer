@@ -117,8 +117,8 @@ def _draw_surface_points(ax, points, slicer_data, surface_points_colors):
 
 def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, direction, orientations, points,
                                     projection_distance) -> SlicerData:
-    if cell_number is None or cell_number == "mid":
-        cell_number = int(regular_grid.resolution[0] / 2)
+    # if cell_number is None or cell_number == "mid":
+    #     cell_number = int(regular_grid.resolution[0] / 2)
 
     if direction == 'x' or direction == 'X':
         arg_ = 0
@@ -135,13 +135,14 @@ def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, dire
     else:
         raise AttributeError('Direction must be x, y, z')
 
-    _loc = regular_grid.extent[arg_] + dx * cell_number
+    _loc = regular_grid.extent[arg_] + dx * int(regular_grid.resolution[0] / 2)
     cartesian_point_dist = points[dir] - _loc
     cartesian_ori_dist = orientations[dir] - _loc
 
-    _, _, _, _, x, y, Gx, Gy = slice_cross_section(
+    _a, _b, _c, _, x, y, Gx, Gy = slice_cross_section(
         regular_grid=regular_grid,
-        direction=direction
+        direction=direction,
+        cell_number=cell_number
     )
     select_projected_p = cartesian_point_dist < projection_distance
     select_projected_o = cartesian_ori_dist < projection_distance
@@ -153,6 +154,9 @@ def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, dire
         Gy=Gy,
         select_projected_p=select_projected_p,
         select_projected_o=select_projected_o,
+        regular_grid_x_idx=_a,
+        regular_grid_y_idx=_b,
+        regular_grid_z_idx=_c
     )
 
     return slice_data

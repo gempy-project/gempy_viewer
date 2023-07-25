@@ -1,11 +1,12 @@
 ﻿import numpy as np
+import matplotlib.colors as mcolors
 
 from gempy import Grid
 from gempy.core.grid_modules import grid_types
 from gempy.core.grid_modules.grid_types import Sections, RegularGrid
 
 
-def slice_cross_section(regular_grid: grid_types.RegularGrid, direction: str, cell_number=25):
+def slice_cross_section(regular_grid: grid_types.RegularGrid, direction: str, cell_number: int or str):
     """
     Slice the 3D array (blocks or scalar field) in the specific direction selected in the plot functions
 
@@ -120,3 +121,11 @@ def calculate_p1p2(regular_grid: RegularGrid, direction, cell_number):
     else:
         raise NotImplementedError
     return p1, p2
+
+
+def get_geo_model_cmap(elements_colors: list[str]) -> mcolors.ListedColormap:
+    return mcolors.ListedColormap(elements_colors).reversed()
+
+
+def get_geo_model_norm(number_elements: int) -> mcolors.Normalize:
+    return mcolors.Normalize(vmin=0.5, vmax=number_elements + 0.5)
