@@ -59,7 +59,7 @@ except ImportError:
 def plot_2d(model,
             n_axis=None,
             section_names: list = None,
-            cell_number: Union[int | list[int]] = None,
+            cell_number: Union[int | list[int] | str | list[str]] = None,
             direction: Union[str | list[str]] = 'y',
             series_n: Union[int, List[int]] = 0,
             ve=1,
@@ -144,7 +144,7 @@ def plot_2d(model,
         series_n = [series_n] * n_axis
 
     # * Grab from kwargs all the show arguments and create the proper class. This is for backwards compatibility
-    can_show_results = model.solutions is not None and model.solutions.lith_block.shape[0] != 0
+    can_show_results = model.solutions is not None # and model.solutions.lith_block.shape[0] != 0
     data_to_show = DataToShow(
         n_axis=n_axis,
         show_data=kwargs.get('show_data', True),
