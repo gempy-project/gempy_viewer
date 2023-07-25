@@ -183,6 +183,7 @@ def plot_2d(model,
     # TODO: Add cartesian axis to the section iterator
     
     orthogonal_section_data_list: list[SectionData2D] = orthogonal_sections_iterator(
+        initial_axis=len(section_data_list),
         plot_2d=p,
         gempy_model=model,
         direction=direction,

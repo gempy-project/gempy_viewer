@@ -52,7 +52,7 @@ def sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, sections_names: li
     return section_data_list
 
 
-def orthogonal_sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, direction: list[str], cell_number: list[int],
+def orthogonal_sections_iterator(initial_axis: int, plot_2d: Plot2D, gempy_model: GeoModel, direction: list[str], cell_number: list[int],
                                  n_axis: int, n_columns: int, ve: float, projection_distance: Optional[float] = None) -> list[SectionData2D]:
     section_data_list: list[SectionData2D] = []
     for e in range(len(cell_number)):
@@ -61,7 +61,7 @@ def orthogonal_sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, directi
         _is_filled = False
         assert e < 10, 'Reached maximum of axes'
 
-        ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + 1
+        ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + 1 + initial_axis
         temp_ax = create_axes_orthogonal(
             plot_2d=plot_2d,
             gempy_grid=gempy_model.grid,
