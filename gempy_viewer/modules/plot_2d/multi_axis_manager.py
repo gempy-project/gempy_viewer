@@ -10,13 +10,12 @@ from gempy import Grid, GeoModel
 from gempy.core.grid_modules.grid_types import Sections
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 from gempy_viewer.modules.plot_2d.plot_2d_utils import make_section_xylabels
-from gempy_viewer.modules.plot_2d.drawer_input_2d import _projection_params_section
+from gempy_viewer.modules.plot_2d.drawer_input_2d import _projection_params_section, _projection_params_regular_grid
 
 
 # TODO: sections_names should be substiteted by something more complex
 def sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, sections_names: list[str],
                       n_axis: int, n_columns: int, ve: float, projection_distance: Optional[float] = None) -> list[SectionData2D]:
-    
     section_data_list: list[SectionData2D] = []
     for e, sec_name in enumerate(sections_names):
         # region matplotlib configuration
@@ -46,7 +45,47 @@ def sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, sections_names: li
             slicer_data=slicer_data,
             ax=temp_ax
         )
+
+        section_data_list.append(section_data_2d)
+
+    return section_data_list
+
+
+def orthogonal_sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, direction: list[str], cell_number: list[int],
+                                 n_axis: int, n_columns: int, ve: float, projection_distance: Optional[float] = None) -> list[SectionData2D]:
+    section_data_list: list[SectionData2D] = []
+    for e in range(len(cell_number)):
+        # region matplotlib configuration
+        # Check if a plot that fills all pixels is plotted
+        _is_filled = False
+        assert e < 10, 'Reached maximum of axes'
+
+        ax_pos = (round(n_axis / 2 + 0.1)) * 100 + n_columns + e + 1
+        temp_ax = create_axes_orthogonal(
+            plot_2d=plot_2d,
+            gempy_grid=gempy_model.grid,
+            cell_number=cell_number[e],
+            direction=direction[e],
+            ax_pos=ax_pos,
+            ve=ve
+        )
         
+        # endregion 
+        slicer_data: SlicerData = _projection_params_regular_grid(
+            regular_grid=gempy_model.grid.regular_grid,
+            orientations=gempy_model.orientations.df.copy(),
+            points=gempy_model.surface_points.df.copy(),
+            projection_distance=projection_distance,
+            cell_number=cell_number[e],
+            direction=direction[e]
+        )
+
+        section_data_2d: SectionData2D = SectionData2D(
+            section_type=SectionType.ORTHOGONAL,
+            slicer_data=slicer_data,
+            ax=temp_ax
+        )
+
         section_data_list.append(section_data_2d)
 
     return section_data_list

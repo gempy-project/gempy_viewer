@@ -35,7 +35,7 @@ from gempy_viewer.API._plot_2d_sections_api import plot_section
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
-from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator
+from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, orthogonal_sections_iterator
 
 # Keep Alex code hidden until we merge it properly
 try:
@@ -181,6 +181,20 @@ def plot_2d(model,
         projection_distance=kwargs.get('projection_distance', 0.2 * model.transform.isometric_scale)
     )
     # TODO: Add cartesian axis to the section iterator
+    
+    orthogonal_section_data_list: list[SectionData2D] = orthogonal_sections_iterator(
+        plot_2d=p,
+        gempy_model=model,
+        direction=direction,
+        cell_number=cell_number,
+        n_axis=n_axis,
+        n_columns=n_columns,
+        ve=ve,
+        projection_distance=kwargs.get('projection_distance', 0.2 * model.transform.isometric_scale)
+    )
+    
+    # merge the two lists
+    section_data_list.extend(orthogonal_section_data_list)
     
     # TODO: Drawers
     plot_section(

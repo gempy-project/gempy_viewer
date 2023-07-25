@@ -7,6 +7,7 @@ import gempy as gp
 
 # TODO: - [x] Test sections
 # TODO: - [ ] Refactor plotting 2d
+# TODO: - [ ] Refactor public and private methods
 
 
 class TestPlot2DInputData:
