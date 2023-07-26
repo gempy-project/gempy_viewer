@@ -23,3 +23,4 @@ Package to visualize gempy models.
 - [ ] Remove DEP folder
 - [ ] Consolidate 3d plotting
 - [ ] Make sure pyvista is an optional dependency
+- [ ] Review private and public modules and functions

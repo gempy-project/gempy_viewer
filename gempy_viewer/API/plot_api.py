@@ -266,8 +266,8 @@ def plot_3d(
 
     # if show_surfaces and len(model.solutions.vertices) != 0:
     #     gpv.plot_surfaces()
-    # if show_lith is True and model.solutions.lith_block.shape[0] != 0:
-    #     gpv.plot_structured_grid('lith', **kwargs_plot_structured_grid)
+    if data_to_show.show_lith is True:
+        gpv.plot_structured_grid('lith', **kwargs_plot_structured_grid)
     # if show_scalar is True and model.solutions.scalar_field_matrix.shape[0] != 0:
     #     gpv.plot_structured_grid("scalar", series=scalar_field)
     # 
