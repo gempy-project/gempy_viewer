@@ -128,8 +128,6 @@ def plot_3d(
             contours=True,  # TODO: This should come from args or kwargs
             **kwargs_plot_topography
         )
-    # if show_topography and model._grid.topography is not None:
-    #     gpv.plot_topography(**kwargs_plot_topography)
 
     set_scalar_bar(
         gempy_vista=gempy_vista,

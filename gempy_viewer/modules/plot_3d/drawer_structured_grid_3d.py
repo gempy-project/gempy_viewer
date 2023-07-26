@@ -34,7 +34,9 @@ def plot_structured_grid(
         active_scalar_field=active_scalar_field
     )
 
+    render_topography = True
     if render_topography is True and regular_grid.mask_topo.shape[0] != 0 and True:
+        raise NotImplementedError("We need to update this first.")
         structured_grid = _mask_topography(
             regular_grid=regular_grid,
             structured_grid=structured_grid,
