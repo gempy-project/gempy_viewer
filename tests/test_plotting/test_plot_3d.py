@@ -17,3 +17,9 @@ class TestPlot3DSolutions:
             show_scalar=True,
             show_lith=False
         )
+    
+    def test_plot_3d_solutions_topography(self, one_fault_model_topo_solution):
+        gpv.plot_3d(
+            model=one_fault_model_topo_solution,
+            show_topography=True
+        )

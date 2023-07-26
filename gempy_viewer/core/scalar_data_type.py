@@ -7,3 +7,8 @@ class ScalarDataType(enum.Enum):
     VALUES = enum.auto()
     ALL = enum.auto()
     
+
+class TopographyDataType(enum.Enum):
+    TOPOGRAPHY = enum.auto()
+    GEOMAP = enum.auto()
+    SCALARS = enum.auto()  # Not implemented yet

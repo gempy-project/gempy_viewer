@@ -116,6 +116,12 @@ def plot_3d(
             **kwargs_plot_data
         )
 
+    if data_to_show.show_topography[0] is True and model.grid.topography is not None:
+        plot_topography(
+            gempy_vista=gempy_vista,
+            topography=model.grid.topography,
+            **kwargs_plot_topography
+        )
     # if show_topography and model._grid.topography is not None:
     #     gpv.plot_topography(**kwargs_plot_topography)
 

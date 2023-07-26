@@ -1,11 +1,9 @@
-﻿import numpy as np
-import matplotlib.colors as mcolors
+﻿import matplotlib.colors as mcolors
+import numpy as np
 
-from gempy_viewer.core.slicer_data import SlicerData
 from gempy import GeoModel, Grid
 from gempy_engine.core.data.legacy_solutions import LegacySolution
-from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
-from gempy_viewer.modules.plot_2d.plot_2d_utils import check_default_section, get_geo_model_cmap, get_geo_model_norm
+from gempy_viewer.core.slicer_data import SlicerData
 
 
 # TODO: This name seems bad. This is plotting area basically?

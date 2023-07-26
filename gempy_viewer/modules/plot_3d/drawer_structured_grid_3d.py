@@ -3,7 +3,7 @@
 import pyvista as pv
 from matplotlib import colors as mcolors
 
-from core.data.legacy_solutions import LegacySolution
+from gempy_engine.core.data.legacy_solutions import LegacySolution
 from gempy_viewer.core.scalar_data_type import ScalarDataType
 from gempy.core.grid_modules.grid_types import RegularGrid
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
