@@ -121,7 +121,8 @@ def create_ax_section(plot_2d: Plot2D, gempy_grid: Grid, section_name, ax=None, 
     ax.set_ylim(extent_val[2], extent_val[3])
 
     ax.set_aspect('equal')
-
+    ax.set_aspect(ve)
+    
     # Adding some properties to the axes to make easier to plot
     ax.section_name = section_name
     ax.tick_params(axis='x', labelrotation=30)

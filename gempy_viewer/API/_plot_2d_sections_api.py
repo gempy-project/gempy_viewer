@@ -1,4 +1,5 @@
 ﻿from typing import Optional
+import matplotlib.pyplot as plt
 
 from gempy import GeoModel
 from gempy_viewer.core.section_data_2d import SectionData2D, SectionType
@@ -12,9 +13,10 @@ from ..modules.plot_2d.drawer_regular_grid_2d import plot_section_area, plot_reg
 from ..modules.plot_2d.drawer_scalar_field_2d import plot_section_scalar_field, plot_regular_grid_scalar_field
 
 
-
 def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
-                  series_n: Optional[list[int]], kwargs_topography: dict = None, kwargs_scalar_field: dict = None):
+                  series_n: Optional[list[int]], legend: bool = True, kwargs_topography: dict = None, kwargs_scalar_field: dict = None):
+    legend_already_added = False
+    
     for e, section_data in enumerate(sections_data):
         temp_ax = section_data.ax
         # region plot methods
@@ -117,7 +119,23 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
         #                         **kwargs_regular_grid)
         # 
         # # endregion
-        # temp_ax.set_aspect(ve)
+
+        if legend and not legend_already_added:
+            colors = gempy_model.structural_frame.elements_colors_contacts
+
+            markers = [plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in colors]
+            temp_ax.legend(
+                markers,
+                gempy_model.structural_frame.elements_names,
+                numpoints=1
+            )
+            legend_already_added = True
+
+            try:
+                temp_ax.legend_.set_frame_on(True)
+                temp_ax.legend_.set_zorder(10000)
+            except AttributeError:
+                pass
 
         # If there are section we need to shift one axis for the perpendicular
         e = e + 1
@@ -204,7 +222,7 @@ def _plot_regular_grid_section(
                                 direction=direction[e2], **kwargs_regular_grid)
         # endregion
         temp_ax.set_aspect(ve)
-        
+
 
 def _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis,
                        n_columns, p, regular_grid, section_names, series_n, show_block,
