@@ -31,6 +31,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pn
 
+from gempy_viewer.core.scalar_data_type import ScalarDataType
 from gempy import GeoModel
 from gempy_viewer.API._plot_2d_sections_api import plot_sections
 from gempy_viewer.core.data_to_show import DataToShow
@@ -40,6 +41,7 @@ from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, o
 from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
 from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
 from gempy_viewer.modules.plot_3d.plot_3d_utils import set_scalar_bar
+from gempy_viewer.modules.plot_3d.drawer_structured_grid_3d import plot_structured_grid
 
 try:
     import pyvista as pv
@@ -266,12 +268,20 @@ def plot_3d(
 
     # if show_surfaces and len(model.solutions.vertices) != 0:
     #     gpv.plot_surfaces()
-    if data_to_show.show_lith is True:
-        gpv.plot_structured_grid('lith', **kwargs_plot_structured_grid)
+    if data_to_show.show_lith[0] is True:
+        # gpv.plot_structured_grid('lith', **kwargs_plot_structured_grid)
+        plot_structured_grid(
+            gempy_vista=gempy_vista,
+            regular_grid=model.grid.regular_grid,
+            scalar_data_type=ScalarDataType.LITHOLOGY,
+            solution=model.solutions.raw_arrays,
+            cmap=get_geo_model_cmap(model.structural_frame.elements_colors_volumes),
+            **kwargs_plot_structured_grid
+        )
     # if show_scalar is True and model.solutions.scalar_field_matrix.shape[0] != 0:
     #     gpv.plot_structured_grid("scalar", series=scalar_field)
     # 
-    if data_to_show.show_data:
+    if data_to_show.show_data[0] is True:
         arrow_size = kwargs.get('arrow_size', 10)
         min_axes = np.min(np.diff(extent)[[0, 2, 4]])
         

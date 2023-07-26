@@ -34,7 +34,7 @@ def plot_structured_grid(
         active_scalar_field="lith" # BUG: Use arg
     )
 
-    if render_topography is True and structured_grid.mask_topo.shape[0] != 0 and True:
+    if render_topography is True and regular_grid.mask_topo.shape[0] != 0 and True:
         structured_grid = _mask_topography(
             regular_grid=regular_grid,
             structured_grid=structured_grid,
