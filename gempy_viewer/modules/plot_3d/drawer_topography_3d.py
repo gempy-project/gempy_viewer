@@ -8,7 +8,7 @@ from gempy_engine.core.data.legacy_solutions import LegacySolution
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 
-def plot_topography(
+def plot_topography_3d(
         gempy_vista: GemPyToVista,
         topography: np.ndarray,
         solution: LegacySolution,
@@ -17,19 +17,12 @@ def plot_topography(
         contours=True,
         **kwargs
 ):
-    """
-    Args:
-        topography:
-        scalars:
-        clear:
-        **kwargs:
-    """
     rgb = False
     polydata = pv.PolyData(topography)
 
     match topography_scalar_type:
         case TopographyDataType.GEOMAP:
-            colors_hex = elements_colors,
+            colors_hex = elements_colors
             if False: # ! This is the old implementation
                 colors_rgb_ = colors_hex.apply(lambda val: list(mcolors.hex2color(val)))
                 colors_rgb = pd.DataFrame(colors_rgb_.to_list(), index=colors_hex.index) * 255

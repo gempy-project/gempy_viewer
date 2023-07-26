@@ -1,4 +1,5 @@
 ﻿import gempy_viewer as gpv
+from gempy_viewer.core.scalar_data_type import TopographyDataType
 
 
 class TestPlot3dInputData:
@@ -21,5 +22,14 @@ class TestPlot3DSolutions:
     def test_plot_3d_solutions_topography(self, one_fault_model_topo_solution):
         gpv.plot_3d(
             model=one_fault_model_topo_solution,
-            show_topography=True
+            show_topography=True,
+            topography_scalar_type=TopographyDataType.TOPOGRAPHY
+        )
+    
+    def test_plot_3d_solutions_topography_geological_map(self, one_fault_model_topo_solution):
+        raise NotImplementedError("We need to interpolate the geological map first.")
+        gpv.plot_3d(
+            model=one_fault_model_topo_solution,
+            show_topography=True,
+            topography_scalar_type=TopographyDataType.GEOMAP
         )

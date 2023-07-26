@@ -3,12 +3,13 @@ import numpy as np
 
 from gempy import GeoModel
 from gempy_viewer.core.data_to_show import DataToShow
-from gempy_viewer.core.scalar_data_type import ScalarDataType
+from gempy_viewer.core.scalar_data_type import ScalarDataType, TopographyDataType
 from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
 from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
 from gempy_viewer.modules.plot_3d.drawer_structured_grid_3d import plot_structured_grid
 from gempy_viewer.modules.plot_3d.plot_3d_utils import set_scalar_bar
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
+from gempy_viewer.modules.plot_3d.drawer_topography_3d import plot_topography_3d
 
 try:
     import pyvista as pv
@@ -31,6 +32,7 @@ def plot_3d(
         plotter_type='basic',
         active_scalar_field: str = None,
         ve=None,
+        topography_scalar_type: TopographyDataType = TopographyDataType.GEOMAP,
         kwargs_plot_structured_grid=None,
         kwargs_plot_topography=None,
         kwargs_plot_data=None,
@@ -117,9 +119,13 @@ def plot_3d(
         )
 
     if data_to_show.show_topography[0] is True and model.grid.topography is not None:
-        plot_topography(
+        plot_topography_3d(
             gempy_vista=gempy_vista,
-            topography=model.grid.topography,
+            topography=model.grid.topography.values,
+            solution=model.solutions.raw_arrays,
+            topography_scalar_type=topography_scalar_type,
+            elements_colors=model.structural_frame.elements_colors,
+            contours=True,  # TODO: This should come from args or kwargs
             **kwargs_plot_topography
         )
     # if show_topography and model._grid.topography is not None:
