@@ -38,7 +38,7 @@ from gempy_viewer.core.section_data_2d import SectionData2D
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, orthogonal_sections_iterator
 from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
-from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
+from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
 from gempy_viewer.modules.plot_3d.plot_3d_utils import set_scalar_bar
 
 try:
@@ -256,8 +256,10 @@ def plot_3d(
 
     fig_path: str = kwargs.get('fig_path', None)
 
+    extent: np.ndarray = model.grid.regular_grid.extent
+    
     gempy_vista = GemPyToVista(
-        extent=model.grid.regular_grid.extent,
+        extent=extent,
         plotter_type=plotter_type,
         **kwargs
     )
@@ -270,10 +272,16 @@ def plot_3d(
     #     gpv.plot_structured_grid("scalar", series=scalar_field)
     # 
     if data_to_show.show_data:
+        arrow_size = kwargs.get('arrow_size', 10)
+        min_axes = np.min(np.diff(extent)[[0, 2, 4]])
+        
+        foo = get_geo_model_norm(model.structural_frame.number_of_elements)
         plot_data(
             gempy_vista=gempy_vista,
             surface_points=model.structural_frame.surface_points,
-            cmap=get_geo_model_cmap(model.structural_frame.elements_colors),
+            orientations=model.structural_frame.orientations,
+            arrows_factor = arrow_size / ( 100/min_axes ),
+            cmap=get_geo_model_cmap(model.structural_frame.elements_colors_volumes),
             **kwargs_plot_data
         )
 
