@@ -1,4 +1,4 @@
-﻿from typing import Union
+﻿from typing import Union, Optional
 
 import pyvista as pv
 from matplotlib import colors as mcolors
@@ -14,8 +14,8 @@ def plot_structured_grid(
         regular_grid: RegularGrid,
         scalar_data_type: ScalarDataType,
         solution: LegacySolution,
-        cmap: mcolors.Colormap,
-        active_scalar_field: str = 'all',
+        cmap: Union[mcolors.Colormap or str],
+        active_scalar_field: Optional[str] = None,
         render_topography: bool = True,
         opacity=.5,
         **kwargs
@@ -31,7 +31,7 @@ def plot_structured_grid(
 
     structured_grid = set_active_scalar_fields(
         structured_grid=structured_grid,
-        active_scalar_field="lith" # BUG: Use arg
+        active_scalar_field=active_scalar_field
     )
 
     if render_topography is True and regular_grid.mask_topo.shape[0] != 0 and True:
@@ -53,7 +53,7 @@ def plot_structured_grid(
 def add_regular_grid_mesh(
         gempy_vista: GemPyToVista,
         structured_grid: pv.StructuredGrid,
-        cmap: mcolors.Colormap,
+        cmap: Union[mcolors.Colormap or str],
         opacity: float,
         **kwargs
 ):
@@ -134,7 +134,10 @@ def set_scalar_data(
     return structured_grid  # , cmap
 
 
-def set_active_scalar_fields(structured_grid: pv.StructuredGrid, active_scalar_field: str) -> pv.StructuredGrid:
+def set_active_scalar_fields(structured_grid: pv.StructuredGrid, active_scalar_field: Optional[str]) -> pv.StructuredGrid:
+    if active_scalar_field is None:
+        active_scalar_field = structured_grid.array_names[0]
+    
     if active_scalar_field == 'lith':
         active_scalar_field = 'id'
 

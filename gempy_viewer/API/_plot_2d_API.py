@@ -25,7 +25,6 @@ def plot_2d(model: GeoModel,
             regular_grid=None,
             kwargs_topography=None,
             kwargs_regular_grid=None,
-            kwargs_plotter=None,
             **kwargs):
     """Plot 2-D sections of geomodel.
 
@@ -71,8 +70,6 @@ def plot_2d(model: GeoModel,
         kwargs_regular_grid = dict()
     if kwargs_topography is None:
         kwargs_topography = dict()
-    if kwargs_plotter is None:
-        kwargs_plotter = dict()
 
     if section_names is None and cell_number is None and direction is not None:
         cell_number = ['mid']

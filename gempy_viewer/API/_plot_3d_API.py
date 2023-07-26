@@ -26,15 +26,15 @@ except ImportError:
     mplstereonet_import = False
 
 
-
 def plot_3d(
         model: GeoModel,
         plotter_type='basic',
-        scalar_field: str = None,
+        active_scalar_field: str = None,
         ve=None,
         kwargs_plot_structured_grid=None,
         kwargs_plot_topography=None,
         kwargs_plot_data=None,
+        kwargs_plotter=None,
         image=False,
         off_screen=False,
         **kwargs
@@ -42,7 +42,6 @@ def plot_3d(
     """Plot 3-D geomodel."""
     # * Grab from kwargs all the show arguments and create the proper class. This is for backwards compatibility
     can_show_results = model.solutions is not None  # and model.solutions.lith_block.shape[0] != 0
-
     data_to_show = DataToShow(
         n_axis=1,
         show_data=kwargs.get('show_data', True),
@@ -61,21 +60,23 @@ def plot_3d(
         off_screen = True
         kwargs['off_screen'] = True
         plotter_type = 'basic'
+
     if kwargs_plot_topography is None:
         kwargs_plot_topography = dict()
     if kwargs_plot_structured_grid is None:
         kwargs_plot_structured_grid = dict()
     if kwargs_plot_data is None:
         kwargs_plot_data = dict()
+    if kwargs_plotter is None:
+        kwargs_plotter = dict()
 
-    fig_path: str = kwargs.get('fig_path', None)
 
     extent: np.ndarray = model.grid.regular_grid.extent
 
     gempy_vista = GemPyToVista(
         extent=extent,
         plotter_type=plotter_type,
-        **kwargs
+        **kwargs_plotter
     )
 
     # if show_surfaces and len(model.solutions.vertices) != 0:
@@ -85,19 +86,20 @@ def plot_3d(
             gempy_vista=gempy_vista,
             regular_grid=model.grid.regular_grid,
             scalar_data_type=ScalarDataType.LITHOLOGY,
+            active_scalar_field="lith",
             solution=model.solutions.raw_arrays,
             cmap=get_geo_model_cmap(model.structural_frame.elements_colors_volumes),
             **kwargs_plot_structured_grid
         )
 
-    import matplotlib.colors as mcolors
     if data_to_show.show_scalar[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
             regular_grid=model.grid.regular_grid,
             scalar_data_type=ScalarDataType.SCALAR_FIELD,
+            active_scalar_field=active_scalar_field,
             solution=model.solutions.raw_arrays,
-            cmap=mcolors.Colormap('viridis'),
+            cmap='viridis',
             **kwargs_plot_structured_grid
         )
 
@@ -105,7 +107,6 @@ def plot_3d(
         arrow_size = kwargs.get('arrow_size', 10)
         min_axes = np.min(np.diff(extent)[[0, 2, 4]])
 
-        foo = get_geo_model_norm(model.structural_frame.number_of_elements)
         plot_data(
             gempy_vista=gempy_vista,
             surface_points=model.structural_frame.surface_points,
@@ -127,11 +128,12 @@ def plot_3d(
     if ve is not None:
         gempy_vista.p.set_scale(zscale=ve)
 
+    fig_path: str = kwargs.get('fig_path', None)
     if fig_path is not None:
         gempy_vista.p.show(screenshot=fig_path)
 
     if image is True:
-        img = gempy_vista.p.show(screenshot=True)
+        gempy_vista.p.show(screenshot=True)
         img = gempy_vista.p.last_image
         plt.imshow(img[1])
         plt.axis('off')
