@@ -7,7 +7,7 @@ from ..modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_no
 from ..modules.plot_2d.drawer_traces_2d import plot_section_traces
 from ..modules.plot_2d.drawer_topography_2d import plot_topography
 from ..modules.plot_2d.drawer_contours_2d import plot_section_contacts, plot_regular_grid_contacts
-from ..modules.plot_2d.drawer_input_2d import plot_data, draw_data
+from ..modules.plot_2d.drawer_input_2d import draw_data
 from ..modules.plot_2d.drawer_regular_grid_2d import plot_section_area, plot_regular_grid_area
 from ..modules.plot_2d.drawer_scalar_field_2d import plot_section_scalar_field, plot_regular_grid_scalar_field
 

@@ -9,11 +9,10 @@ from gempy_viewer.core.section_data_2d import SectionData2D, SectionType
 from gempy import Grid, GeoModel
 from gempy.core.grid_modules.grid_types import Sections
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
-from gempy_viewer.modules.plot_2d.plot_2d_utils import make_section_xylabels
+from gempy_viewer.modules.plot_2d.plot_2d_utils import make_section_xylabels, slice_cross_section
 from gempy_viewer.modules.plot_2d.drawer_input_2d import _projection_params_section, _projection_params_regular_grid
 
 
-# TODO: sections_names should be substiteted by something more complex
 def sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, sections_names: list[str],
                       n_axis: int, n_columns: int, ve: float, projection_distance: Optional[float] = None) -> list[SectionData2D]:
     section_data_list: list[SectionData2D] = []
@@ -137,7 +136,7 @@ def create_axes_orthogonal(plot_2d: Plot2D, gempy_grid: Grid, cell_number,
     if ax is None:
         ax = plot_2d.fig.add_subplot(ax_pos)
 
-    extent_val = _setup_orthogonal_section(ax, cell_number, direction, gempy_grid, plot_2d)
+    extent_val = _setup_orthogonal_section(ax, cell_number, direction, gempy_grid)
 
     if extent_val[3] < extent_val[2]:  # correct vertical orientation of plot
         ax.invert_yaxis()
@@ -157,8 +156,8 @@ def create_axes_orthogonal(plot_2d: Plot2D, gempy_grid: Grid, cell_number,
     return ax
 
 
-def _setup_orthogonal_section(ax, cell_number, direction, gempy_grid, plot_2d):
-    _a, _b, _c, extent_val, x, y = plot_2d.slice(gempy_grid.regular_grid, direction, cell_number)[:-2]  # * This requires the grid object
+def _setup_orthogonal_section(ax, cell_number, direction, gempy_grid):
+    _a, _b, _c, extent_val, x, y = slice_cross_section(gempy_grid.regular_grid, direction, cell_number)[:-2]  # * This requires the grid object
     ax.set_xlabel(x)
     ax.set_ylabel(y)
     ax.set(title='Cell Number: ' + str(cell_number) + ' Direction: ' + str(direction))
