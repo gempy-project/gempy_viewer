@@ -1,8 +1,7 @@
 import sys
-from .API.plot_api import plot_2d, plot_3d
-from .core.plotting_2d_options import Plotting2DOptions
+from .API import *
 
-__all__ = ['plot_2d', 'plot_3d']
+__all__ = ['plot_2d', 'plot_3d', 'plot_section_traces', 'plot_topology', 'plot_stereonet']
 
 # Assert at least pyton 3.10
 assert sys.version_info[0] >= 3 and sys.version_info[1] >= 10, "GemPy requires Python 3.10 or higher"

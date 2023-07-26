@@ -9,3 +9,6 @@ class TestPlot3dInputData:
 class TestPlot3DSolutions:
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution):
         gpv.plot_3d(one_fault_model_topo_solution)
+    
+    def test_plot_3d_scalar_field(self, one_fault_model_topo_solution):
+        gpv.plot_3d(one_fault_model_topo_solution, show_scalar=True, show_lith=False)
