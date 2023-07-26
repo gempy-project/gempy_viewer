@@ -51,7 +51,7 @@ def plot_3d(
         show_surfaces=kwargs.get('show_surfaces', True),
         show_lith=kwargs.get('show_lith', True),
         show_scalar=kwargs.get('show_scalar', False),
-        show_boundaries=kwargs.get('show_boundaries', True),
+        show_boundaries=kwargs.get('show_boundaries', False),  # BUG: When function is updated this should be True
         show_topography=kwargs.get('show_topography', False),
         show_section_traces=kwargs.get('show_section_traces', True),
         show_values=kwargs.get('show_values', False),
@@ -81,8 +81,11 @@ def plot_3d(
         **kwargs_plotter
     )
 
-    # if show_surfaces and len(model.solutions.vertices) != 0:
-    #     gpv.plot_surfaces()
+    if data_to_show.show_boundaries[0] is True and len(model.solutions.raw_arrays.vertices) != 0:
+        raise NotImplementedError("We need to update this first.")
+        plot_surfaces(
+            
+        )
     if data_to_show.show_lith[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
