@@ -26,7 +26,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import Union, Dict, List, Iterable, Set, Tuple
+from typing import Union, Dict, List, Iterable, Set, Tuple, Optional
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -59,7 +59,8 @@ except ImportError:
 
 class GemPyToVista(WidgetsCallbacks, RenderChanges):
 
-    def __init__(self, model, plotter_type: str = 'basic', extent=None, lith_c=None, live_updating=False, **kwargs):
+    def __init__(self, extent: Union[np.ndarray | list[float]], plotter_type: str = 'basic',
+                 live_updating=False, pyvista_bounds_kwargs: Optional[dict] = None, **kwargs):
         """GemPy 3-D visualization using pyVista.
 
         Args:
@@ -74,13 +75,16 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
 
         """
 
+        if pyvista_bounds_kwargs is None:
+            pyvista_bounds_kwargs = {}
+            
         # Override default notebook value
         pv.set_plot_theme("document")
         kwargs['notebook'] = kwargs.get('notebook', False)
 
         # Model properties
-        self.model = model
-        self.extent = model._grid.regular_grid.extent if extent is None else extent
+        # self.model = model
+        # self.extent = model._grid.regular_grid.extent if extent is None else extent
 
         # plotting options
         self.live_updating = live_updating
@@ -93,6 +97,7 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
             raise NotImplementedError
             # self.p = pv.PlotterITK()
         elif plotter_type == 'background':
+            # TODO: Move this to the module to require optional dependencies
             try:
                 self.p = pv.BackgroundPlotter(**kwargs)
             except pv.QtDeprecationError:
@@ -103,8 +108,9 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
             raise AttributeError('Plotter type must be basic, background or notebook.')
 
         self.plotter_type = plotter_type
+
         # Default camera and bounds
-        self.set_bounds()
+        self.set_bounds(extent, **pyvista_bounds_kwargs)
         self.p.view_isometric(negative=False)
 
         # Actors containers
@@ -193,30 +199,13 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
         self.p.add_scalar_bar(**sargs)
         self.p.update_scalar_bar_range((arr_.min(), arr_.max()))
 
-    def set_bounds(
-            self,
-            extent: list = None,
-            grid: bool = False,
-            location: str = 'furthest',
-            **kwargs
-    ):
-        """Set and toggle display of bounds of geomodel.
+    def set_bounds(self, extent: List[float], **kwargs):
 
-        Args:
-            extent (list): [description]. Defaults to None.
-            grid (bool): [description]. Defaults to False.
-            location (str): [description]. Defaults to 'furthest'.
-            **kwargs:
-        """
-        if self.plotter_type != 'notebook':
-            if extent is None:
-                extent = self.extent
-            try:
-                self.p.show_bounds(
-                    bounds=extent, location=location, grid=grid, use_2d=False, **kwargs
-                )
-            except KeyError:
-                pass
+        kwargs.setdefault('location', 'furthest')
+        kwargs.setdefault('grid', False)
+        kwargs.setdefault('use_2d', False)
+
+        self.p.show_bounds(bounds=extent, **kwargs)
 
     def plot_data(self, surfaces='all', surface_points=None, orientations=None, **kwargs):
         """Plot all the geometric data
@@ -373,7 +362,7 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
             r = self.surface_points_widgets
         else:
             poly = pv.PolyData(surface_points[["X", "Y", "Z"]].values)
-            
+
             # TODO: Check if this is the final solution
             poly['id'] = surface_points['id'] - 1  # This seems to fix the surface points colors 
             self.surface_points_mesh = poly
@@ -405,7 +394,7 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
             **kwargs:
         """
         arrow_size = kwargs.get('arrow_size', 10)
-        
+
         if orientations is None:
             orientations = self._select_surfaces_data(self.model._orientations.df, surfaces)
 
@@ -471,7 +460,7 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
             edges_ = val['edges']
             if isinstance(vertices_, list): vertices_ = vertices_[0]
             if isinstance(edges_, list): edges_ = edges_[0]
-            
+
             if vertices_.shape[0] == 0 or edges_.shape[0] == 0:
                 continue
             surf = pv.PolyData(vertices_, np.insert(edges_, 0, 3, axis=1).ravel())

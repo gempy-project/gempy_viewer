@@ -13,8 +13,8 @@ from ..modules.plot_2d.drawer_scalar_field_2d import plot_section_scalar_field, 
 
 
 
-def plot_section(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
-                 series_n: Optional[list[int]], kwargs_topography: dict = None, kwargs_scalar_field: dict = None):
+def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
+                  series_n: Optional[list[int]], kwargs_topography: dict = None, kwargs_scalar_field: dict = None):
     for e, section_data in enumerate(sections_data):
         temp_ax = section_data.ax
         # region plot methods

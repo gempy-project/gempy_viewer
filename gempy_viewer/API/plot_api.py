@@ -31,7 +31,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pn
 
-from gempy_viewer.API._plot_2d_sections_api import plot_section
+from gempy import GeoModel
+from gempy_viewer.API._plot_2d_sections_api import plot_sections
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
@@ -56,7 +57,7 @@ except ImportError:
     mplstereonet_import = False
 
 
-def plot_2d(model,
+def plot_2d(model: GeoModel,
             n_axis=None,
             section_names: list = None,
             cell_number: Union[int | list[int] | str | list[str]] = None,
@@ -107,7 +108,7 @@ def plot_2d(model,
         :class:`gempy.plot.visualization_2d.Plot2D`: Plot2D object
 
     """
-    
+
     if kwargs_regular_grid is None:
         kwargs_regular_grid = dict()
     if kwargs_topography is None:
@@ -144,7 +145,7 @@ def plot_2d(model,
         series_n = [series_n] * n_axis
 
     # * Grab from kwargs all the show arguments and create the proper class. This is for backwards compatibility
-    can_show_results = model.solutions is not None # and model.solutions.lith_block.shape[0] != 0
+    can_show_results = model.solutions is not None  # and model.solutions.lith_block.shape[0] != 0
     data_to_show = DataToShow(
         n_axis=n_axis,
         show_data=kwargs.get('show_data', True),
@@ -180,8 +181,7 @@ def plot_2d(model,
         ve=ve,
         projection_distance=kwargs.get('projection_distance', 0.2 * model.transform.isometric_scale)
     )
-    # TODO: Add cartesian axis to the section iterator
-    
+
     orthogonal_section_data_list: list[SectionData2D] = orthogonal_sections_iterator(
         initial_axis=len(section_data_list),
         plot_2d=p,
@@ -193,76 +193,40 @@ def plot_2d(model,
         ve=ve,
         projection_distance=kwargs.get('projection_distance', 0.2 * model.transform.isometric_scale)
     )
-    
+
     section_data_list.extend(orthogonal_section_data_list)
-    
-    # TODO: Drawers
-    plot_section(
+
+    plot_sections(
         gempy_model=model,
         sections_data=section_data_list,
         data_to_show=data_to_show,
         series_n=series_n,
         kwargs_topography=kwargs_topography,
     )
-    
-    # ===============   
-    # TODO: This is a mess: Extract the loop to a function and split the functions in several chunks according to 
-    # TODO: the arguments
-    # e = _plot_section_grid(kwargs, kwargs_regular_grid, kwargs_topography, model, n_axis,
-    #                        n_columns, p, regular_grid, section_names, series_n, show_block, show_boundaries,
-    #                        show_data, show_lith, show_scalar, show_section_traces, show_topography, show_values, ve)
-    # 
-    # _plot_regular_grid_section(cell_number, direction, e, kwargs, kwargs_regular_grid, kwargs_topography, model,
-    #                            n_axis, n_columns, p, regular_grid, series_n, show_block, show_boundaries, show_data, show_lith, show_scalar,
-    #                            show_topography, show_values, ve)
-
     if show is True:
         p.fig.show()
 
     return p
 
 
-
-def plot_3d(model, plotter_type='basic',
-            show_data: bool = True,
-            show_results: bool = True,
-            show_surfaces: bool = True,
-            show_lith: bool = True,
-            show_scalar: bool = False,
-            show_boundaries: bool = True,
-            show_topography: Union[bool, list] = False,
-            scalar_field: str = None,
-            ve=None,
-            kwargs_plot_structured_grid=None,
-            kwargs_plot_topography=None,
-            kwargs_plot_data=None,
-            image=False,
-            off_screen=False, **kwargs) -> GemPyToVista:
-    """foobar
-
-    Args:
-
-        model (:class:`gempy.core.model.Project`): Container class of all
-         objects that constitute a GemPy model.
-        plotter_type: PyVista plotter types. Supported plotters are:
-         'basic', 'background', and 'notebook'.
-        show_data (bool): Show original input data. Defaults to True.
-        show_results (bool): If False, override show lith, show_scalar, show_values
-        show_lith (bool): Show lithological block volumes. Defaults to True.
-        show_scalar (bool): Show scalar field isolines. Defaults to False.
-        show_boundaries (bool): Show surface boundaries as lines. Defaults to True.
-        show_topography (bool): Show topography on plot. Defaults to False.
-        scalar_field (str): Name of the field to be activated
-        series_n (int): number of the scalar field.
-        ve (float): Vertical Exaggeration
-        kwargs_plot_structured_grid:
-        kwargs_plot_topography:
-        **kwargs:
-
-    Returns:
-        :class:`gempy.plot.vista.GemPyToVista`
-
-    """
+def plot_3d(
+        model: GeoModel,
+        plotter_type='basic',
+        show_data: bool = True,
+        show_results: bool = True,
+        show_surfaces: bool = True,
+        show_lith: bool = True,
+        show_scalar: bool = False,
+        show_boundaries: bool = True,
+        show_topography: Union[bool, list] = False,
+        scalar_field: str = None,
+        ve=None,
+        kwargs_plot_structured_grid=None,
+        kwargs_plot_topography=None,
+        kwargs_plot_data=None,
+        image=False,
+        off_screen=False,
+        **kwargs) -> GemPyToVista:
     if image is True:
         off_screen = True
         kwargs['off_screen'] = True
@@ -281,19 +245,24 @@ def plot_3d(model, plotter_type='basic',
 
     fig_path: str = kwargs.get('fig_path', None)
 
-    gpv = GemPyToVista(model, plotter_type=plotter_type, **kwargs)
-    if show_surfaces and len(model.solutions.vertices) != 0:
-        gpv.plot_surfaces()
-    if show_lith is True and model.solutions.lith_block.shape[0] != 0:
-        gpv.plot_structured_grid('lith', **kwargs_plot_structured_grid)
-    if show_scalar is True and model.solutions.scalar_field_matrix.shape[0] != 0:
-        gpv.plot_structured_grid("scalar", series=scalar_field)
+    gpv = GemPyToVista(
+        extent=model.grid.regular_grid.extent,
+        plotter_type=plotter_type,
+        **kwargs
+    )
+    
+    # if show_surfaces and len(model.solutions.vertices) != 0:
+    #     gpv.plot_surfaces()
+    # if show_lith is True and model.solutions.lith_block.shape[0] != 0:
+    #     gpv.plot_structured_grid('lith', **kwargs_plot_structured_grid)
+    # if show_scalar is True and model.solutions.scalar_field_matrix.shape[0] != 0:
+    #     gpv.plot_structured_grid("scalar", series=scalar_field)
+    # 
+    # if show_data:
+    #     gpv.plot_data(**kwargs_plot_data)
 
-    if show_data:
-        gpv.plot_data(**kwargs_plot_data)
-
-    if show_topography and model._grid.topography is not None:
-        gpv.plot_topography(**kwargs_plot_topography)
+    # if show_topography and model._grid.topography is not None:
+    #     gpv.plot_topography(**kwargs_plot_topography)
 
     if ve is not None:
         gpv.p.set_scale(zscale=ve)
@@ -335,7 +304,7 @@ def plot_interactive_3d(
         :class:`gempy.plot.vista.GemPyToVista`
 
     """
-    gpv = GemPyToVista(geo_model, plotter_type='background', shape="1|3")
+    gpv = GemPyToVista(plotter_type='background', shape="1|3")
     gpv.plot_data()
     gpv.plot_structured_grid_interactive(scalar_field=scalar_field, series=series,
                                          render_topography=show_topography, **kwargs)
