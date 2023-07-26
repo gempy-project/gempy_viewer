@@ -37,6 +37,7 @@ from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, orthogonal_sections_iterator
+from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
 
 # Keep Alex code hidden until we merge it properly
 try:
@@ -212,13 +213,6 @@ def plot_2d(model: GeoModel,
 def plot_3d(
         model: GeoModel,
         plotter_type='basic',
-        show_data: bool = True,
-        show_results: bool = True,
-        show_surfaces: bool = True,
-        show_lith: bool = True,
-        show_scalar: bool = False,
-        show_boundaries: bool = True,
-        show_topography: Union[bool, list] = False,
         scalar_field: str = None,
         ve=None,
         kwargs_plot_structured_grid=None,
@@ -226,16 +220,30 @@ def plot_3d(
         kwargs_plot_data=None,
         image=False,
         off_screen=False,
-        **kwargs) -> GemPyToVista:
+        **kwargs
+) -> GemPyToVista:
+    """Plot 3-D geomodel."""
+    # * Grab from kwargs all the show arguments and create the proper class. This is for backwards compatibility
+    can_show_results = model.solutions is not None  # and model.solutions.lith_block.shape[0] != 0
+    
+    data_to_show = DataToShow(
+        n_axis=1,
+        show_data=kwargs.get('show_data', True),
+        show_results=kwargs.get('show_results', can_show_results),
+        show_surfaces=kwargs.get('show_surfaces', True),
+        show_lith=kwargs.get('show_lith', True),
+        show_scalar=kwargs.get('show_scalar', False),
+        show_boundaries=kwargs.get('show_boundaries', True),
+        show_topography=kwargs.get('show_topography', False),
+        show_section_traces=kwargs.get('show_section_traces', True),
+        show_values=kwargs.get('show_values', False),
+        show_block=kwargs.get('show_block', False)
+    )
+
     if image is True:
         off_screen = True
         kwargs['off_screen'] = True
         plotter_type = 'basic'
-    if show_results is False:
-        show_surfaces = False
-        show_scalar = False
-        show_lith = False
-
     if kwargs_plot_topography is None:
         kwargs_plot_topography = dict()
     if kwargs_plot_structured_grid is None:
@@ -245,12 +253,12 @@ def plot_3d(
 
     fig_path: str = kwargs.get('fig_path', None)
 
-    gpv = GemPyToVista(
+    gempy_vista = GemPyToVista(
         extent=model.grid.regular_grid.extent,
         plotter_type=plotter_type,
         **kwargs
     )
-    
+
     # if show_surfaces and len(model.solutions.vertices) != 0:
     #     gpv.plot_surfaces()
     # if show_lith is True and model.solutions.lith_block.shape[0] != 0:
@@ -258,30 +266,34 @@ def plot_3d(
     # if show_scalar is True and model.solutions.scalar_field_matrix.shape[0] != 0:
     #     gpv.plot_structured_grid("scalar", series=scalar_field)
     # 
-    # if show_data:
-    #     gpv.plot_data(**kwargs_plot_data)
+    if data_to_show.show_data:
+        plot_data(
+            gempy_vista=gempy_vista,
+            surface_points=model.structural_frame.surface_points,
+            **kwargs_plot_data
+        )
 
     # if show_topography and model._grid.topography is not None:
     #     gpv.plot_topography(**kwargs_plot_topography)
 
     if ve is not None:
-        gpv.p.set_scale(zscale=ve)
+        gempy_vista.p.set_scale(zscale=ve)
 
     if fig_path is not None:
-        gpv.p.show(screenshot=fig_path)
+        gempy_vista.p.show(screenshot=fig_path)
 
     if image is True:
-        img = gpv.p.show(screenshot=True)
-        img = gpv.p.last_image
+        img = gempy_vista.p.show(screenshot=True)
+        img = gempy_vista.p.last_image
         plt.imshow(img[1])
         plt.axis('off')
         plt.show(block=False)
-        gpv.p.close()
+        gempy_vista.p.close()
 
     if off_screen is False:
-        gpv.p.show()
+        gempy_vista.p.show()
 
-    return gpv
+    return gempy_vista
 
 
 def plot_interactive_3d(

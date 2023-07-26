@@ -188,8 +188,10 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
         return sargs
 
     def set_scalar_bar(self):
+        # TODO: Move this to arguments
         n_labels = self.model._surfaces.df.shape[0]
         arr_ = self.model._surfaces.df['id']
+        
         sargs = self.scalar_bar_options
         sargs['title'] = 'id'
         sargs['n_labels'] = n_labels
