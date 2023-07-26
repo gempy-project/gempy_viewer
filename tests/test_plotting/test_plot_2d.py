@@ -1,9 +1,10 @@
-from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
-import gempy_viewer as gpv
+
 import gempy as gp
+import gempy_viewer as gpv
+from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
+
 
 # TODO: - [x] Test sections
 # TODO: - [x] Refactor plotting 2d

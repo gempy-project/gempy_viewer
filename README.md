@@ -15,3 +15,11 @@
 ## Overview
 
 Package to visualize gempy models.
+
+
+## TODO:
+
+- [ ] Move _plot_2d_sections_api to modules?
+- [ ] Remove DEP folder
+- [ ] Consolidate 3d plotting
+- [ ] Make sure pyvista is an optional dependency
