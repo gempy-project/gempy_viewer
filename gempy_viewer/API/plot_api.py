@@ -38,8 +38,9 @@ from gempy_viewer.core.section_data_2d import SectionData2D
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, orthogonal_sections_iterator
 from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
+from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
+from gempy_viewer.modules.plot_3d.plot_3d_utils import set_scalar_bar
 
-# Keep Alex code hidden until we merge it properly
 try:
     import pyvista as pv
     from gempy_viewer.modules.plot_3d._vista import Vista as Vista
@@ -225,7 +226,7 @@ def plot_3d(
     """Plot 3-D geomodel."""
     # * Grab from kwargs all the show arguments and create the proper class. This is for backwards compatibility
     can_show_results = model.solutions is not None  # and model.solutions.lith_block.shape[0] != 0
-    
+
     data_to_show = DataToShow(
         n_axis=1,
         show_data=kwargs.get('show_data', True),
@@ -270,12 +271,19 @@ def plot_3d(
         plot_data(
             gempy_vista=gempy_vista,
             surface_points=model.structural_frame.surface_points,
+            cmap=get_geo_model_cmap(model.structural_frame.elements_colors),
             **kwargs_plot_data
         )
 
     # if show_topography and model._grid.topography is not None:
     #     gpv.plot_topography(**kwargs_plot_topography)
-
+    
+    set_scalar_bar(
+        gempy_vista=gempy_vista,
+        n_labels=model.structural_frame.number_of_elements,
+        surfaces_ids=model.structural_frame.elements_ids -1
+    )
+    
     if ve is not None:
         gempy_vista.p.set_scale(zscale=ve)
 
