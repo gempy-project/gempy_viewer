@@ -117,7 +117,7 @@ def plot_3d(
             surface_points=model.structural_frame.surface_points,
             orientations=model.structural_frame.orientations,
             arrows_factor=arrow_size / (100 / min_axes),
-            cmap=get_geo_model_cmap(model.structural_frame.elements_colors_volumes),
+            elements_colors=model.structural_frame.elements_colors_contacts[:-1],
             **kwargs_plot_data
         )
 

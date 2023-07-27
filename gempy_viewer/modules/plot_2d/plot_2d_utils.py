@@ -123,8 +123,11 @@ def calculate_p1p2(regular_grid: RegularGrid, direction, cell_number):
     return p1, p2
 
 
-def get_geo_model_cmap(elements_colors: list[str]) -> mcolors.ListedColormap:
-    return mcolors.ListedColormap(elements_colors).reversed()
+def get_geo_model_cmap(elements_colors: list[str], reverse: bool = True) -> mcolors.ListedColormap:
+    if reverse:
+        return mcolors.ListedColormap(elements_colors).reversed()
+    else:
+        return mcolors.ListedColormap(elements_colors)
 
 
 def get_geo_model_norm(number_elements: int) -> mcolors.Normalize:
