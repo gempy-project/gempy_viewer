@@ -11,6 +11,15 @@ class TestPlot3DSolutions:
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution):
         gpv.plot_3d(one_fault_model_topo_solution)
     
+    def test_plot_3d_solutions(self, one_fault_model_topo_solution):
+        gpv.plot_3d(
+            model=one_fault_model_topo_solution,
+            show_scalar=False,
+            show_lith=True,
+            show_data=True,
+            show_boundaries=True
+        )
+    
     def test_plot_3d_scalar_field(self, one_fault_model_topo_solution):
         gpv.plot_3d(
             model=one_fault_model_topo_solution,
