@@ -11,6 +11,7 @@ def plot_surfaces(
         structural_elements_with_solution: list[StructuralElement],
         **kwargs
 ):
+    # ! If the order of the meshes does not match the order of scalar_field_at_surface points we need to reorder them in 'multi_scalar_dual_contouring.py'
     for element in structural_elements_with_solution:
         vertices_ = element.vertices
         edges_ = element.edges

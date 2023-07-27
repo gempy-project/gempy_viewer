@@ -95,6 +95,7 @@ class TestPlot2DInputData:
         
 class TestPlot2DSolutions:
     def test_plot_2d_solutions_default(self, one_fault_model_topo_solution):
+        print(one_fault_model_topo_solution.structural_frame)
         _: Plot2D = gpv.plot_2d(one_fault_model_topo_solution)
 
 
