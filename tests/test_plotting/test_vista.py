@@ -158,7 +158,7 @@ class TestVista:
         Args:
             vista_object_computed:
         """
-        a = vista_object_computed.plot_surfaces()
+        a = vista_object_computed.plot_surfaces(,
         img = vista_object_computed.p.show(screenshot=True, auto_close=False)
         img = vista_object_computed.p.last_image
         plt.imshow(img[1])
@@ -169,7 +169,7 @@ class TestVista:
         Args:
             vista_object_computed:
         """
-        a = vista_object_computed.plot_surfaces()
+        a = vista_object_computed.plot_surfaces(,
         vista_object_computed.plot_data()
         img = vista_object_computed.p.show(screenshot=True, auto_close=False)
         img = vista_object_computed.p.last_image
@@ -269,7 +269,7 @@ class TestVista:
                                                   plotter_type='basic', off_screen=True)
 
         vista_object_computed_topo.plot_structured_grid('lith', render_topography=False)
-        vista_object_computed_topo.plot_surfaces()
+        vista_object_computed_topo.plot_surfaces(,
         # vista_object_computed_topo.set_scalar_bar()
         img = vista_object_computed_topo.p.show(screenshot=True)
         img = vista_object_computed_topo.p.last_image
@@ -306,7 +306,7 @@ class TestVista:
                                                   plotter_type='basic', off_screen=True)
 
         vista_object_computed_topo.plot_surface_points()
-        vista_object_computed_topo.plot_surfaces()
+        vista_object_computed_topo.plot_surfaces(,
         vista_object_computed_topo.plot_structured_grid('scalar',
                                                         series='Strat_Series',
                                                         render_topography=False)
@@ -320,7 +320,7 @@ class TestVista:
                                                   plotter_type='basic', off_screen=True)
 
         vista_object_computed_topo.plot_surface_points()
-        vista_object_computed_topo.plot_surfaces()
+        vista_object_computed_topo.plot_surfaces(,
         vista_object_computed_topo.plot_structured_grid(render_topography=False)
         img = vista_object_computed_topo.p.show(screenshot=True)
         img = vista_object_computed_topo.p.last_image
@@ -332,7 +332,7 @@ class TestVista:
                                                   plotter_type='basic', off_screen=True)
 
         vista_object_computed_topo.plot_surface_points()
-        vista_object_computed_topo.plot_surfaces()
+        vista_object_computed_topo.plot_surfaces(,
         vista_object_computed_topo.plot_structured_grid(render_topography=True,
                                                         scalar_field='scalar',
                                                         series='Strat_Series',

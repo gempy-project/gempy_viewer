@@ -4,12 +4,13 @@ import numpy as np
 from gempy import GeoModel
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.scalar_data_type import ScalarDataType, TopographyDataType
-from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
+from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
 from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
 from gempy_viewer.modules.plot_3d.drawer_structured_grid_3d import plot_structured_grid
+from gempy_viewer.modules.plot_3d.drawer_surfaces_3d import plot_surfaces
+from gempy_viewer.modules.plot_3d.drawer_topography_3d import plot_topography_3d
 from gempy_viewer.modules.plot_3d.plot_3d_utils import set_scalar_bar
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
-from gempy_viewer.modules.plot_3d.drawer_topography_3d import plot_topography_3d
 
 try:
     import pyvista as pv
@@ -37,6 +38,7 @@ def plot_3d(
         kwargs_plot_topography=None,
         kwargs_plot_data=None,
         kwargs_plotter=None,
+        kwargs_plot_surfaces=None,
         image=False,
         off_screen=False,
         **kwargs
@@ -51,7 +53,7 @@ def plot_3d(
         show_surfaces=kwargs.get('show_surfaces', True),
         show_lith=kwargs.get('show_lith', True),
         show_scalar=kwargs.get('show_scalar', False),
-        show_boundaries=kwargs.get('show_boundaries', False),  # BUG: When function is updated this should be True
+        show_boundaries=kwargs.get('show_boundaries', True),
         show_topography=kwargs.get('show_topography', False),
         show_section_traces=kwargs.get('show_section_traces', True),
         show_values=kwargs.get('show_values', False),
@@ -63,16 +65,12 @@ def plot_3d(
         kwargs['off_screen'] = True
         plotter_type = 'basic'
 
-    if kwargs_plot_topography is None:
-        kwargs_plot_topography = dict()
-    if kwargs_plot_structured_grid is None:
-        kwargs_plot_structured_grid = dict()
-    if kwargs_plot_data is None:
-        kwargs_plot_data = dict()
-    if kwargs_plotter is None:
-        kwargs_plotter = dict()
-
-
+    kwargs_plot_topography = kwargs_plot_topography or {}
+    kwargs_plot_structured_grid = kwargs_plot_structured_grid or {}
+    kwargs_plot_data = kwargs_plot_data or {}
+    kwargs_plotter = kwargs_plotter or {}
+    kwargs_plot_surfaces = kwargs_plot_surfaces or {}
+    
     extent: np.ndarray = model.grid.regular_grid.extent
 
     gempy_vista = GemPyToVista(
@@ -82,10 +80,12 @@ def plot_3d(
     )
 
     if data_to_show.show_boundaries[0] is True and len(model.solutions.raw_arrays.vertices) != 0:
-        raise NotImplementedError("We need to update this first.")
         plot_surfaces(
-            
+            gempy_vista=gempy_vista,
+            structural_elements_with_solution=model.structural_frame.structural_elements,
+            **kwargs_plot_surfaces
         )
+
     if data_to_show.show_lith[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
