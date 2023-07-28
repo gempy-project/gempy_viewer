@@ -59,18 +59,18 @@ def plot_3d(
         show_values=kwargs.get('show_values', False),
         show_block=kwargs.get('show_block', False)
     )
-
-    if image is True:
-        off_screen = True
-        kwargs['off_screen'] = True
-        plotter_type = 'basic'
-
     kwargs_plot_topography = kwargs_plot_topography or {}
     kwargs_plot_structured_grid = kwargs_plot_structured_grid or {}
     kwargs_plot_data = kwargs_plot_data or {}
     kwargs_plotter = kwargs_plotter or {}
     kwargs_plot_surfaces = kwargs_plot_surfaces or {}
-    
+
+    if image is True:
+        off_screen = True
+        kwargs_plotter['off_screen'] = True
+        plotter_type = 'basic'
+
+   
     extent: np.ndarray = model.grid.regular_grid.extent
 
     gempy_vista = GemPyToVista(
@@ -148,7 +148,7 @@ def plot_3d(
     if image is True:
         gempy_vista.p.show(screenshot=True)
         img = gempy_vista.p.last_image
-        plt.imshow(img[1])
+        plt.imshow(img)
         plt.axis('off')
         plt.show(block=False)
         gempy_vista.p.close()
