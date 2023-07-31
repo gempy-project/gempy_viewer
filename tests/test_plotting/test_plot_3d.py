@@ -1,5 +1,11 @@
-﻿import gempy_viewer as gpv
+﻿import numpy as np
+import pytest
+
+import gempy_viewer as gpv
+import gempy as gp
+from gempy import GeoModel
 from gempy_viewer.core.scalar_data_type import TopographyDataType
+from tests.conftest import _one_fault_model_generator
 
 
 class TestPlot3dInputData:
@@ -42,3 +48,33 @@ class TestPlot3DSolutions:
             show_topography=True,
             topography_scalar_type=TopographyDataType.GEOMAP
         )
+
+
+class TestPlot2DSolutionsOctrees:
+    @pytest.fixture(scope='class')
+    def one_fault_model_topo_solution_octrees(self) -> GeoModel:
+        one_fault_model = _one_fault_model_generator()
+        one_fault_model.grid.regular_grid.resolution = [2, 4, 2]
+
+        one_fault_model.interpolation_options.number_octree_levels = 5
+
+        # TODO: Test octree regular grid with everything else combined
+        gp.set_section_grid(
+            grid=one_fault_model.grid,
+            section_dict={'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
+                          'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
+        )
+
+        gp.set_topography_from_random(
+            grid=one_fault_model.grid,
+            fractal_dimension=1.2,
+            d_z=np.array([600, 2000]),
+            topography_resolution=np.array([60, 60])
+        )
+
+        gp.compute_model(one_fault_model)
+        return one_fault_model
+
+
+    def test_plot_3d_solutions_default(self, one_fault_model_topo_solution_octrees):
+        gpv.plot_3d(one_fault_model_topo_solution_octrees)
