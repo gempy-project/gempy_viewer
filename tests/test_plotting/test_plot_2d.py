@@ -154,25 +154,51 @@ class TestPlot2DSolutionsOctrees:
         one_fault_model = _one_fault_model_generator()
         one_fault_model.grid.regular_grid.resolution = [2, 4, 2]
 
-        one_fault_model.interpolation_options.number_octree_levels = 4
+        one_fault_model.interpolation_options.number_octree_levels = 5
         
         # TODO: Test octree regular grid with everything else combined
-        # gp.set_section_grid(
-        #     grid=one_fault_model.grid,
-        #     section_dict={'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
-        #                   'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
-        # )
-        # 
-        # gp.set_topography_from_random(
-        #     grid=one_fault_model.grid,
-        #     fractal_dimension=1.2,
-        #     d_z=np.array([600, 2000]),
-        #     topography_resolution=np.array([60, 60])
-        # )
+        gp.set_section_grid(
+            grid=one_fault_model.grid,
+            section_dict={'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
+                          'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
+        )
+
+        gp.set_topography_from_random(
+            grid=one_fault_model.grid,
+            fractal_dimension=1.2,
+            d_z=np.array([600, 2000]),
+            topography_resolution=np.array([60, 60])
+        )
 
         gp.compute_model(one_fault_model)
         return one_fault_model
 
     def test_plot_2d_solutions_default(self, one_fault_model_topo_solution_octrees):
         print(one_fault_model_topo_solution_octrees.structural_frame)
-        _: Plot2D = gpv.plot_2d(one_fault_model_topo_solution_octrees)
+        _: Plot2D = gpv.plot_2d(
+            model=one_fault_model_topo_solution_octrees,
+            show_boundaries=True
+        )
+    
+    def test_plot_2d_solutions_scalar(self, one_fault_model_topo_solution_octrees):
+        print(one_fault_model_topo_solution_octrees.structural_frame)
+        _: Plot2D = gpv.plot_2d(
+            model=one_fault_model_topo_solution_octrees,
+            show_boundaries=False,
+            show_scalar=True,
+            series_n=1
+        )
+        
+        
+    def test_plot_2d_all_together(self, one_fault_model_topo_solution_octrees):
+        gpv.plot_2d(
+            model=one_fault_model_topo_solution_octrees,
+            section_names=['section_SW-NE', 'section_NW-SE', 'topography'],
+            direction=['x', 'y', 'y'], cell_number=['mid', 'mid', 'mid'],
+            show_lith=[False, False, False, True, True, True],
+            show_boundaries=[False, False, False, True, True, True],
+            show_scalar=[False, False, False, False, True, True],
+            series_n=[0, 0, 0, 0, 0, 1],
+            show_topography=True,
+            show_section_traces=True  # TODO: Test this one
+        )
