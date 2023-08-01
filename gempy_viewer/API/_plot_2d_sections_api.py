@@ -16,7 +16,7 @@ from ..modules.plot_2d.drawer_scalar_field_2d import plot_section_scalar_field, 
 def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
                   series_n: Optional[list[int]], legend: bool = True, kwargs_topography: dict = None, kwargs_scalar_field: dict = None):
     legend_already_added = False
-    
+
     for e, section_data in enumerate(sections_data):
         temp_ax = section_data.ax
         # region plot methods
@@ -83,7 +83,8 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
         if data_to_show.show_boundaries[e] is True:
             match section_data.section_type:
                 case SectionType.SECTION:
-                    raise NotImplementedError('Section contacts not implemented yet')
+                    raise NotImplementedError('Section contacts not implemented yet. '
+                                              ' We need to pass scalar field for the sections grid')
                     plot_section_contacts()
                 case SectionType.ORTHOGONAL:
                     plot_regular_grid_contacts(

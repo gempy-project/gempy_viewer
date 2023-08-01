@@ -54,7 +54,7 @@ def plot_3d(
         show_lith=kwargs.get('show_lith', True),
         show_scalar=kwargs.get('show_scalar', False),
         show_boundaries=kwargs.get('show_boundaries', True),
-        show_topography=kwargs.get('show_topography', False),
+        show_topography=kwargs.get('show_topography', True),
         show_section_traces=kwargs.get('show_section_traces', True),
         show_values=kwargs.get('show_values', False),
         show_block=kwargs.get('show_block', False)
@@ -127,7 +127,7 @@ def plot_3d(
             topography=model.grid.topography.values,
             solution=model.solutions.raw_arrays,
             topography_scalar_type=topography_scalar_type,
-            elements_colors=model.structural_frame.elements_colors,
+            elements_colors=model.structural_frame.elements_colors_contacts,
             contours=True,  # TODO: This should come from args or kwargs
             **kwargs_plot_topography
         )

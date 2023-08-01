@@ -37,7 +37,7 @@ def plot_topography_3d(
                 # Multiply by 255 to get RGB values in [0, 255]
                 colors_rgb = np.array(colors_rgb_) * 255
 
-                sel = np.round(solution.geological_map[0]).astype(int)
+                sel = np.round(solution.geological_map).astype(int) - 1
 
                 # Use numpy advanced indexing to get the corresponding RGB values
                 selected_colors = colors_rgb[sel]
