@@ -58,5 +58,5 @@ def _prepare_section_image(gempy_model: GeoModel, section_name: str):
 
         l0, l1 = grid.sections.get_section_args(section_name)
         shape = grid.sections.df.loc[section_name, 'resolution']
-        image = legacy_solutions.sections[0][l0:l1].reshape(shape[0], shape[1]).T
+        image = legacy_solutions.sections[l0:l1].reshape(shape[0], shape[1]).T
     return image
