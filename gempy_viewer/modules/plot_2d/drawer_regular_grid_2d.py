@@ -48,7 +48,7 @@ def _prepare_section_image(gempy_model: GeoModel, section_name: str):
     
     if section_name == 'topography':
         try:
-            image = legacy_solutions.geological_map[0].reshape(grid.topography.values_2d[:, :, 2].shape).T
+            image = legacy_solutions.geological_map.reshape(grid.topography.values_2d[:, :, 2].shape).T
         except AttributeError:
             raise AttributeError('Geological map not computed. Activate the topography grid.')
     else:
