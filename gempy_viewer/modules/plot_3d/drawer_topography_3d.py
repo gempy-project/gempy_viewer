@@ -4,14 +4,14 @@ from vtkmodules.util.numpy_support import numpy_to_vtk
 import matplotlib.colors as mcolors
 
 from gempy_viewer.core.scalar_data_type import TopographyDataType
-from gempy_engine.core.data.legacy_solutions import LegacySolution
+from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 
 def plot_topography_3d(
         gempy_vista: GemPyToVista,
         topography: np.ndarray,
-        solution: LegacySolution,
+        solution: RawArraysSolution,
         topography_scalar_type: TopographyDataType,
         elements_colors: list[str],
         contours=True,

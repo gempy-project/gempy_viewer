@@ -3,7 +3,7 @@
 import pyvista as pv
 from matplotlib import colors as mcolors
 
-from gempy_engine.core.data.legacy_solutions import LegacySolution
+from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.core.scalar_data_type import ScalarDataType
 from gempy.core.data.grid_modules import RegularGrid
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
@@ -13,7 +13,7 @@ def plot_structured_grid(
         gempy_vista: GemPyToVista,
         regular_grid: RegularGrid,
         scalar_data_type: ScalarDataType,
-        solution: LegacySolution,
+        solution: RawArraysSolution,
         cmap: Union[mcolors.Colormap or str],
         active_scalar_field: Optional[str] = None,
         render_topography: bool = True,
@@ -109,7 +109,7 @@ def _mask_topography(regular_grid: RegularGrid, structured_grid: pv.StructuredGr
 
 
 def set_scalar_data(
-        data: LegacySolution,
+        data: RawArraysSolution,
         structured_grid: pv.StructuredGrid,
         scalar_data_type: ScalarDataType,
 ) -> pv.StructuredGrid:

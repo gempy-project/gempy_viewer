@@ -2,7 +2,7 @@
 
 from gempy_viewer.core.slicer_data import SlicerData
 from gempy.core.data import GeoModel, Grid
-from gempy_engine.core.data.legacy_solutions import LegacySolution
+from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
@@ -65,7 +65,7 @@ def plot_section_scalar_field(gempy_model: GeoModel, ax, section_name=None, seri
 
 
 def _prepare_section_image(gempy_model: GeoModel, section_name: str, series_n: int = 0):
-    legacy_solutions: LegacySolution = gempy_model.solutions.raw_arrays
+    legacy_solutions: RawArraysSolution = gempy_model.solutions.raw_arrays
     grid: Grid = gempy_model.grid
 
     if section_name == 'topography':
