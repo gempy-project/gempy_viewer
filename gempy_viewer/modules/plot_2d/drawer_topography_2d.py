@@ -3,9 +3,8 @@
 import numpy as np
 
 from gempy import GeoModel, Grid
-from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
-from gempy.core.grid_modules.grid_types import Sections, RegularGrid
+from gempy.core.data.grid_modules import Sections, RegularGrid
 from gempy_viewer.modules.plot_2d.plot_2d_utils import check_default_section, slice_topo_4_sections, calculate_p1p2
 from gempy_viewer.optional_dependencies import require_skimage
 

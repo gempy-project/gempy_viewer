@@ -7,12 +7,12 @@ from matplotlib import pyplot as plt
 import scipy.spatial.distance as dd
 
 from gempy_viewer.core.slicer_data import SlicerData
-from gempy.core.grid_modules.grid_types import RegularGrid, Sections
-from gempy.core.grid_modules.topography import Topography
+from gempy.core.data.grid_modules import RegularGrid, Sections
+from gempy.core.data.grid_modules import Topography
 from .plot_2d_utils import slice_cross_section
 from .visualization_2d import Plot2D
 from gempy import GeoModel
-from gempy.core.grid import Grid
+from gempy.core.data.grid import Grid
 
 
 def _plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cell_number=None, direction='y',

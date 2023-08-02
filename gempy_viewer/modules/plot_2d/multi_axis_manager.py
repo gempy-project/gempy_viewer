@@ -7,7 +7,7 @@ from matplotlib.ticker import FixedLocator, FixedFormatter
 from gempy_viewer.core.slicer_data import SlicerData
 from gempy_viewer.core.section_data_2d import SectionData2D, SectionType
 from gempy import Grid, GeoModel
-from gempy.core.grid_modules.grid_types import Sections
+from gempy.core.data.grid_modules import Sections
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 from gempy_viewer.modules.plot_2d.plot_2d_utils import make_section_xylabels, slice_cross_section
 from gempy_viewer.modules.plot_2d.drawer_input_2d import _projection_params_section, _projection_params_regular_grid

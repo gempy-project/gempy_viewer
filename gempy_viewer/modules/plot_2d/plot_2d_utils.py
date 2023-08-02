@@ -2,8 +2,8 @@
 import matplotlib.colors as mcolors
 
 from gempy import Grid
-from gempy.core.grid_modules import grid_types
-from gempy.core.grid_modules.grid_types import Sections, RegularGrid
+from gempy.core.data.grid_modules import grid_types
+from gempy.core.data.grid_modules import Sections, RegularGrid
 
 
 def slice_cross_section(regular_grid: grid_types.RegularGrid, direction: str, cell_number: int or str):

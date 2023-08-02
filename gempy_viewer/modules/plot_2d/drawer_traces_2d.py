@@ -1,7 +1,7 @@
 ﻿import numpy as np
 
 from gempy.core.data.geo_model import GeoModel
-from gempy.core.grid_modules.grid_types import Sections
+from gempy.core.data.grid_modules import Sections
 
 
 def plot_section_traces(gempy_model: GeoModel, ax, section_names: list[str] = None):
