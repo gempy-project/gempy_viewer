@@ -1,7 +1,7 @@
 ﻿import matplotlib
 import numpy as np
 
-from gempy import GeoModel
+from gempy.core.data import GeoModel
 from gempy_viewer.core.slicer_data import SlicerData
 
 

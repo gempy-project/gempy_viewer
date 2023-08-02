@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from gempy import GeoModel
+from gempy.core.data import GeoModel
 from gempy_viewer.API._plot_2d_sections_api import plot_sections
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D

@@ -1,7 +1,7 @@
 ﻿import matplotlib.pyplot as plt
 import numpy as np
 
-from gempy import GeoModel
+from gempy.core.data import GeoModel
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.scalar_data_type import ScalarDataType, TopographyDataType
 from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap

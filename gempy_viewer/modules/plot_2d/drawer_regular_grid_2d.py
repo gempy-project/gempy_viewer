@@ -1,7 +1,7 @@
 ﻿import matplotlib.colors as mcolors
 import numpy as np
 
-from gempy import GeoModel, Grid
+from gempy.core.data import GeoModel, Grid
 from gempy_engine.core.data.legacy_solutions import LegacySolution
 from gempy_viewer.core.slicer_data import SlicerData
 

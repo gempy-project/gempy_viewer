@@ -11,7 +11,7 @@ from gempy.core.data.grid_modules import RegularGrid, Sections
 from gempy.core.data.grid_modules import Topography
 from .plot_2d_utils import slice_cross_section
 from .visualization_2d import Plot2D
-from gempy import GeoModel
+from gempy.core.data import GeoModel
 from gempy.core.data.grid import Grid
 
 

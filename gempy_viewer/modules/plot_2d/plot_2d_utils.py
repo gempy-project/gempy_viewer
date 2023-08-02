@@ -1,7 +1,7 @@
 ﻿import numpy as np
 import matplotlib.colors as mcolors
 
-from gempy import Grid
+from gempy.core.data import Grid
 from gempy.core.data.grid_modules import grid_types
 from gempy.core.data.grid_modules import Sections, RegularGrid
 

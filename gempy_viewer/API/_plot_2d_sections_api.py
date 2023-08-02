@@ -1,7 +1,7 @@
 ﻿from typing import Optional
 import matplotlib.pyplot as plt
 
-from gempy import GeoModel
+from gempy.core.data import GeoModel
 from gempy_viewer.core.section_data_2d import SectionData2D, SectionType
 from gempy_viewer.core.data_to_show import DataToShow
 from ..modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
