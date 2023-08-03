@@ -62,7 +62,11 @@ class Plot2D:
         rows = kwargs.get('rows', 1)
 
         figsize, self.ax_labelsize, _, self.xt_labelsize, self.linewidth, _ = _scale_fig_size(
-            figsize, textsize, rows, cols)
+            figsize,
+            textsize,
+            rows,
+            cols
+        )
         self.fig = plt.figure(figsize=figsize, constrained_layout=False)
         self.fig.is_legend = False
 
