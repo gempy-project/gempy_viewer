@@ -2,6 +2,7 @@
 
 import pyvista as pv
 from matplotlib import colors as mcolors
+from pyvista import PolyData
 
 from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.core.scalar_data_type import ScalarDataType
@@ -32,10 +33,10 @@ def plot_structured_grid(
         structured_grid=structured_grid,
         active_scalar_field=active_scalar_field
     )
-
-    if Topography is not None:
+    topography_polydata: PolyData = gempy_vista.surface_poly.get('topography', None)
+    if topography_polydata is not None:
         structured_grid = structured_grid.clip_surface(
-            surface=gempy_vista.surface_poly["topography"],
+            surface=topography_polydata,
             value=-10,
             crinkle=False,
             invert=True
