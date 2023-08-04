@@ -56,16 +56,12 @@ def plot_topography_3d(
     polydata['id'] = scalars_val
     polydata['height'] = topography.values[:, 2]
 
-    sbo = gempy_vista.scalar_bar_options
-    sbo['position_y'] = .35
-
     topography_actor = gempy_vista.p.add_mesh(
         polydata,
         scalars=scalars,
         cmap=cm,
         rgb=rgb,
-        show_scalar_bar=show_scalar_bar,
-        scalar_bar_args=sbo,
+        show_scalar_bar=False,
         **kwargs
     )
 

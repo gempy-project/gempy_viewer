@@ -97,6 +97,19 @@ def plot_3d(
             **kwargs_plot_surfaces
         )
 
+    if data_to_show.show_data[0] is True:
+        arrow_size = kwargs.get('arrow_size', 10)
+        min_axes = np.min(np.diff(extent)[[0, 2, 4]])
+
+        plot_data(
+            gempy_vista=gempy_vista,
+            surface_points=model.structural_frame.surface_points,
+            orientations=model.structural_frame.orientations,
+            arrows_factor=arrow_size / (100 / min_axes),
+            elements_colors=model.structural_frame.elements_colors_contacts[:-1],
+            **kwargs_plot_data
+        )
+
     if data_to_show.show_lith[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
@@ -119,25 +132,13 @@ def plot_3d(
             **kwargs_plot_structured_grid
         )
 
-    if data_to_show.show_data[0] is True:
-        arrow_size = kwargs.get('arrow_size', 10)
-        min_axes = np.min(np.diff(extent)[[0, 2, 4]])
-
-        plot_data(
+    if True: 
+        set_scalar_bar(
             gempy_vista=gempy_vista,
-            surface_points=model.structural_frame.surface_points,
-            orientations=model.structural_frame.orientations,
-            arrows_factor=arrow_size / (100 / min_axes),
-            elements_colors=model.structural_frame.elements_colors_contacts[:-1],
-            **kwargs_plot_data
+            n_labels=model.structural_frame.number_of_elements,
+            elements_names = model.structural_frame.elements_names,
+            surfaces_ids=model.structural_frame.elements_ids - 1
         )
-
-    
-    # set_scalar_bar(
-    #     gempy_vista=gempy_vista,
-    #     n_labels=model.structural_frame.number_of_elements,
-    #     surfaces_ids=model.structural_frame.elements_ids - 1
-    # )
 
     if ve is not None:
         gempy_vista.p.set_scale(zscale=ve)

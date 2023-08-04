@@ -23,12 +23,26 @@ def select_surfaces_data(data_df: pd.DataFrame, surfaces: Union[str, list[str]] 
     return geometric_data
 
 
-def set_scalar_bar(gempy_vista: GemPyToVista, n_labels: int, surfaces_ids: np.ndarray):
-    sargs = gempy_vista.scalar_bar_options
-    sargs['title'] = 'id'
-    sargs['n_labels'] = n_labels
-    sargs['position_y'] = 0.30
-    sargs['height'] = -0.25
-    sargs['fmt'] = "%.0f"
+def set_scalar_bar(gempy_vista: GemPyToVista, n_labels: int, elements_names: list[str],
+                   surfaces_ids: np.ndarray):
+    import pyvista as pv
+    
+    # Get mapper actor 
+    if gempy_vista.surface_points_actor is not None:
+        mapper_actor: pv.Actor = gempy_vista.surface_points_actor
+    elif gempy_vista.regular_grid_actor is not None:
+        mapper_actor = gempy_vista.regular_grid_actor
+    else:
+        return None  # * Not a good mapper for the scalar bar
+    
+    annotations = {}
+    for e, name in enumerate(elements_names):
+        annotations[e] = name
+
+    mapper_actor.mapper.lookup_table.annotations = annotations
+    
+    sargs = gempy_vista.scalar_bar_arguments
+    sargs["mapper"] = mapper_actor.mapper
+    
     gempy_vista.p.add_scalar_bar(**sargs)
-    gempy_vista.p.update_scalar_bar_range((surfaces_ids.min(), surfaces_ids.max()))
+    gempy_vista.p.update_scalar_bar_range((surfaces_ids.min(), surfaces_ids.max())) # * This has to be here to now screw the colors with the volumes

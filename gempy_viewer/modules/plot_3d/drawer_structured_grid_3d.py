@@ -58,14 +58,13 @@ def add_regular_grid_mesh(
         opacity: float,
         **kwargs
 ):
-    sargs = gempy_vista.scalar_bar_options
 
     gempy_vista.regular_grid_actor = gempy_vista.p.add_mesh(
         mesh=structured_grid,
         cmap=cmap,
         # ? scalars=main_scalar, if we prepare the structured grid do we need this arg?
         show_scalar_bar=True,
-        scalar_bar_args=sargs,
+        scalar_bar_args=gempy_vista.scalar_bar_arguments,
         opacity=opacity,
         **kwargs
     )
