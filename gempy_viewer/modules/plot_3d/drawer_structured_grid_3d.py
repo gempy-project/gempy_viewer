@@ -35,10 +35,12 @@ def plot_structured_grid(
     )
 
     if Topography is not None:
-        structured_grid = _mask_topography(
-            structured_grid=structured_grid,
-            topography=topography
-        )
+        structured_grid = structured_grid.clip_surface(gempy_vista.surface_poly["topography"], invert=False)
+        
+        # structured_grid = _mask_topography(
+        #     structured_grid=structured_grid,
+        #     topography=topography
+        # )
 
     add_regular_grid_mesh(
         gempy_vista=gempy_vista,
@@ -57,18 +59,6 @@ def add_regular_grid_mesh(
         **kwargs
 ):
     sargs = gempy_vista.scalar_bar_options
-    # 
-    # if scalar_field == 'all' or scalar_field == 'lith':
-    #     sargs['title'] = 'id'
-    # show_scalar_bar = False
-    # main_scalar = 'id'
-    # else:
-    # sargs['title'] = scalar_field + ': ' + series
-    # show_scalar_bar = True
-    # main_scalar_prefix = 'sf_' if scalar_field == 'scalar' else 'values_'
-    # main_scalar = main_scalar_prefix + series
-    # if series == '':
-    #     main_scalar = regular_grid_mesh.array_names[-1]
 
     gempy_vista.regular_grid_actor = gempy_vista.p.add_mesh(
         mesh=structured_grid,
@@ -79,11 +69,6 @@ def add_regular_grid_mesh(
         opacity=opacity,
         **kwargs
     )
-
-    # if scalar_field == 'all' or scalar_field == 'lith':
-    #     self.set_scalar_bar()
-    # self.regular_grid_mesh = regular_grid_mesh
-    # return [regular_grid_mesh, cmap]
 
 
 def create_regular_mesh(gempy_vista: GemPyToVista, regular_grid: RegularGrid) -> pv.StructuredGrid:
@@ -96,7 +81,7 @@ def create_regular_mesh(gempy_vista: GemPyToVista, regular_grid: RegularGrid) ->
 
 
 def _mask_topography(structured_grid: pv.StructuredGrid, topography: Topography) -> pv.StructuredGrid:
-
+    # ? Obsolete? I am using pyvista clipping and seems to do the job very good.
     threshold = -100
     structured_grid.active_scalars[topography.topography_mask.ravel(order='C')] = threshold - 1
 
