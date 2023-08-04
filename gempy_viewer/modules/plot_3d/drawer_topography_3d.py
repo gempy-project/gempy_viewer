@@ -3,6 +3,7 @@ import pyvista as pv
 from vtkmodules.util.numpy_support import numpy_to_vtk
 import matplotlib.colors as mcolors
 
+from gempy.core.data.grid_modules import Topography
 from gempy_viewer.core.scalar_data_type import TopographyDataType
 from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
@@ -10,7 +11,7 @@ from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 def plot_topography_3d(
         gempy_vista: GemPyToVista,
-        topography: np.ndarray,
+        topography: Topography,
         solution: RawArraysSolution,
         topography_scalar_type: TopographyDataType,
         elements_colors: list[str],
@@ -18,33 +19,22 @@ def plot_topography_3d(
         **kwargs
 ):
     rgb = False
-    polydata = pv.PolyData(topography)
+
+    xx, yy = np.meshgrid(topography.x, topography.y)
+
+    grid = pv.StructuredGrid(yy, xx, topography.values_2d[:, :, 2])
+    polydata = grid.extract_surface()
 
     match topography_scalar_type:
         case TopographyDataType.GEOMAP:
             colors_hex = elements_colors
-            if False: # ! This is the old implementation
-                colors_rgb_ = colors_hex.apply(lambda val: list(mcolors.hex2color(val)))
-                colors_rgb = pd.DataFrame(colors_rgb_.to_list(), index=colors_hex.index) * 255
+            colors_rgb_ = [list(mcolors.hex2color(val)) for val in colors_hex]  # Convert hex to RGB using list comprehension
 
-                sel = np.round(solution.geological_map[0]).astype(int)
+            colors_rgb = np.array(colors_rgb_) * 255  # Multiply by 255 to get RGB values in [0, 255]
+            sel = np.round(solution.geological_map).astype(int) - 1
+            selected_colors = colors_rgb[sel]  # Use numpy advanced indexing to get the corresponding RGB values
+            scalars_val = numpy_to_vtk(selected_colors, array_type=3)  # Convert to vtk array
 
-                scalars_val = numpy_to_vtk(colors_rgb.loc[sel], array_type=3)
-            else:
-                # Convert hex to RGB using list comprehension
-                colors_rgb_ = [list(mcolors.hex2color(val)) for val in colors_hex]
-
-                # Multiply by 255 to get RGB values in [0, 255]
-                colors_rgb = np.array(colors_rgb_) * 255
-
-                sel = np.round(solution.geological_map).astype(int) - 1
-
-                # Use numpy advanced indexing to get the corresponding RGB values
-                selected_colors = colors_rgb[sel]
-
-                # Convert to vtk array
-                scalars_val = numpy_to_vtk(selected_colors, array_type=3)
-                
             cm = mcolors.ListedColormap(elements_colors)
             rgb = True
 
@@ -63,9 +53,8 @@ def plot_topography_3d(
         case _:
             raise AttributeError("Parameter scalars needs to be either 'geomap', 'topography' or 'scalars'")
 
-    polydata.delaunay_2d(inplace=True)
     polydata['id'] = scalars_val
-    polydata['height'] = topography[:, 2]
+    polydata['height'] = topography.values[:, 2]
 
     sbo = gempy_vista.scalar_bar_options
     sbo['position_y'] = .35

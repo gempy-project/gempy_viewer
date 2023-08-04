@@ -82,7 +82,7 @@ def plot_3d(
     if data_to_show.show_topography[0] is True and model.grid.topography is not None:
         plot_topography_3d(
             gempy_vista=gempy_vista,
-            topography=model.grid.topography.values,
+            topography=model.grid.topography,
             solution=model.solutions.raw_arrays,
             topography_scalar_type=topography_scalar_type,
             elements_colors=model.structural_frame.elements_colors_contacts,
@@ -101,7 +101,6 @@ def plot_3d(
         plot_structured_grid(
             gempy_vista=gempy_vista,
             regular_grid=model.grid.regular_grid,
-            topography=model.grid.topography,
             scalar_data_type=ScalarDataType.LITHOLOGY,
             active_scalar_field="lith",
             solution=model.solutions.raw_arrays,
@@ -113,7 +112,6 @@ def plot_3d(
         plot_structured_grid(
             gempy_vista=gempy_vista,
             regular_grid=model.grid.regular_grid,
-            topography=model.grid.topography,
             scalar_data_type=ScalarDataType.SCALAR_FIELD,
             active_scalar_field=active_scalar_field,
             solution=model.solutions.raw_arrays,

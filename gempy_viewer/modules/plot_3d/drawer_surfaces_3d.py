@@ -23,7 +23,7 @@ def plot_surfaces(
         surf = pv.PolyData(vertices_, np.insert(edges_, 0, 3, axis=1).ravel())
         
         if topography_mesh is not None:
-            surf = surf.clip_surface(topography_mesh, invert=False)
+            surf = surf.clip_surface(topography_mesh, invert=True)
         
         gempy_vista.surface_poly[element.name] = surf
         gempy_vista.surface_actors[element.name] = gempy_vista.p.add_mesh(

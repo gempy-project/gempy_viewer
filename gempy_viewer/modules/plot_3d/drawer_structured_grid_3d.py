@@ -12,7 +12,6 @@ from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 def plot_structured_grid(
         gempy_vista: GemPyToVista,
         regular_grid: RegularGrid,
-        topography: Topography,  # Can be null
         scalar_data_type: ScalarDataType,
         solution: RawArraysSolution,
         cmap: Union[mcolors.Colormap or str],
@@ -20,7 +19,7 @@ def plot_structured_grid(
         opacity=.5,
         **kwargs
 ):
-    structured_grid: pv.StructuredGrid = create_regular_mesh(gempy_vista, regular_grid)
+    structured_grid: pv.StructuredGrid | pv.PolyData = create_regular_mesh(gempy_vista, regular_grid)
 
     # Set the scalar field-Activate it-getting cmap?
     structured_grid = set_scalar_data(
@@ -35,13 +34,13 @@ def plot_structured_grid(
     )
 
     if Topography is not None:
-        structured_grid = structured_grid.clip_surface(gempy_vista.surface_poly["topography"], invert=False)
+        structured_grid = structured_grid.clip_surface(
+            surface=gempy_vista.surface_poly["topography"],
+            value=-10,
+            crinkle=False,
+            invert=True
+        )
         
-        # structured_grid = _mask_topography(
-        #     structured_grid=structured_grid,
-        #     topography=topography
-        # )
-
     add_regular_grid_mesh(
         gempy_vista=gempy_vista,
         structured_grid=structured_grid,
