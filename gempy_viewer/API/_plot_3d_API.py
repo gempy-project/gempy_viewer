@@ -79,12 +79,6 @@ def plot_3d(
         **kwargs_plotter
     )
 
-    if data_to_show.show_boundaries[0] is True and len(model.solutions.raw_arrays.vertices) != 0:
-        plot_surfaces(
-            gempy_vista=gempy_vista,
-            structural_elements_with_solution=model.structural_frame.structural_elements,
-            **kwargs_plot_surfaces
-        )
     if data_to_show.show_topography[0] is True and model.grid.topography is not None:
         plot_topography_3d(
             gempy_vista=gempy_vista,
@@ -94,6 +88,13 @@ def plot_3d(
             elements_colors=model.structural_frame.elements_colors_contacts,
             contours=True,  # TODO: This should come from args or kwargs
             **kwargs_plot_topography
+        )
+        
+    if data_to_show.show_boundaries[0] is True and len(model.solutions.raw_arrays.vertices) != 0:
+        plot_surfaces(
+            gempy_vista=gempy_vista,
+            structural_elements_with_solution=model.structural_frame.structural_elements,
+            **kwargs_plot_surfaces
         )
 
     if data_to_show.show_lith[0] is True:

@@ -28,7 +28,7 @@ def one_fault_model_topo_solution() -> GeoModel:
     gp.set_topography_from_random(
         grid=one_fault_model.grid,
         fractal_dimension=1.2,
-        d_z=np.array([600, 1200]),
+        d_z=np.array([300, 800]),
         topography_resolution=np.array([60, 60])
     )
     
