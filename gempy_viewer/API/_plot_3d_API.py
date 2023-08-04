@@ -86,7 +86,7 @@ def plot_3d(
             solution=model.solutions.raw_arrays,
             topography_scalar_type=topography_scalar_type,
             elements_colors=model.structural_frame.elements_colors_contacts,
-            contours=True,  # TODO: This should come from args or kwargs
+            contours=kwargs_plot_topography.get('contours', True),
             **kwargs_plot_topography
         )
         
@@ -133,11 +133,11 @@ def plot_3d(
         )
 
     
-    set_scalar_bar(
-        gempy_vista=gempy_vista,
-        n_labels=model.structural_frame.number_of_elements,
-        surfaces_ids=model.structural_frame.elements_ids - 1
-    )
+    # set_scalar_bar(
+    #     gempy_vista=gempy_vista,
+    #     n_labels=model.structural_frame.number_of_elements,
+    #     surfaces_ids=model.structural_frame.elements_ids - 1
+    # )
 
     if ve is not None:
         gempy_vista.p.set_scale(zscale=ve)

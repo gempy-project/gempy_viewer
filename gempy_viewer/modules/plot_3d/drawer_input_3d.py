@@ -35,16 +35,22 @@ def plot_surface_points(
         render_points_as_spheres=True,
         point_size=10, **kwargs
 ):
+
+    ids = surface_points.ids
+    unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
+    unique_values_order = unique_values[np.argsort(first_indices)] # Sort the unique values by their first appearance in `a`
+
+    mapping_dict = {value: i for i, value in enumerate(unique_values_order)} # Use a dictionary to map the original numbers to new values
+    mapped_array = np.vectorize(mapping_dict.get)(ids)  # Map the original array to the new values
+
     # Selecting the surfaces to plo
     poly = pv.PolyData(surface_points.xyz)
 
-    # TODO: Check if this is the final solution
-    ids = surface_points.ids
-    poly['id'] = ids
+    poly['id'] = mapped_array
 
-    _, unique_indices = np.unique(ids, return_index=True)
-    unique_ids_in_order = ids[np.sort(unique_indices)]
-    cmap = get_geo_model_cmap(np.array(elements_colors)[unique_ids_in_order], reverse=False)
+    cmap = get_geo_model_cmap(
+        elements_colors=np.array(elements_colors),
+        reverse=False)
 
     gempy_vista.surface_points_mesh = poly
     gempy_vista.surface_points_actor = gempy_vista.p.add_mesh(
