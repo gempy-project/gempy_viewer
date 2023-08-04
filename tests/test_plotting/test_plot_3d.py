@@ -3,7 +3,7 @@ import pytest
 
 import gempy_viewer as gpv
 import gempy as gp
-from gempy import GeoModel
+from gempy.core.data import GeoModel
 from gempy_viewer.core.scalar_data_type import TopographyDataType
 from tests.conftest import _one_fault_model_generator
 

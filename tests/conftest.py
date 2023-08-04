@@ -1,7 +1,7 @@
 ﻿import pytest
 import numpy as np
 
-from gempy import GeoModel, StackRelationType
+from gempy.core.data import GeoModel, StackRelationType
 import gempy as gp
 from gempy.core.data.importer_helper import ImporterHelper
 
@@ -43,6 +43,7 @@ def _one_fault_model_generator():
         project_name='fault',
         extent=[0, 2000, 0, 2000, 0, 1000],
         resolution=[20, 5, 20],
+        number_octree_levels=4,
         importer_helper=ImporterHelper(
             path_to_surface_points=path_to_data + "model5_surface_points.csv",
             path_to_orientations=path_to_data + "model5_orientations.csv",

@@ -5,13 +5,14 @@ from matplotlib import colors as mcolors
 
 from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.core.scalar_data_type import ScalarDataType
-from gempy.core.data.grid_modules import RegularGrid
+from gempy.core.data.grid_modules import RegularGrid, Topography
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 
 def plot_structured_grid(
         gempy_vista: GemPyToVista,
         regular_grid: RegularGrid,
+        topography: Topography, # Can be null
         scalar_data_type: ScalarDataType,
         solution: RawArraysSolution,
         cmap: Union[mcolors.Colormap or str],
@@ -35,11 +36,17 @@ def plot_structured_grid(
     )
 
     render_topography = True
-    if render_topography is True and regular_grid.mask_topo.shape[0] != 0 and True:
-        raise NotImplementedError("We need to update this first.")
+    
+    if render_topography is True and regular_grid.mask_topo.shape[0] != 0 or True: # TODO: Update the check
+        # structured_grid.active_scalars[regular_grid.mask_topo.ravel(order='C')] = -100
+        # topography = gempy_vista.surface_poly['topography']
+        # structured_grid = structured_grid.cast_to_unstructured_grid()
+        # structured_grid.extrude_trim((0, 0, -1.0), topography, inplace=True)
+        # raise NotImplementedError("We need to update this first.")
         structured_grid = _mask_topography(
             regular_grid=regular_grid,
             structured_grid=structured_grid,
+            topography=topography,
             active_scalar_field=active_scalar_field
         )
 
@@ -98,13 +105,19 @@ def create_regular_mesh(gempy_vista: GemPyToVista, regular_grid: RegularGrid) ->
     return regular_grid_mesh
 
 
-def _mask_topography(regular_grid: RegularGrid, structured_grid: pv.StructuredGrid,
+def _mask_topography(regular_grid: RegularGrid, structured_grid: pv.StructuredGrid, topography: Topography,
                      active_scalar_field: str) -> pv.StructuredGrid:
-    main_scalar = 'id' if active_scalar_field == 'all' else structured_grid.array_names[-1]
+    # main_scalar = 'id' if active_scalar_field == 'all' else structured_grid.array_names[-1]
 
-    structured_grid[main_scalar][regular_grid.mask_topo.ravel(order='C')] = -100
+    # structured_grid[main_scalar][regular_grid.mask_topo.ravel(order='C')] = -100
+    # TODO: Add cache system to the mask?
+    
+    regular_grid.set_topography_mask(topography)
+    
+    structured_grid.active_scalars[regular_grid.mask_topo.ravel(order='C')] = -100
+
     # ? Is this messing up the data type?
-    structured_grid: pv.StructuredGrid = structured_grid.threshold(-99, scalars=main_scalar)
+    structured_grid: pv.StructuredGrid = structured_grid.threshold(-99)
     return structured_grid
 
 
