@@ -101,7 +101,7 @@ def plot_3d(
         )
 
     if data_to_show.show_data[0] is True:
-        arrow_size = kwargs.get('arrow_size', 10)
+        arrow_size = kwargs_plot_data.get('arrow_size', 10)
         min_axes = np.min(np.diff(extent)[[0, 2, 4]])
 
         plot_data(
