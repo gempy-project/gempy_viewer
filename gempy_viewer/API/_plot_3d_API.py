@@ -34,6 +34,7 @@ def plot_3d(
         active_scalar_field: str = None,
         ve=None,
         topography_scalar_type: TopographyDataType = TopographyDataType.GEOMAP,
+        kwargs_pyvista_bounds=None,
         kwargs_plot_structured_grid=None,
         kwargs_plot_topography=None,
         kwargs_plot_data=None,
@@ -64,6 +65,7 @@ def plot_3d(
     kwargs_plot_data = kwargs_plot_data or {}
     kwargs_plotter = kwargs_plotter or {}
     kwargs_plot_surfaces = kwargs_plot_surfaces or {}
+    kwargs_pyvista_bounds = kwargs_pyvista_bounds or {}
 
     if image is True:
         off_screen = True
@@ -76,6 +78,7 @@ def plot_3d(
     gempy_vista = GemPyToVista(
         extent=extent,
         plotter_type=plotter_type,
+        pyvista_bounds_kwargs=kwargs_pyvista_bounds,
         **kwargs_plotter
     )
 

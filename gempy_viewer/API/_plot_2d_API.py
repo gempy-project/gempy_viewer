@@ -118,8 +118,6 @@ def plot_2d(model: GeoModel,
         show_block=kwargs.get('show_block', False)
     )
 
-    # init e
-    e = 0
     # is 10 and 10 because in the ax pos is the second digit
     n_columns_ = 1 if len(section_names) + len(cell_number) < 2 else 2
     n_columns = n_columns_ * 10  # This is for the axis location syntax
