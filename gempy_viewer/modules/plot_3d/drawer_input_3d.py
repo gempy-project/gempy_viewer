@@ -72,7 +72,11 @@ def plot_orientations(
         **kwargs
 ):
 
-    poly = pv.PolyData(orientations.xyz)
+    orientations_xyz = orientations.xyz
+    if orientations_xyz.shape[0] == 0:
+        return
+    
+    poly = pv.PolyData(orientations_xyz)
     ids = orientations.ids
     poly['id'] = ids
     poly['vectors'] = orientations.grads
