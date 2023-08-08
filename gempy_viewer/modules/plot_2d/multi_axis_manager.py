@@ -141,7 +141,7 @@ def create_axes_orthogonal(plot_2d: Plot2D, gempy_grid: Grid, cell_number,
 
     if extent_val[3] < extent_val[2]:  # correct vertical orientation of plot
         ax.invert_yaxis()
-    plot_2d._aspect = (extent_val[3] - extent_val[2]) / (extent_val[1] - extent_val[0]) / ve
+    # plot_2d._aspect = (extent_val[3] - extent_val[2]) / (extent_val[1] - extent_val[0]) / ve
     ax.set_xlim(extent_val[0], extent_val[1])
     ax.set_ylim(extent_val[2], extent_val[3])
 
