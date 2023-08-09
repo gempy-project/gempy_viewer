@@ -41,7 +41,7 @@ def plot_3d(
         kwargs_plotter=None,
         kwargs_plot_surfaces=None,
         image=False,
-        off_screen=False,
+        show=True,
         **kwargs
 ) -> GemPyToVista:
     """Plot 3-D geomodel."""
@@ -68,7 +68,7 @@ def plot_3d(
     kwargs_pyvista_bounds = kwargs_pyvista_bounds or {}
 
     if image is True:
-        off_screen = True
+        show = True
         kwargs_plotter['off_screen'] = True
         plotter_type = 'basic'
 
@@ -158,7 +158,7 @@ def plot_3d(
         plt.show(block=False)
         gempy_vista.p.close()
 
-    if off_screen is False:
+    if show is True:
         gempy_vista.p.show()
 
     return gempy_vista
