@@ -157,6 +157,7 @@ def plot_3d(
         plt.axis('off')
         plt.show(block=False)
         gempy_vista.p.close()
+        show= False
 
     if show is True:
         gempy_vista.p.show()
