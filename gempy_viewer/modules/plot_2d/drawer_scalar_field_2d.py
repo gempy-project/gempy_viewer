@@ -6,7 +6,7 @@ from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
-def plot_regular_grid_scalar_field(ax, slicer_data: SlicerData, block: np.ndarray, resolution: iter, **kwargs):
+def plot_regular_grid_scalar_field(ax, slicer_data: SlicerData, block: np.ndarray, resolution: iter, kwargs: dict):
     extent_val = [*ax.get_xlim(), *ax.get_ylim()]
 
     plot_block = block.reshape(resolution)
