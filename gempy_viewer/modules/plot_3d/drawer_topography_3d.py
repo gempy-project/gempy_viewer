@@ -25,13 +25,16 @@ def plot_topography_3d(
     grid = pv.StructuredGrid(yy, xx, topography.values_2d[:, :, 2])
     polydata = grid.extract_surface()
 
-    match topography_scalar_type:
-        case TopographyDataType.GEOMAP:
+    geological_map: np.array = solution.geological_map
+    is_geological_map = ~(geological_map is None or geological_map.size == 0)
+    
+    match topography_scalar_type, is_geological_map:
+        case TopographyDataType.GEOMAP, True:
             colors_hex = elements_colors
             colors_rgb_ = [list(mcolors.hex2color(val)) for val in colors_hex]  # Convert hex to RGB using list comprehension
 
             colors_rgb = np.array(colors_rgb_) * 255  # Multiply by 255 to get RGB values in [0, 255]
-            sel = np.round(solution.geological_map).astype(int) - 1
+            sel = np.round(geological_map).astype(int) - 1
             selected_colors = colors_rgb[sel]  # Use numpy advanced indexing to get the corresponding RGB values
             scalars_val = numpy_to_vtk(selected_colors, array_type=3)  # Convert to vtk array
 
@@ -41,17 +44,14 @@ def plot_topography_3d(
             show_scalar_bar = False
             scalars = 'id'
 
-        case TopographyDataType.TOPOGRAPHY:
-            scalars_val = topography[:, 2]
+        case TopographyDataType.SCALARS, True:
+            raise NotImplementedError('Not implemented yet')
+        case _:  # * Plot topography 
+            scalars_val = topography.values[:, 2]
             cm = 'terrain'
 
             show_scalar_bar = True
             scalars = 'height'
-
-        case TopographyDataType.SCALARS:
-            raise NotImplementedError('Not implemented yet')
-        case _:
-            raise AttributeError("Parameter scalars needs to be either 'geomap', 'topography' or 'scalars'")
 
     polydata['id'] = scalars_val
     polydata['height'] = topography.values[:, 2]
