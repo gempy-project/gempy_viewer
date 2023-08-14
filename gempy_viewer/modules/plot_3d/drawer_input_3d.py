@@ -37,6 +37,8 @@ def plot_surface_points(
 ):
 
     ids = surface_points.ids
+    if ids.shape[0] == 0:
+        return
     unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
     unique_values_order = unique_values[np.argsort(first_indices)] # Sort the unique values by their first appearance in `a`
 
