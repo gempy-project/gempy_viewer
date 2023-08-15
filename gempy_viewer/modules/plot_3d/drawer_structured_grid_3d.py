@@ -39,7 +39,7 @@ def plot_structured_grid(
             surface=topography_polydata,
             value=-10,
             crinkle=False,
-            invert=True
+            invert=False
         )
         
     add_regular_grid_mesh(

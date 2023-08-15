@@ -110,7 +110,7 @@ def plot_2d(model: GeoModel,
     data_to_show = DataToShow(
         n_axis=n_axis,
         show_data=kwargs.get('show_data', True),
-        show_results=kwargs.get('show_results', can_show_results),
+        _show_results=kwargs.get('show_results', can_show_results),
         show_surfaces=kwargs.get('show_surfaces', True),
         show_lith=kwargs.get('show_lith', True),
         show_scalar=kwargs.get('show_scalar', False),

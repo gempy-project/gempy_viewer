@@ -24,14 +24,14 @@ def plot_topography_3d(
 
     xx, yy = np.meshgrid(topography.x, topography.y)
 
-    grid = pv.StructuredGrid(yy, xx, topography.values_2d[:, :, 2])
+    grid = pv.StructuredGrid(xx, yy, topography.values_2d[:, :, 2])
     polydata = grid.extract_surface()
 
     if solution is None:
         is_geological_map = False
     else:
         geological_map: np.array = solution.geological_map
-        is_geological_map = ~(geological_map is None or geological_map.size == 0)
+        is_geological_map = not(geological_map is None or geological_map.size == 0)
     
     match topography_scalar_type, is_geological_map:
         case TopographyDataType.GEOMAP, True:
