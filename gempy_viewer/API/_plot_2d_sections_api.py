@@ -1,4 +1,5 @@
-﻿from typing import Optional
+﻿import warnings
+from typing import Optional
 import matplotlib.pyplot as plt
 
 from gempy.core.data import GeoModel
@@ -83,9 +84,12 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
         if data_to_show.show_boundaries[e] is True:
             match section_data.section_type:
                 case SectionType.SECTION:
-                    raise NotImplementedError('Section contacts not implemented yet. '
-                                              ' We need to pass scalar field for the sections grid')
-                    plot_section_contacts()
+                    warnings.warn(
+                        message='Section contacts not implemented yet. We need to pass scalar field for the sections grid',
+                        category=UserWarning
+                    )
+                    pass
+                    # plot_section_contacts()
                 case SectionType.ORTHOGONAL:
                     plot_regular_grid_contacts(
                         gempy_model=gempy_model,

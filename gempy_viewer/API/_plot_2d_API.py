@@ -11,8 +11,6 @@ from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, o
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
-
-
 def plot_2d(model: GeoModel,
             n_axis=None,
             section_names: list = None,
@@ -171,18 +169,26 @@ def plot_2d(model: GeoModel,
     return p
 
 
-def plot_section_traces(model):  
-    """Plot section traces of section grid in 2-D topview (xy).
-
-    Args:
-        model: Geomodel object with solutions.
-
-    Returns:
-        (Plot2D) Plot2D object
+def plot_section_traces(model: GeoModel, section_names: list[str] = None):
     """
-    pst = plot_2d(model, n_axis=1, direction=['z'], cell_number=[-1],
-                  show_data=False, show_boundaries=False, show_lith=False, show=False)
-    pst.plot_section_traces(pst.axes[0], show_data=False)
+    Plot section traces of section grid in 2-D topview (xy).
+    """
+    from gempy_viewer.modules.plot_2d.drawer_traces_2d import plot_section_traces as pst
+    plot: Plot2D = plot_2d(
+        model=model,
+        n_axis=1,
+        direction=['z'],
+        cell_number=[-1],
+        show_data=False,
+        show_boundaries=False,
+        show_lith=False,
+        show=False
+    )
+    pst(
+        gempy_model=model,
+        ax=plot.axes[0],
+        section_names=section_names
+    )
     return pst
 
 
