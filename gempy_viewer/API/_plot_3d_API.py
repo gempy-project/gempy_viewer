@@ -50,7 +50,7 @@ def plot_3d(
     data_to_show = DataToShow(
         n_axis=1,
         show_data=kwargs.get('show_data', True),
-        show_results=kwargs.get('show_results', can_show_results),
+        _show_results=kwargs.get('show_results', can_show_results),
         show_surfaces=kwargs.get('show_surfaces', True),
         show_lith=kwargs.get('show_lith', True),
         show_scalar=kwargs.get('show_scalar', False),
@@ -72,7 +72,12 @@ def plot_3d(
         kwargs_plotter['off_screen'] = True
         plotter_type = 'basic'
 
-   
+    if model.solutions is None:
+        data_to_show.show_results = False
+        solutions_raw_arrays = None
+    else:
+        solutions_raw_arrays = model.solutions.raw_arrays
+
     extent: np.ndarray = model.grid.regular_grid.extent
 
     gempy_vista = GemPyToVista(
@@ -86,14 +91,14 @@ def plot_3d(
         plot_topography_3d(
             gempy_vista=gempy_vista,
             topography=model.grid.topography,
-            solution=model.solutions.raw_arrays,
+            solution=solutions_raw_arrays,
             topography_scalar_type=topography_scalar_type,
             elements_colors=model.structural_frame.elements_colors_contacts,
             contours=kwargs_plot_topography.get('contours', True),
             **kwargs_plot_topography
         )
         
-    if data_to_show.show_boundaries[0] is True and len(model.solutions.raw_arrays.vertices) != 0:
+    if data_to_show.show_boundaries[0] is True and len(solutions_raw_arrays.vertices) != 0:
         plot_surfaces(
             gempy_vista=gempy_vista,
             structural_elements_with_solution=model.structural_frame.structural_elements,
@@ -119,7 +124,7 @@ def plot_3d(
             regular_grid=model.grid.regular_grid,
             scalar_data_type=ScalarDataType.LITHOLOGY,
             active_scalar_field="lith",
-            solution=model.solutions.raw_arrays,
+            solution=solutions_raw_arrays,
             cmap=get_geo_model_cmap(model.structural_frame.elements_colors_volumes),
             **kwargs_plot_structured_grid
         )
@@ -130,7 +135,7 @@ def plot_3d(
             regular_grid=model.grid.regular_grid,
             scalar_data_type=ScalarDataType.SCALAR_FIELD,
             active_scalar_field=active_scalar_field,
-            solution=model.solutions.raw_arrays,
+            solution=solutions_raw_arrays,
             cmap='viridis',
             **kwargs_plot_structured_grid
         )

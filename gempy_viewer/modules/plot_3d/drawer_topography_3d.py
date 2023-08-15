@@ -1,4 +1,6 @@
-﻿import numpy as np
+﻿from typing import Optional
+
+import numpy as np
 import pyvista as pv
 from vtkmodules.util.numpy_support import numpy_to_vtk
 import matplotlib.colors as mcolors
@@ -12,7 +14,7 @@ from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 def plot_topography_3d(
         gempy_vista: GemPyToVista,
         topography: Topography,
-        solution: RawArraysSolution,
+        solution: Optional[RawArraysSolution],
         topography_scalar_type: TopographyDataType,
         elements_colors: list[str],
         contours=True,
@@ -25,8 +27,11 @@ def plot_topography_3d(
     grid = pv.StructuredGrid(yy, xx, topography.values_2d[:, :, 2])
     polydata = grid.extract_surface()
 
-    geological_map: np.array = solution.geological_map
-    is_geological_map = ~(geological_map is None or geological_map.size == 0)
+    if solution is None:
+        is_geological_map = False
+    else:
+        geological_map: np.array = solution.geological_map
+        is_geological_map = ~(geological_map is None or geological_map.size == 0)
     
     match topography_scalar_type, is_geological_map:
         case TopographyDataType.GEOMAP, True:
