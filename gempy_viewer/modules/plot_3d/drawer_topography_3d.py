@@ -22,7 +22,7 @@ def plot_topography_3d(
 ):
     rgb = False
 
-    xx, yy = np.meshgrid(topography.x, topography.y)
+    xx, yy = np.meshgrid(topography.y, topography.x)
 
     grid = pv.StructuredGrid(xx, yy, topography.values_2d[:, :, 2])
     polydata = grid.extract_surface()
