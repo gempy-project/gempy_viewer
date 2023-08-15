@@ -24,7 +24,7 @@ def plot_topography_3d(
 
     xx, yy = np.meshgrid(topography.y, topography.x)
 
-    grid = pv.StructuredGrid(xx, yy, topography.values_2d[:, :, 2])
+    grid = pv.StructuredGrid(yy, xx, topography.values_2d[:, :, 2])
     polydata = grid.extract_surface()
 
     if solution is None:
