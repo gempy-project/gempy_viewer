@@ -105,6 +105,9 @@ def create_ax_section(plot_2d: Plot2D, gempy_grid: Grid, section_name, ax=None, 
             _setup_topography_section(ax)
             extent_val = gempy_grid.topography.extent
         else:
+            # Check if section is in the grid and if not raise an error
+            if section_name not in gempy_grid.sections.df.index:
+                raise ValueError('Section name not in grid')
             dist = gempy_grid.sections.df.loc[section_name, 'dist']
             _setup_section(
                 ax=ax,
