@@ -20,7 +20,7 @@ def plot_2d(model: GeoModel,
             legend: bool = True,
             ve=1,
             block=None,
-            regular_grid=None,
+            override_regular_grid=None,
             kwargs_topography=None,
             kwargs_regular_grid=None,
             kwargs_scalar_field=None,
@@ -43,7 +43,7 @@ def plot_2d(model: GeoModel,
         direction (str): Cartesian direction to be plotted (xyz)
         series_n (int): number of the scalar field.
         ve (float): vertical exageration
-        regular_grid (numpy.ndarray): Numpy array of the size of model.grid.regular_grid
+        override_regular_grid (numpy.ndarray): Numpy array of the size of model.grid.regular_grid. If provided, the regular grid will be overriden by this array.
         kwargs_topography (dict):
             * fill_contour
             * hillshade (bool): Calculate and add hillshading using elevation data
@@ -159,6 +159,7 @@ def plot_2d(model: GeoModel,
         data_to_show=data_to_show,
         ve=ve,
         series_n=series_n,
+        override_regular_grid=override_regular_grid,
         legend=legend,
         kwargs_topography=kwargs_topography,
         kwargs_scalar_field=kwargs_scalar_field,

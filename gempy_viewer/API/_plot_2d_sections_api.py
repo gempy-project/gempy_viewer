@@ -1,21 +1,24 @@
 ﻿import warnings
 from typing import Optional
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 from gempy.core.data import GeoModel
-from gempy_viewer.core.section_data_2d import SectionData2D, SectionType
 from gempy_viewer.core.data_to_show import DataToShow
-from ..modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
-from ..modules.plot_2d.drawer_traces_2d import plot_section_traces
-from ..modules.plot_2d.drawer_topography_2d import plot_topography
-from ..modules.plot_2d.drawer_contours_2d import plot_section_contacts, plot_regular_grid_contacts
+from gempy_viewer.core.section_data_2d import SectionData2D, SectionType
+from ..modules.plot_2d.drawer_contours_2d import plot_regular_grid_contacts
 from ..modules.plot_2d.drawer_input_2d import draw_data
 from ..modules.plot_2d.drawer_regular_grid_2d import plot_section_area, plot_regular_grid_area
 from ..modules.plot_2d.drawer_scalar_field_2d import plot_section_scalar_field, plot_regular_grid_scalar_field
+from ..modules.plot_2d.drawer_topography_2d import plot_topography
+from ..modules.plot_2d.drawer_traces_2d import plot_section_traces
+from ..modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
 
 
 def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
-                  ve: float, series_n: Optional[list[int]], legend: bool = True, kwargs_topography: dict = None, kwargs_scalar_field: dict = None):
+                  ve: float, series_n: Optional[list[int]], override_regular_grid: Optional[np.ndarray], legend: bool = True, kwargs_topography: dict = None,
+                  kwargs_scalar_field: dict = None):
     legend_already_added = False
 
     for e, section_data in enumerate(sections_data):
@@ -43,13 +46,22 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                         norm=get_geo_model_norm(gempy_model.structural_frame.number_of_elements),
                     )
                 case SectionType.ORTHOGONAL:
+                    if override_regular_grid is None:
+                        block_to_plot = gempy_model.solutions.raw_arrays.lith_block
+                        cmap = get_geo_model_cmap(gempy_model.structural_frame.elements_colors)
+                        norm = get_geo_model_norm(gempy_model.structural_frame.number_of_elements)
+                    else:
+                        block_to_plot = override_regular_grid
+                        cmap = None
+                        norm = None
+
                     plot_regular_grid_area(
                         ax=temp_ax,
                         slicer_data=section_data.slicer_data,
-                        block=gempy_model.solutions.raw_arrays.lith_block,  # * Only used for orthogonal sections
+                        block=block_to_plot,  # * Only used for orthogonal sections
                         resolution=gempy_model.grid.regular_grid.resolution,
-                        cmap=get_geo_model_cmap(gempy_model.structural_frame.elements_colors),
-                        norm=get_geo_model_norm(gempy_model.structural_frame.number_of_elements),
+                        cmap=cmap,
+                        norm=norm,
                     )
                 case _:
                     raise ValueError(f'Unknown section type: {section_data.section_type}')
@@ -117,12 +129,6 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                     ax=temp_ax,
                     section_names=[section_data.section_name for section_data in sections_data],
                 )
-
-        # ? This was just to plot directly a 2d array... mmmm not sure what to do with this
-        # if regular_grid is not None:
-        #     p.plot_regular_grid(temp_ax, block=regular_grid, section_name=sn,
-        #                         **kwargs_regular_grid)
-        # 
         # # endregion
 
         if legend and not legend_already_added:
@@ -141,11 +147,8 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                 temp_ax.legend_.set_zorder(10000)
             except AttributeError:
                 pass
-        
+
         if ve != 1:
             temp_ax.set_aspect(ve)
-        
-        # If there are section we need to shift one axis for the perpendicular
-        e = e + 1
 
     return
