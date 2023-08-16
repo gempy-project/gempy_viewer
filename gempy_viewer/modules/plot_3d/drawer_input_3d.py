@@ -85,8 +85,11 @@ def plot_orientations(
 
     _, unique_indices = np.unique(ids, return_index=True)
     unique_ids_in_order = ids[np.sort(unique_indices)]
-    cmap = get_geo_model_cmap(np.array(elements_colors)[unique_ids_in_order], reverse=False)
-    
+    # cmap = get_geo_model_cmap(np.array(elements_colors)[unique_ids_in_order], reverse=False)
+
+    # TODO: I am still trying to figure out colors and ids in orientations and surface points
+    cmap = get_geo_model_cmap(np.array(elements_colors), reverse=False)
+
     arrows = poly.glyph(
         orient='vectors',
         scale=False,
