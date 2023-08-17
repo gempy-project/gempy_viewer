@@ -1,4 +1,4 @@
-﻿from typing import Union, List
+﻿from typing import Union, List, Optional
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,8 +14,8 @@ from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 def plot_2d(model: GeoModel,
             n_axis=None,
             section_names: list = None,
-            cell_number: Union[int | list[int] | str | list[str]] = None,
-            direction: Union[str | list[str]] = 'y',
+            cell_number: Optional[Union[int | list[int] | str | list[str]]] = None,
+            direction: Optional[Union[str | list[str]]] = 'y',
             series_n: Union[int, List[int]] = 0,
             legend: bool = True,
             ve=1,
