@@ -14,7 +14,8 @@ from gempy_viewer.modules.plot_2d.drawer_input_2d import _projection_params_sect
 
 
 def sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, sections_names: list[str],
-                      n_axis: int, n_columns: int, ve: float, projection_distance: Optional[float] = None) -> list[SectionData2D]:
+                      n_axis: int, n_columns: int, ve: float, projection_distance: Optional[float] = None,
+                      e:int =0) -> list[SectionData2D]:
     section_data_list: list[SectionData2D] = []
     for e, sec_name in enumerate(sections_names):
         # region matplotlib configuration

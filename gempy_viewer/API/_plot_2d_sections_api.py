@@ -17,8 +17,11 @@ from ..modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_no
 
 
 def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
-                  ve: float, series_n: Optional[list[int]], override_regular_grid: Optional[np.ndarray], legend: bool = True, kwargs_topography: dict = None,
+                  ve: float = 1, series_n: Optional[list[int]] = None, override_regular_grid: Optional[np.ndarray] = None, legend: bool = True, kwargs_topography: dict = None,
                   kwargs_scalar_field: dict = None):
+    
+    series_n = series_n if series_n is not None else [0]
+    
     legend_already_added = False
 
     for e, section_data in enumerate(sections_data):

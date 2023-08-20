@@ -190,6 +190,8 @@ def plot_section_traces(model: GeoModel, section_names: list[str] = None):
         ax=plot.axes[0],
         section_names=section_names
     )
+    
+    plot.fig.show()
     return pst
 
 
