@@ -80,5 +80,11 @@ def _prepare_section_image(gempy_model: GeoModel, section_name: str, series_n: i
 
         l0, l1 = grid.sections.get_section_args(section_name)
         shape = grid.sections.df.loc[section_name, 'resolution']
-        image = legacy_solutions.sections[1][l0:l1].reshape(shape[0], shape[1]).T
+        
+        first_level_octree = gempy_model.solutions.octrees_output[0]
+        group_output = first_level_octree.outputs_centers[series_n]
+        scalar_field_ALL_sections = group_output.scalar_fields.exported_fields.scalar_field[group_output.grid.sections_slice]
+        scalar_field_THIS_section = scalar_field_ALL_sections[l0:l1]
+        image = scalar_field_THIS_section.reshape(shape[0], shape[1]).T
+        # image = legacy_solutions.sections[1][l0:l1].reshape(shape[0], shape[1]).T
     return image
