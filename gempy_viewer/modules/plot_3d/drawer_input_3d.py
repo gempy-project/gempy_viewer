@@ -44,12 +44,11 @@ def plot_surface_points(
     mapped_array = np.vectorize(mapping_dict.get)(ids)  # Map the original array to the new values
 
     # Selecting the surfaces to plot
+    xyz = surface_points.xyz
     if transfromed_data := True:  # TODO: Expose this to user
-        xyz = surface_points.model_transform.apply(surface_points.xyz)
-    else:
-        xyz = surface_points.xyz
+        xyz = surface_points.model_transform.apply(xyz)
+        
     poly = pv.PolyData(xyz)
-
     poly['id'] = mapped_array
 
     cmap = get_geo_model_cmap(
@@ -76,13 +75,19 @@ def plot_orientations(
         **kwargs
 ):
     orientations_xyz = orientations.xyz
+    orientations_grads = orientations.grads
+    
     if orientations_xyz.shape[0] == 0:
         return
-
+    if transfromed_data := True:
+        orientations_xyz = orientations.model_transform.apply(orientations_xyz)
+        orientations_grads = orientations.model_transform.transform_gradient(orientations_grads)
+        arrows_factor /=  orientations.model_transform.isometric_scale
+        
     poly = pv.PolyData(orientations_xyz)
     ids = orientations.ids
     poly['id'] = ids
-    poly['vectors'] = orientations.grads
+    poly['vectors'] = orientations_grads
 
     _, unique_indices = np.unique(ids, return_index=True)
     unique_ids_in_order = ids[np.sort(unique_indices)]
