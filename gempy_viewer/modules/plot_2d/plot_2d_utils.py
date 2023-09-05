@@ -1,4 +1,6 @@
-﻿import numpy as np
+﻿from typing import Sequence
+
+import numpy as np
 import matplotlib.colors as mcolors
 
 from gempy.core.data import Grid
@@ -123,7 +125,7 @@ def calculate_p1p2(regular_grid: RegularGrid, direction, cell_number):
     return p1, p2
 
 
-def get_geo_model_cmap(elements_colors: list[str], reverse: bool = True) -> mcolors.ListedColormap:
+def get_geo_model_cmap(elements_colors: Sequence[str], reverse: bool = True) -> mcolors.ListedColormap:
     if reverse:
         return mcolors.ListedColormap(elements_colors).reversed()
     else:

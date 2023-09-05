@@ -111,8 +111,8 @@ def plot_3d(
 
         plot_data(
             gempy_vista=gempy_vista,
-            surface_points=model.structural_frame.surface_points,
-            orientations=model.structural_frame.orientations,
+            surface_points=model.surface_points,
+            orientations=model.orientations,
             arrows_factor=arrow_size / (100 / min_axes),
             elements_colors=model.structural_frame.elements_colors_contacts[:-1],
             **kwargs_plot_data

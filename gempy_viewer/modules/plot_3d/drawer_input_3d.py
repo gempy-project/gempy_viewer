@@ -11,14 +11,13 @@ from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
 
 def plot_data(gempy_vista: GemPyToVista, surface_points: SurfacePointsTable, orientations: OrientationsTable, arrows_factor: float,
               elements_colors: list[str], **kwargs):
-
     plot_surface_points(
         gempy_vista=gempy_vista,
         surface_points=surface_points,
         elements_colors=elements_colors,
         **kwargs
     )
-    
+
     plot_orientations(
         gempy_vista=gempy_vista,
         orientations=orientations,
@@ -35,18 +34,21 @@ def plot_surface_points(
         render_points_as_spheres=True,
         point_size=10, **kwargs
 ):
-
     ids = surface_points.ids
     if ids.shape[0] == 0:
         return
     unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
-    unique_values_order = unique_values[np.argsort(first_indices)] # Sort the unique values by their first appearance in `a`
+    unique_values_order = unique_values[np.argsort(first_indices)]  # Sort the unique values by their first appearance in `a`
 
-    mapping_dict = {value: i for i, value in enumerate(unique_values_order)} # Use a dictionary to map the original numbers to new values
+    mapping_dict = {value: i for i, value in enumerate(unique_values_order)}  # Use a dictionary to map the original numbers to new values
     mapped_array = np.vectorize(mapping_dict.get)(ids)  # Map the original array to the new values
 
-    # Selecting the surfaces to plo
-    poly = pv.PolyData(surface_points.xyz)
+    # Selecting the surfaces to plot
+    if transfromed_data := True:  # TODO: Expose this to user
+        xyz = surface_points.model_transform.apply(surface_points.xyz)
+    else:
+        xyz = surface_points.xyz
+    poly = pv.PolyData(xyz)
 
     poly['id'] = mapped_array
 
@@ -73,11 +75,10 @@ def plot_orientations(
         clear=True,
         **kwargs
 ):
-
     orientations_xyz = orientations.xyz
     if orientations_xyz.shape[0] == 0:
         return
-    
+
     poly = pv.PolyData(orientations_xyz)
     ids = orientations.ids
     poly['id'] = ids
