@@ -17,8 +17,15 @@ from ..modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_no
 
 
 def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
-                  ve: float = 1, series_n: Optional[list[int]] = None, override_regular_grid: Optional[np.ndarray] = None, legend: bool = True, kwargs_topography: dict = None,
-                  kwargs_scalar_field: dict = None):
+                  ve: float = 1, series_n: Optional[list[int]] = None, override_regular_grid: Optional[np.ndarray] = None,
+                  legend: bool = True,
+                  kwargs_topography: dict = None,
+                  kwargs_scalar_field: dict = None,
+                  kwargs_lithology: dict = None
+                  ):
+    kwargs_lithology = kwargs_lithology if kwargs_lithology is not None else {}
+    kwargs_scalar_field = kwargs_scalar_field if kwargs_scalar_field is not None else {}
+    kwargs_topography = kwargs_topography if kwargs_topography is not None else {}
     
     series_n = series_n if series_n is not None else [0]
     
@@ -39,24 +46,27 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
 
         if data_to_show.show_lith[e] is True:
             _is_filled = True
+            cmap = kwargs_lithology.get('cmap', get_geo_model_cmap(gempy_model.structural_frame.elements_colors))
+            norm = kwargs_lithology.get('norm', get_geo_model_norm(gempy_model.structural_frame.number_of_elements))
+            
             match section_data.section_type:
                 case SectionType.SECTION:
                     plot_section_area(
                         gempy_model=gempy_model,
                         ax=temp_ax,
                         section_name=section_data.section_name,
-                        cmap=get_geo_model_cmap(gempy_model.structural_frame.elements_colors),
-                        norm=get_geo_model_norm(gempy_model.structural_frame.number_of_elements),
+                        cmap=cmap,
+                        norm=norm,
                     )
                 case SectionType.ORTHOGONAL:
                     if override_regular_grid is None:
                         block_to_plot = gempy_model.solutions.raw_arrays.lith_block
-                        cmap = get_geo_model_cmap(gempy_model.structural_frame.elements_colors)
-                        norm = get_geo_model_norm(gempy_model.structural_frame.number_of_elements)
+                        cmap = cmap
+                        norm = norm
                     else:
                         block_to_plot = override_regular_grid
-                        cmap = None
-                        norm = None
+                        cmap = kwargs_lithology.get('cmap', None)
+                        norm = kwargs_lithology.get('norm', None)
 
                     plot_regular_grid_area(
                         ax=temp_ax,
@@ -68,13 +78,6 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                     )
                 case _:
                     raise ValueError(f'Unknown section type: {section_data.section_type}')
-        # TODO: Revive the other solutions
-        # elif data_to_show.show_values[e] is True: # and model.solutions.values_matrix.shape[0] != 0:
-        #     _is_filled = True
-        #     p.plot_values(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
-        # elif show_block[e] is True and model.solutions.block_matrix.shape[0] != 0:
-        #     _is_filled = True
-        #     p.plot_block(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
         if data_to_show.show_scalar[e] is True:
             _is_filled = True
             match section_data.section_type:
@@ -132,7 +135,16 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                     ax=temp_ax,
                     section_names=[section_data.section_name for section_data in sections_data],
                 )
-        # # endregion
+
+        # TODO: Revive the other solutions
+        # elif data_to_show.show_values[e] is True: # and model.solutions.values_matrix.shape[0] != 0:
+        #     _is_filled = True
+        #     p.plot_values(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
+        # elif show_block[e] is True and model.solutions.block_matrix.shape[0] != 0:
+        #     _is_filled = True
+        #     p.plot_block(temp_ax, series_n=series_n[e], section_name=sn, **kwargs)
+        
+        # endregion
 
         if legend and not legend_already_added:
             colors = gempy_model.structural_frame.elements_colors_contacts
