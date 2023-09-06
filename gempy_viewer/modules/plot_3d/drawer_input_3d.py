@@ -45,7 +45,7 @@ def plot_surface_points(
 
     # Selecting the surfaces to plot
     xyz = surface_points.xyz
-    if transfromed_data := True:  # TODO: Expose this to user
+    if transfromed_data := False:  # TODO: Expose this to user
         xyz = surface_points.model_transform.apply(xyz)
         
     poly = pv.PolyData(xyz)
@@ -79,7 +79,7 @@ def plot_orientations(
     
     if orientations_xyz.shape[0] == 0:
         return
-    if transfromed_data := True:
+    if transfromed_data := False:
         orientations_xyz = orientations.model_transform.apply(orientations_xyz)
         orientations_grads = orientations.model_transform.transform_gradient(orientations_grads)
         arrows_factor /=  orientations.model_transform.isometric_scale
