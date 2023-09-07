@@ -1,27 +1,28 @@
 ﻿import numpy as np
 import pyvista as pv
 
+from gempy.core.data import GeoModel
 from gempy.core.data.orientations import OrientationsTable
 from gempy.core.data.surface_points import SurfacePointsTable
-from gempy_viewer.modules.plot_3d.vista import GemPyToVista
-from matplotlib import colors as mcolors
-
 from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
+from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 
-def plot_data(gempy_vista: GemPyToVista, surface_points: SurfacePointsTable, orientations: OrientationsTable, arrows_factor: float,
-              elements_colors: list[str], **kwargs):
+def plot_data(gempy_vista: GemPyToVista, 
+              model: GeoModel,
+              arrows_factor: float,
+              **kwargs):
     plot_surface_points(
         gempy_vista=gempy_vista,
-        surface_points=surface_points,
-        elements_colors=elements_colors,
+        surface_points=model.surface_points,
+        elements_colors=model.structural_frame.elements_colors_contacts,
         **kwargs
     )
 
     plot_orientations(
         gempy_vista=gempy_vista,
-        orientations=orientations,
-        elements_colors=elements_colors,
+        orientations=model.orientations,
+        elements_colors=model.structural_frame.elements_colors_orientations,
         arrows_factor=arrows_factor,
         **kwargs
     )

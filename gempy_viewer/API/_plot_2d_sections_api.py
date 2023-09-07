@@ -37,8 +37,8 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
         if data_to_show.show_data[e] is True:
             draw_data(
                 ax=temp_ax,
-                surface_points_colors=gempy_model.structural_frame.surface_points_colors,
-                orientations_colors=gempy_model.structural_frame.orientations_colors,
+                surface_points_colors=gempy_model.structural_frame.surface_points_colors_per_item,
+                orientations_colors=gempy_model.structural_frame.orientations_colors_per_item,
                 orientations=gempy_model.orientations.df.copy(),
                 points=gempy_model.surface_points.df.copy(),
                 slicer_data=section_data.slicer_data

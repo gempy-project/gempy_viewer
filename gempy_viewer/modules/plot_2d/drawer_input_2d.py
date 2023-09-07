@@ -52,8 +52,8 @@ def _plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, ce
     
     draw_data(
         ax=ax, 
-        surface_points_colors=gempy_model.structural_frame.surface_points_colors,
-        orientations_colors=gempy_model.structural_frame.orientations_colors,
+        surface_points_colors=gempy_model.structural_frame.surface_points_colors_per_item,
+        orientations_colors=gempy_model.structural_frame.orientations_colors_per_item,
         orientations=orientations,
         points=points,
         slicer_data=slicer_data
