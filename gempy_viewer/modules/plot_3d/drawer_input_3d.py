@@ -72,7 +72,6 @@ def plot_orientations(
         orientations: OrientationsTable,
         elements_colors: list[str],
         arrows_factor: float,
-        clear=True,
         **kwargs
 ):
     orientations_xyz = orientations.xyz
@@ -86,16 +85,24 @@ def plot_orientations(
         arrows_factor /=  orientations.model_transform.isometric_scale
         
     poly = pv.PolyData(orientations_xyz)
+    
     ids = orientations.ids
-    poly['id'] = ids
+    if ids.shape[0] == 0:
+        return
+    unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
+    unique_values_order = unique_values[np.argsort(first_indices)]  # Sort the unique values by their first appearance in `a`
+
+    mapping_dict = {value: i for i, value in enumerate(unique_values_order)}  # Use a dictionary to map the original numbers to new values
+    mapped_array = np.vectorize(mapping_dict.get)(ids)  # Map the original array to the new values
+    
+    poly['id'] = mapped_array
     poly['vectors'] = orientations_grads
 
-    _, unique_indices = np.unique(ids, return_index=True)
-    unique_ids_in_order = ids[np.sort(unique_indices)]
-    # cmap = get_geo_model_cmap(np.array(elements_colors)[unique_ids_in_order], reverse=False)
-
     # TODO: I am still trying to figure out colors and ids in orientations and surface points
-    cmap = get_geo_model_cmap(np.array(elements_colors), reverse=False)
+    cmap = get_geo_model_cmap(
+        elements_colors=np.array(elements_colors),
+        reverse=False
+    )
 
     arrows = poly.glyph(
         orient='vectors',
