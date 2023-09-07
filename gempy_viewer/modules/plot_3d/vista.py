@@ -138,9 +138,9 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
 
     def set_bounds(self, extent: List[float], **kwargs):
 
-        kwargs.setdefault('location', 'furthest')
-        kwargs.setdefault('grid', False)
-        kwargs.setdefault('use_2d', False)
+        # kwargs.setdefault('location', 'furthest')
+        # kwargs.setdefault('grid', False)
+        # kwargs.setdefault('use_2d', False)
 
         self.p.show_bounds(bounds=extent, **kwargs)
     
