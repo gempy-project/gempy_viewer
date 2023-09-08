@@ -23,8 +23,7 @@ def select_surfaces_data(data_df: pd.DataFrame, surfaces: Union[str, list[str]] 
     return geometric_data
 
 
-def set_scalar_bar(gempy_vista: GemPyToVista, n_labels: int, elements_names: list[str],
-                   surfaces_ids: np.ndarray):
+def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str], surfaces_ids: np.ndarray):
     import pyvista as pv
     
     # Get mapper actor 

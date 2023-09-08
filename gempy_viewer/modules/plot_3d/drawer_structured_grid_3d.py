@@ -68,6 +68,7 @@ def add_regular_grid_mesh(
         scalar_bar_args=gempy_vista.scalar_bar_arguments,
         interpolate_before_map=True,
         opacity=opacity,
+        clim=(0, cmap.N - 1),
         **kwargs
     )
 

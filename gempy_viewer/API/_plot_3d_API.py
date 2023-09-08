@@ -141,7 +141,6 @@ def plot_3d(
     if True: 
         set_scalar_bar(
             gempy_vista=gempy_vista,
-            n_labels=model.structural_frame.number_of_elements,
             elements_names = model.structural_frame.elements_names,
             surfaces_ids=model.structural_frame.elements_ids - 1
         )
