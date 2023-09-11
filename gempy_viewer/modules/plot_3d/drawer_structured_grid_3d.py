@@ -18,7 +18,7 @@ def plot_structured_grid(
         solution: RawArraysSolution,
         cmap: Union[mcolors.Colormap or str],
         active_scalar_field: Optional[str] = None,
-        opacity=.5,
+        opacity=.25,
         **kwargs
 ):
     structured_grid: pv.StructuredGrid | pv.PolyData = create_regular_mesh(gempy_vista, regular_grid)

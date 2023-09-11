@@ -19,6 +19,11 @@ def plot_topography(
         direction='y',
         block=None,
         **kwargs):
+    
+    # Check topography in model 
+    if gempy_model.grid.topography is None:
+        raise ValueError('Cannot plot topography, no topography in model')
+    
     hillshade = kwargs.get('hillshade', True)
     azdeg = kwargs.get('azdeg', 0)
     altdeg = kwargs.get('altdeg', 0)
