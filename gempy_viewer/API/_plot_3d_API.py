@@ -93,7 +93,7 @@ def plot_3d(
             topography=model.grid.topography,
             solution=solutions_raw_arrays,
             topography_scalar_type=topography_scalar_type,
-            elements_colors=model.structural_frame.elements_colors_contacts,
+            elements_colors=model.structural_frame.elements_colors[::-1],
             contours=kwargs_plot_topography.get('contours', True),
             **kwargs_plot_topography
         )

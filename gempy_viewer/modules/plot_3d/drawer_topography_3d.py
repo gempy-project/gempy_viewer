@@ -48,13 +48,15 @@ def plot_topography_3d(
 
             show_scalar_bar = False
             scalars = 'id'
+            clim = (0, len(elements_colors) - 1),
 
         case TopographyDataType.SCALARS, True:
             raise NotImplementedError('Not implemented yet')
+            clim = None
         case _:  # * Plot topography 
             scalars_val = topography.values[:, 2]
             cm = 'terrain'
-
+            clim = None
             show_scalar_bar = True
             scalars = 'height'
 
@@ -67,6 +69,7 @@ def plot_topography_3d(
         cmap=cm,
         rgb=rgb,
         show_scalar_bar=False,
+        clim= clim,
         **kwargs
     )
 
