@@ -58,7 +58,8 @@ def plot_2d(model: GeoModel,
         show_lith (bool): Show lithological block volumes. Defaults to True.
         show_scalar (bool): Show scalar field isolines. Defaults to False.
         show_boundaries (bool): Show surface boundaries as lines. Defaults to True.
-        show_topography (bool): Show topography on plot. Defaults to False.
+        show_topography (bool): Show topography on plot. Defaults to False. (Note Sep 2023) If True this is showing
+         the height map instead of the geological map.
 
     Returns:
         :class:`gempy.plot.visualization_2d.Plot2D`: Plot2D object
