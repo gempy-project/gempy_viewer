@@ -8,7 +8,6 @@ from matplotlib import pyplot as plt
 from gempy_viewer.core.slicer_data import SlicerData
 from gempy.core.data.grid_modules import RegularGrid, Sections
 from gempy.core.data.grid_modules import Topography
-from optional_dependencies import require_scipy
 from .plot_2d_utils import slice_cross_section
 from .visualization_2d import Plot2D
 from gempy.core.data import GeoModel
