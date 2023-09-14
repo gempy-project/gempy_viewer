@@ -4,7 +4,6 @@ import pytest
 
 import gempy as gp
 import gempy_viewer as gpv
-from gempy import GeoModel
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 from tests.conftest import _one_fault_model_generator
 
@@ -16,7 +15,7 @@ from tests.conftest import _one_fault_model_generator
 
 class TestPlot2DInputData:
     @pytest.fixture(scope='class')
-    def one_fault_model_no_interp(self) -> GeoModel:
+    def one_fault_model_no_interp(self) -> gp.data.GeoModel:
         geo_data = _one_fault_model_generator()
 
         return geo_data
@@ -104,7 +103,7 @@ class TestPlot2DInputData:
 
 class TestPlot2DSolutions:
     @pytest.fixture(scope='class')
-    def one_fault_model_topo_solution(self) -> GeoModel:
+    def one_fault_model_topo_solution(self) -> gp.data.GeoModel:
         one_fault_model = _one_fault_model_generator()
 
         gp.set_section_grid(
@@ -150,7 +149,7 @@ class TestPlot2DSolutions:
 
 class TestPlot2DSolutionsOctrees:
     @pytest.fixture(scope='class')
-    def one_fault_model_topo_solution_octrees(self) -> GeoModel:
+    def one_fault_model_topo_solution_octrees(self) -> gp.data.GeoModel:
         one_fault_model = _one_fault_model_generator()
         one_fault_model.grid.regular_grid.resolution = [2, 4, 2]
 

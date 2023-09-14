@@ -1,3 +1,4 @@
 gempy>=2023.1.0b0
 matplotlib
 numpy
+pandas

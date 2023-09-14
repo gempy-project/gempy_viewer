@@ -25,9 +25,7 @@ import warnings
 
 import matplotlib
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-sns.set_context('talk')
 plt.style.use(['seaborn-v0_8-white', 'seaborn-v0_8-talk'])
 
 warnings.filterwarnings("ignore", message="No contour levels were found")

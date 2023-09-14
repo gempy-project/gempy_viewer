@@ -4,11 +4,11 @@ import warnings
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-import scipy.spatial.distance as dd
 
 from gempy_viewer.core.slicer_data import SlicerData
 from gempy.core.data.grid_modules import RegularGrid, Sections
 from gempy.core.data.grid_modules import Topography
+from optional_dependencies import require_scipy
 from .plot_2d_utils import slice_cross_section
 from .visualization_2d import Plot2D
 from gempy.core.data import GeoModel
@@ -213,13 +213,15 @@ def _projection_params_section(grid: Grid, orientations: 'pd.DataFrame', points:
 
 
 def _projection_params_topography(topography: Topography, orientations, points, projection_distance, topography_compression: int = 5000):
+    import scipy.spatial.distance as dd
+    
     decimation_aux = int(topography.values.shape[0] / topography_compression)
     tpp = topography.values[::decimation_aux + 1, :]
-    cdist_sp = dd.cdist(
+    cdist_sp = scipy.spatial.distance.dd.cdist(
         XA=tpp,
         XB=points[['X', 'Y', 'Z']])
     cartesian_point_dist = (cdist_sp < projection_distance).sum(axis=0).astype(bool)
-    cdist_ori = dd.cdist(
+    cdist_ori = scipy.spatial.distance.dd.cdist(
         XA=tpp,
         XB=orientations[['X', 'Y', 'Z']]
     )
