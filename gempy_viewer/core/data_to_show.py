@@ -18,11 +18,11 @@ class DataToShow:
     
     def __post_init__(self):
         if self.show_results is False:
-            self.show_lith = [False]
-            self.show_values = [False]
-            self.show_block = [False]
-            self.show_scalar = [False]
-            self.show_boundaries = [False]
+            self.show_lith = False
+            self.show_values = False
+            self.show_block = False
+            self.show_scalar = False
+            self.show_boundaries = False
 
 
         if type(self.show_data) is bool:
