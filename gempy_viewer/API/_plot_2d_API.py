@@ -153,6 +153,7 @@ def plot_2d(model: GeoModel,
     )
 
     section_data_list.extend(orthogonal_section_data_list)
+    p.section_data_list = section_data_list
 
     plot_sections(
         gempy_model=model,
