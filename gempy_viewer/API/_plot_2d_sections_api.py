@@ -65,8 +65,8 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                         norm = norm
                     else:
                         block_to_plot = override_regular_grid
-                        cmap = kwargs_lithology.get('cmap', None)
-                        norm = kwargs_lithology.get('norm', None)
+                        cmap = kwargs_lithology.pop('cmap', None)
+                        norm = kwargs_lithology.pop('norm', None)
 
                     plot_regular_grid_area(
                         ax=temp_ax,
@@ -75,6 +75,7 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                         resolution=gempy_model.grid.regular_grid.resolution,
                         cmap=cmap,
                         norm=norm,
+                        imshow_kwargs=kwargs_lithology
                     )
                 case _:
                     raise ValueError(f'Unknown section type: {section_data.section_type}')

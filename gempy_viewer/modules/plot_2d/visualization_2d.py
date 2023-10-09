@@ -22,6 +22,7 @@ the potential field method.
 """
 
 import warnings
+from typing import Optional
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -35,6 +36,7 @@ warnings.filterwarnings("ignore", message="No contour levels were found")
 class Plot2D:
     # _color_lot: dict
     axes: list[plt.Axes]
+    section_data_list: Optional[list] = list()
 
     def __init__(self):
         # TODO: Moving this to plotting options

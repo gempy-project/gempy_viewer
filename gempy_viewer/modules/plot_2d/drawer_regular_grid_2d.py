@@ -8,7 +8,9 @@ from gempy_viewer.core.slicer_data import SlicerData
 
 # TODO: This name seems bad. This is plotting area basically?
 def plot_regular_grid_area(ax, slicer_data: SlicerData, block: np.ndarray, resolution: iter,
-                      cmap: mcolors.Colormap, norm: mcolors.Normalize):
+                      cmap: mcolors.Colormap, norm: mcolors.Normalize, imshow_kwargs: dict = None):
+    if imshow_kwargs is None:
+        imshow_kwargs = dict()  
     
     plot_block = block.reshape(resolution)
     image = plot_block[
@@ -16,16 +18,17 @@ def plot_regular_grid_area(ax, slicer_data: SlicerData, block: np.ndarray, resol
         slicer_data.regular_grid_y_idx,
         slicer_data.regular_grid_z_idx].T
 
-    ax.imshow(
+    im = ax.imshow(
         image,
         origin='lower',
         zorder=-100,
         cmap=cmap,
         norm=norm,
-        extent=[*ax.get_xlim(), *ax.get_ylim()]
+        extent=[*ax.get_xlim(), *ax.get_ylim()],
+        **imshow_kwargs
     )
     
-    return ax
+    return im
 
 
 def plot_section_area(gempy_model: GeoModel, ax, section_name: str, cmap: mcolors.Colormap, norm: mcolors.Normalize):
