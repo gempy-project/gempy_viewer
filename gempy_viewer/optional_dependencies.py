@@ -13,6 +13,12 @@ def require_pyvista():
         raise ImportError("The pyvista package is required to run this function.")
     return pv
 
+def require_scipy():
+    try:
+        import scipy
+    except ImportError:
+        raise ImportError("The scipy package is required to run this function.")
+    return scipy
 
 def require_skimage():
     try:
