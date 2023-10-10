@@ -3,7 +3,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import gempy as gp
 from gempy.core.data import GeoModel
+from gempy.core.data.grid_modules import RegularGrid
 from gempy_viewer.API._plot_2d_sections_api import plot_sections
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D
@@ -198,7 +200,7 @@ def plot_section_traces(model: GeoModel, section_names: list[str] = None):
     return pst
 
 
-def plot_topology(geo_model, edges, centroids, direction="y", scale=True,
+def plot_topology(regular_grid: RegularGrid, edges, centroids, direction="y", ax=None, scale=True,
                   label_kwargs=None, edge_kwargs=None):
     """Plot the topology adjacency graph in 2-D.
 
@@ -215,33 +217,36 @@ def plot_topology(geo_model, edges, centroids, direction="y", scale=True,
                 Defaults to None.
 
         """
-    res = geo_model._grid.regular_grid.resolution
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10, 10))
+        
+    res = regular_grid.resolution
     if direction == "y":
         c1, c2 = (0, 2)
-        e1 = geo_model._grid.regular_grid.extent[1] - geo_model._grid.regular_grid.extent[0]
-        e2 = geo_model._grid.regular_grid.extent[5] - geo_model._grid.regular_grid.extent[4]
-        d1 = geo_model._grid.regular_grid.extent[0]
-        d2 = geo_model._grid.regular_grid.extent[4]
-        # if len(list(centroids.items())[0][1]) == 2:
-        #     c1, c2 = (0, 1)
+        e1 = regular_grid.extent[1] - regular_grid.extent[0]
+        e2 = regular_grid.extent[5] - regular_grid.extent[4]
+        d1 = regular_grid.extent[0]
+        d2 = regular_grid.extent[4]
+        if len(list(centroids.items())[0][1]) == 2:
+            c1, c2 = (0, 1)
         r1 = res[0]
         r2 = res[2]
     elif direction == "x":
         c1, c2 = (1, 2)
-        e1 = geo_model._grid.regular_grid.extent[3] - geo_model._grid.regular_grid.extent[2]
-        e2 = geo_model._grid.regular_grid.extent[5] - geo_model._grid.regular_grid.extent[4]
-        d1 = geo_model._grid.regular_grid.extent[2]
-        d2 = geo_model._grid.regular_grid.extent[4]
+        e1 = regular_grid.extent[3] - regular_grid.extent[2]
+        e2 = regular_grid.extent[5] - regular_grid.extent[4]
+        d1 = regular_grid.extent[2]
+        d2 = regular_grid.extent[4]
         # if len(list(centroids.items())[0][1]) == 2:
         #     c1, c2 = (0, 1)
         r1 = res[1]
         r2 = res[2]
     elif direction == "z":
         c1, c2 = (0, 1)
-        e1 = geo_model._grid.regular_grid.extent[1] - geo_model._grid.regular_grid.extent[0]
-        e2 = geo_model._grid.regular_grid.extent[3] - geo_model._grid.regular_grid.extent[2]
-        d1 = geo_model._grid.regular_grid.extent[0]
-        d2 = geo_model._grid.regular_grid.extent[2]
+        e1 = regular_grid.extent[1] - regular_grid.extent[0]
+        e2 = regular_grid.extent[3] - regular_grid.extent[2]
+        d1 = regular_grid.extent[0]
+        d2 = regular_grid.extent[2]
         # if len(list(centroids.items())[0][1]) == 2:
         #     c1, c2 = (0, 1)
         r1 = res[0]
@@ -275,7 +280,7 @@ def plot_topology(geo_model, edges, centroids, direction="y", scale=True,
         if scale:
             x = x * e1 / r1 + d1
             y = y * e2 / r2 + d2
-        plt.plot(x, y, **lkw)
+        ax.plot(x, y, **lkw)
 
     for node in np.unique(list(edges)):
         x = centroids[node][c1]
@@ -283,4 +288,6 @@ def plot_topology(geo_model, edges, centroids, direction="y", scale=True,
         if scale:
             x = x * e1 / r1 + d1
             y = y * e2 / r2 + d2
-        plt.text(x, y, str(node), **tkw)
+        ax.text(x, y, str(node), **tkw)
+    
+    plt.show()
