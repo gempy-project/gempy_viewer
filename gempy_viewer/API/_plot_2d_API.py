@@ -96,7 +96,7 @@ def plot_2d(model: GeoModel,
         cell_number = [cell_number]
 
     if type(direction) != list:
-        direction = [direction]
+        direction = [direction] * len(cell_number)
 
     if n_axis is None:
         n_axis = len(section_names) + len(cell_number)
