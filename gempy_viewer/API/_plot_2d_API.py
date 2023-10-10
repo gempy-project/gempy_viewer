@@ -3,7 +3,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-import gempy as gp
 from gempy.core.data import GeoModel
 from gempy.core.data.grid_modules import RegularGrid
 from gempy_viewer.API._plot_2d_sections_api import plot_sections
@@ -227,6 +226,7 @@ def plot_topology(regular_grid: RegularGrid, edges, centroids, direction="y", ax
         e2 = regular_grid.extent[5] - regular_grid.extent[4]
         d1 = regular_grid.extent[0]
         d2 = regular_grid.extent[4]
+        # ? (miguel, Oct 23) When is this condition used?
         if len(list(centroids.items())[0][1]) == 2:
             c1, c2 = (0, 1)
         r1 = res[0]
@@ -237,8 +237,6 @@ def plot_topology(regular_grid: RegularGrid, edges, centroids, direction="y", ax
         e2 = regular_grid.extent[5] - regular_grid.extent[4]
         d1 = regular_grid.extent[2]
         d2 = regular_grid.extent[4]
-        # if len(list(centroids.items())[0][1]) == 2:
-        #     c1, c2 = (0, 1)
         r1 = res[1]
         r2 = res[2]
     elif direction == "z":
@@ -247,8 +245,6 @@ def plot_topology(regular_grid: RegularGrid, edges, centroids, direction="y", ax
         e2 = regular_grid.extent[3] - regular_grid.extent[2]
         d1 = regular_grid.extent[0]
         d2 = regular_grid.extent[2]
-        # if len(list(centroids.items())[0][1]) == 2:
-        #     c1, c2 = (0, 1)
         r1 = res[0]
         r2 = res[1]
 
