@@ -19,11 +19,10 @@ def plot_topography(
         direction='y',
         block=None,
         **kwargs):
-    
     # Check topography in model 
     if gempy_model.grid.topography is None:
         raise ValueError('Cannot plot topography, no topography in model')
-    
+
     hillshade = kwargs.get('hillshade', True)
     azdeg = kwargs.get('azdeg', 0)
     altdeg = kwargs.get('altdeg', 0)
@@ -54,7 +53,7 @@ def _plot_top_down_topography(altdeg, ax, azdeg, cmap, height_contours, fill_con
         mode='edge',
         anti_aliasing=True, preserve_range=False)
     values = topo_super_res[:, :, 2].T
-    
+
     if height_contours is True:
         CS = ax.contour(
             values,
@@ -64,7 +63,7 @@ def _plot_top_down_topography(altdeg, ax, azdeg, cmap, height_contours, fill_con
             origin='lower'
         )
         ax.clabel(CS, inline=1, fontsize=10, fmt='%d')
-        
+
     if fill_contour is True:
         CS2 = ax.contourf(
             values,
@@ -72,7 +71,7 @@ def _plot_top_down_topography(altdeg, ax, azdeg, cmap, height_contours, fill_con
             cmap=cmap
         )
         add_colorbar(axes=ax, label='elevation [m]', cs=CS2)
-        
+
     if hillshade is True:
         from matplotlib.colors import LightSource
 
