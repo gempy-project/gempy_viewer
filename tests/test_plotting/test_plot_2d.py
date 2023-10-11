@@ -67,7 +67,7 @@ class TestPlot2DInputData:
         gp.set_topography_from_random(
             grid=one_fault_model_no_interp.grid,
             fractal_dimension=1.2,
-            d_z=np.array([600, 2000]),
+            d_z=np.array([600, 1000]),
             topography_resolution=np.array([60, 60])
         )
 
@@ -88,7 +88,7 @@ class TestPlot2DInputData:
         gp.set_topography_from_random(
             grid=one_fault_model_no_interp.grid,
             fractal_dimension=1.2,
-            d_z=np.array([600, 2000]),
+            d_z=np.array([600, 1000]),
             topography_resolution=np.array([60, 60])
         )
 
@@ -165,7 +165,7 @@ class TestPlot2DSolutionsOctrees:
         gp.set_topography_from_random(
             grid=one_fault_model.grid,
             fractal_dimension=1.2,
-            d_z=np.array([600, 2000]),
+            d_z=np.array([600, 1000]),
             topography_resolution=np.array([60, 60])
         )
 
