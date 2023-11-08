@@ -18,7 +18,7 @@ def plot_regular_grid_area(ax, slicer_data: SlicerData, block: np.ndarray, resol
     image = plot_block[
         slicer_data.regular_grid_x_idx,
         slicer_data.regular_grid_y_idx,
-        slicer_data.regular_grid_z_idx]
+        slicer_data.regular_grid_z_idx].T
 
     im = ax.imshow(
         image,
@@ -31,8 +31,8 @@ def plot_regular_grid_area(ax, slicer_data: SlicerData, block: np.ndarray, resol
     )
 
     if plot_grid:
-        ticks_x = np.linspace(ax.get_xlim()[0], ax.get_xlim()[1], image.shape[0])
-        ticks_y = np.linspace(ax.get_ylim()[0], ax.get_ylim()[1], image.shape[1])
+        ticks_x = np.linspace(ax.get_xlim()[0], ax.get_xlim()[1], image.shape[1] + 1)
+        ticks_y = np.linspace(ax.get_ylim()[0], ax.get_ylim()[1], image.shape[0] + 1)
         ax.set_xticks(ticks_x, minor=True)
         ax.set_yticks(ticks_y, minor=True)
         ax.grid(which="minor",linestyle='-', linewidth='3', color='grey', alpha=0.7)
