@@ -155,6 +155,8 @@ def create_axes_orthogonal(plot_2d: Plot2D, gempy_grid: Grid, cell_number,
     ax.cell_number = cell_number
     ax.direction = direction
     ax.tick_params(axis='x', labelrotation=30)
+
+   
     plot_2d.axes = np.append(plot_2d.axes, ax)
     plot_2d.fig.tight_layout()
 
