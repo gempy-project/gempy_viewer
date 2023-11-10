@@ -133,4 +133,5 @@ def get_geo_model_cmap(elements_colors: Sequence[str], reverse: bool = True) -> 
 
 
 def get_geo_model_norm(number_elements: int) -> mcolors.Normalize:
-    return mcolors.Normalize(vmin=0.5, vmax=number_elements + 0.5)
+    # return mcolors.Normalize(vmin=0.5, vmax=number_elements + 0.5)
+    return mcolors.Normalize(vmin=0, vmax=number_elements + 0.01)
