@@ -46,8 +46,8 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
 
         if data_to_show.show_lith[e] is True:
             _is_filled = True
-            cmap = kwargs_lithology.get('cmap', get_geo_model_cmap(gempy_model.structural_frame.elements_colors))
-            norm = kwargs_lithology.get('norm', get_geo_model_norm(gempy_model.structural_frame.number_of_elements))
+            cmap = kwargs_lithology.pop('cmap', get_geo_model_cmap(gempy_model.structural_frame.elements_colors))
+            norm = kwargs_lithology.pop('norm', get_geo_model_norm(gempy_model.structural_frame.number_of_elements))
             
             match section_data.section_type:
                 case SectionType.SECTION:
@@ -65,8 +65,8 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                         norm = norm
                     else:
                         block_to_plot = override_regular_grid
-                        cmap = kwargs_lithology.pop('cmap', None)
-                        norm = kwargs_lithology.pop('norm', None)
+                        # cmap = kwargs_lithology.pop('cmap', None)
+                        # norm = kwargs_lithology.pop('norm', None)
 
                     plot_regular_grid_area(
                         ax=temp_ax,
