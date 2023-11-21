@@ -22,12 +22,9 @@
 
     @author: Alex Schaaf, Elisa Heim, Miguel de la Varga
 """
-# This is for sphenix to find the packages
-# sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-
 import matplotlib.pyplot as plt
 
-from optional_dependencies import require_pandas
+from gempy_viewer.optional_dependencies import require_pandas
 
 try:
     import mplstereonet
