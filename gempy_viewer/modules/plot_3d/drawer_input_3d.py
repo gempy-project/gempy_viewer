@@ -1,11 +1,11 @@
 ﻿import numpy as np
-import pyvista as pv
 
 from gempy.core.data import GeoModel
 from gempy.core.data.orientations import OrientationsTable
 from gempy.core.data.surface_points import SurfacePointsTable
 from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
+from gempy_viewer.optional_dependencies import require_pyvista
 
 
 def plot_data(gempy_vista: GemPyToVista, 
@@ -48,7 +48,8 @@ def plot_surface_points(
     xyz = surface_points.xyz
     if transfromed_data := False:  # TODO: Expose this to user
         xyz = surface_points.model_transform.apply(xyz)
-        
+
+    pv = require_pyvista()
     poly = pv.PolyData(xyz)
     poly['id'] = mapped_array
 
@@ -83,7 +84,8 @@ def plot_orientations(
         orientations_xyz = orientations.model_transform.apply(orientations_xyz)
         orientations_grads = orientations.model_transform.transform_gradient(orientations_grads)
         arrows_factor /=  orientations.model_transform.isometric_scale
-        
+
+    pv = require_pyvista()
     poly = pv.PolyData(orientations_xyz)
     
     ids = orientations.ids

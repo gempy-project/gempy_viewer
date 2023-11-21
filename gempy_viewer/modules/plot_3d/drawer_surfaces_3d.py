@@ -1,9 +1,8 @@
-﻿import pyvista as pv
-import numpy as np
+﻿import numpy as np
 
 from gempy.core.data.structural_element import StructuralElement
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
-
+from ...optional_dependencies import require_pyvista
 
 
 def plot_surfaces(
@@ -11,6 +10,7 @@ def plot_surfaces(
         structural_elements_with_solution: list[StructuralElement],
         **kwargs
 ):
+    pv = require_pyvista()
     # ! If the order of the meshes does not match the order of scalar_field_at_surface points we need to reorder them in 'multi_scalar_dual_contouring.py'
     
     topography_mesh = gempy_vista.surface_poly.get('topography', None)

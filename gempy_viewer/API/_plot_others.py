@@ -26,7 +26,8 @@
 # sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
 import matplotlib.pyplot as plt
-import pandas as pn
+
+from optional_dependencies import require_pandas
 
 try:
     import mplstereonet
@@ -51,11 +52,10 @@ def plot_stereonet(self, litho=None, planes=True, poles=True,
 
     if single_plots is False:
         fig, ax = mplstereonet.subplots(figsize=(5, 5))
+        pn = require_pandas()
         df_sub2 = pn.DataFrame()
         for i in litho:
-            df_sub2 = df_sub2.append(self.model._orientations.df[
-                                         self.model._orientations.df[
-                                             'surface'] == i])
+            df_sub2 = df_sub2.append(self.model._orientations.df[ self.model._orientations.df[ 'surface'] == i])
 
     for formation in litho:
         if single_plots:

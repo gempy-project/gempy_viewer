@@ -1,14 +1,13 @@
 ﻿from typing import Union, Optional
 
 import numpy as np
-import pyvista as pv
 from matplotlib import colors as mcolors
-from pyvista import PolyData
 
 from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.core.scalar_data_type import ScalarDataType
 from gempy.core.data.grid_modules import RegularGrid, Topography
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
+from gempy_viewer.optional_dependencies import require_pyvista
 
 
 def plot_structured_grid(
@@ -21,6 +20,7 @@ def plot_structured_grid(
         opacity=.25,
         **kwargs
 ):
+    pv = require_pyvista()
     structured_grid: pv.StructuredGrid | pv.PolyData = create_regular_mesh(gempy_vista, regular_grid)
 
     # Set the scalar field-Activate it-getting cmap?
@@ -35,7 +35,7 @@ def plot_structured_grid(
         structured_grid=structured_grid,
         active_scalar_field=active_scalar_field
     )
-    topography_polydata: PolyData = gempy_vista.surface_poly.get('topography', None)
+    topography_polydata: pv.PolyData = gempy_vista.surface_poly.get('topography', None)
     if topography_polydata is not None:
         structured_grid = structured_grid.clip_surface(
             surface=topography_polydata,
@@ -55,7 +55,7 @@ def plot_structured_grid(
 
 def add_regular_grid_mesh(
         gempy_vista: GemPyToVista,
-        structured_grid: pv.StructuredGrid,
+        structured_grid: 'pv.StructuredGrid',
         cmap: Union[mcolors.Colormap or str],
         opacity: float,
         **kwargs
@@ -73,7 +73,7 @@ def add_regular_grid_mesh(
     )
 
 
-def create_regular_mesh(gempy_vista: GemPyToVista, regular_grid: RegularGrid) -> pv.StructuredGrid:
+def create_regular_mesh(gempy_vista: GemPyToVista, regular_grid: RegularGrid) -> "pv.StructuredGrid":
     gempy_vista._grid_values = regular_grid.values
 
     if False:
@@ -85,16 +85,18 @@ def create_regular_mesh(gempy_vista: GemPyToVista, regular_grid: RegularGrid) ->
         z = np.linspace(regular_grid.extent[4], regular_grid.extent[5], regular_grid.resolution[2] + 1)
 
         x, y, z = np.meshgrid(x, y, z, indexing='ij')
+        pv = require_pyvista()
         regular_grid_mesh = pv.StructuredGrid( x , y, z ) 
     return regular_grid_mesh
 
 
-def _mask_topography(structured_grid: pv.StructuredGrid, topography: Topography) -> pv.StructuredGrid:
+def _mask_topography(structured_grid: "pv.StructuredGrid", topography: Topography) -> "pv.StructuredGrid":
     # ? Obsolete? I am using pyvista clipping and seems to do the job very good.
     threshold = -100
     structured_grid.active_scalars[topography.topography_mask.ravel(order='C')] = threshold - 1
 
     # ? Is this messing up the data type?
+    pv = require_pyvista()
     structured_grid: pv.StructuredGrid = structured_grid.threshold(
         value=threshold,
         method="upper"
@@ -105,10 +107,10 @@ def _mask_topography(structured_grid: pv.StructuredGrid, topography: Topography)
 
 def set_scalar_data(
         data: RawArraysSolution,
-        structured_grid: pv.StructuredGrid,
+        structured_grid: "pv.StructuredGrid",
         resolution: np.ndarray,
         scalar_data_type: ScalarDataType,
-) -> pv.StructuredGrid:
+) -> "pv.StructuredGrid":
     
     def _convert_sol_array_to_fortran_order(array: np.ndarray) -> np.ndarray:
         return array.reshape(*resolution, order='C').ravel(order='F')
@@ -131,7 +133,7 @@ def set_scalar_data(
     return structured_grid  # , cmap
 
 
-def set_active_scalar_fields(structured_grid: pv.StructuredGrid, active_scalar_field: Optional[str]) -> pv.StructuredGrid:
+def set_active_scalar_fields(structured_grid: "pv.StructuredGrid", active_scalar_field: Optional[str]) -> "pv.StructuredGrid":
     if active_scalar_field is None:
         active_scalar_field = structured_grid.array_names[0]
 

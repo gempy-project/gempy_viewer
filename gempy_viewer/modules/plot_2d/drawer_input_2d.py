@@ -2,7 +2,6 @@
 import warnings
 
 import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plt
 
 from gempy_viewer.core.slicer_data import SlicerData
@@ -78,7 +77,7 @@ def _plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, ce
 
 # TODO: This could be public and the slice just a class yes!
 def draw_data(ax, surface_points_colors: list[str], orientations_colors: list[str],
-              orientations: pd.DataFrame, points: pd.DataFrame, slicer_data: SlicerData):
+              orientations: 'pd.DataFrame', points: 'pd.DataFrame', slicer_data: SlicerData):
     
     _draw_surface_points(ax, points, slicer_data, surface_points_colors)
     _draw_orientations(ax, orientations, orientations_colors, slicer_data)

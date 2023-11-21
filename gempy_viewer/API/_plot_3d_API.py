@@ -5,11 +5,6 @@ from gempy.core.data import GeoModel
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.scalar_data_type import ScalarDataType, TopographyDataType
 from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
-from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
-from gempy_viewer.modules.plot_3d.drawer_structured_grid_3d import plot_structured_grid
-from gempy_viewer.modules.plot_3d.drawer_surfaces_3d import plot_surfaces
-from gempy_viewer.modules.plot_3d.drawer_topography_3d import plot_topography_3d
-from gempy_viewer.modules.plot_3d.plot_3d_utils import set_scalar_bar
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 try:
@@ -44,7 +39,15 @@ def plot_3d(
         show=True,
         **kwargs
 ) -> GemPyToVista:
+    
     """Plot 3-D geomodel."""
+
+    from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
+    from gempy_viewer.modules.plot_3d.drawer_structured_grid_3d import plot_structured_grid
+    from gempy_viewer.modules.plot_3d.drawer_surfaces_3d import plot_surfaces
+    from gempy_viewer.modules.plot_3d.drawer_topography_3d import plot_topography_3d
+    from gempy_viewer.modules.plot_3d.plot_3d_utils import set_scalar_bar
+    
     # * Grab from kwargs all the show arguments and create the proper class. This is for backwards compatibility
     can_show_results = model.solutions is not None  # and model.solutions.lith_block.shape[0] != 0
     data_to_show = DataToShow(

@@ -1,14 +1,13 @@
 ﻿from typing import Optional
 
 import numpy as np
-import pyvista as pv
-from vtkmodules.util.numpy_support import numpy_to_vtk
 import matplotlib.colors as mcolors
 
 from gempy.core.data.grid_modules import Topography
 from gempy_viewer.core.scalar_data_type import TopographyDataType
 from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
+from ...optional_dependencies import require_pyvista
 
 
 def plot_topography_3d(
@@ -20,6 +19,9 @@ def plot_topography_3d(
         contours=True,
         **kwargs
 ):
+    pv = require_pyvista()
+    from vtkmodules.util.numpy_support import numpy_to_vtk
+    
     rgb = False
 
     xx, yy = np.meshgrid(topography.y, topography.x)

@@ -29,17 +29,7 @@ import warnings
 from typing import Union, List, Optional
 
 import numpy as np
-import pyvista as pv
 
-# TODO Check if this is necessary if it is implemented in the API
-try:
-    import pyvistaqt as pvqt
-
-    PYVISTA_IMPORT = True
-except ImportError:
-    PYVISTA_IMPORT = False
-
-from gempy_viewer.modules.plot_3d.vista_aux import WidgetsCallbacks, RenderChanges
 import matplotlib
 
 warnings.filterwarnings("ignore",
@@ -53,8 +43,11 @@ try:
 except ImportError:
     VTK_IMPORT = False
 
+from gempy_viewer.optional_dependencies import require_pyvista
 
-class GemPyToVista(WidgetsCallbacks, RenderChanges):
+
+
+class GemPyToVista:
 
     def __init__(self, extent: Union[np.ndarray | list[float]], plotter_type: str = 'basic',
                  live_updating=False, pyvista_bounds_kwargs: Optional[dict] = None, **kwargs):
@@ -72,16 +65,14 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
 
         """
 
+        pv = require_pyvista()
+        
         if pyvista_bounds_kwargs is None:
             pyvista_bounds_kwargs = {}
-            
+
         # Override default notebook value
         pv.set_plot_theme("document")
         kwargs['notebook'] = kwargs.get('notebook', False)
-
-        # Model properties
-        # self.model = model
-        # self.extent = model._grid.regular_grid.extent if extent is None else extent
 
         # plotting options
         self.live_updating = live_updating
@@ -94,13 +85,7 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
             raise NotImplementedError
             # self.p = pv.PlotterITK()
         elif plotter_type == 'background':
-            # TODO: Move this to the module to require optional dependencies
-            try:
-                self.p = pv.BackgroundPlotter(**kwargs)
-            except pv.QtDeprecationError:
-                from pyvistaqt import BackgroundPlotter
-                self.p = BackgroundPlotter(**kwargs)
-            self.p.view_isometric(negative=False)
+            raise NotImplementedError
         else:
             raise AttributeError('Plotter type must be basic, background or notebook.')
 
@@ -135,15 +120,9 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
         self.topo_edges = None
         self.topo_ctrs = None
 
-
     def set_bounds(self, extent: List[float], **kwargs):
-
-        # kwargs.setdefault('location', 'furthest')
-        # kwargs.setdefault('grid', False)
-        # kwargs.setdefault('use_2d', False)
-
         self.p.show_bounds(bounds=extent, **kwargs)
-    
+
     @property
     def scalar_bar_arguments(self):
         sargs = dict(
@@ -159,7 +138,3 @@ class GemPyToVista(WidgetsCallbacks, RenderChanges):
             fmt="%.0f",
         )
         return sargs
-
-
-
-    
