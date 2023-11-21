@@ -17,7 +17,7 @@ def plot_structured_grid(
         solution: RawArraysSolution,
         cmap: Union[mcolors.Colormap or str],
         active_scalar_field: Optional[str] = None,
-        opacity=.25,
+        opacity=.5,
         **kwargs
 ):
     pv = require_pyvista()
