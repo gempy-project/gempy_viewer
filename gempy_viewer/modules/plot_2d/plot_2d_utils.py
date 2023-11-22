@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.colors as mcolors
 
 from gempy.core.data import Grid
+from gempy.core.data.core_utils import calculate_line_coordinates_2points, interpolate_zvals_at_xy
 from gempy.core.data.grid_modules import grid_types
 from gempy.core.data.grid_modules import Sections, RegularGrid
 
@@ -100,8 +101,8 @@ def slice_topo_4_sections(grid: Grid, p1, p2, resx, method='interp2d'):
     Returns:
         :return: returns x,y,z values of the topography along the section
     """
-    xy = grid.sections.calculate_line_coordinates_2points(p1, p2, resx)
-    z = grid.sections.interpolate_zvals_at_xy(xy, grid.topography, method)
+    xy = calculate_line_coordinates_2points(p1, p2, resx)
+    z = interpolate_zvals_at_xy(xy, grid.topography, method)
     return xy[:, 0], xy[:, 1], z
 
 
