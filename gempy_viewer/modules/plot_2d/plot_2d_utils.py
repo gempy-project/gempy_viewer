@@ -57,7 +57,7 @@ def make_section_xylabels(sections: Sections, section_name, n=5):
     j = np.where(sections.names == section_name)[0][0]
     startend = list(sections.section_dict.values())[j]
     p1, p2 = startend[0], startend[1]
-    xy = sections.calculate_line_coordinates_2points(p1, p2, n)
+    xy = calculate_line_coordinates_2points(p1, p2, n)
     if len(np.unique(xy[:, 0])) == 1:
         labels = xy[:, 1].astype(int)
         axname = 'Y'

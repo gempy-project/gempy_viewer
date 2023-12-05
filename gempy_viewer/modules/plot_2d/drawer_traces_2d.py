@@ -6,6 +6,8 @@ from gempy.core.data.grid_modules import Sections
 
 def plot_section_traces(gempy_model: GeoModel, ax, section_names: list[str] = None):
     sections: Sections = gempy_model.grid.sections
+    if sections is None:
+        return 
     
     if section_names is None:
         section_names = list(sections.names)

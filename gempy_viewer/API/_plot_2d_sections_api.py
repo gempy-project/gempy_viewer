@@ -65,8 +65,6 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                         norm = norm
                     else:
                         block_to_plot = override_regular_grid
-                        # cmap = kwargs_lithology.pop('cmap', None)
-                        # norm = kwargs_lithology.pop('norm', None)
 
                     plot_regular_grid_area(
                         ax=temp_ax,
@@ -108,7 +106,6 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                         category=UserWarning
                     )
                     pass
-                    # plot_section_contacts()
                 case SectionType.ORTHOGONAL:
                     plot_regular_grid_contacts(
                         gempy_model=gempy_model,
