@@ -114,7 +114,7 @@ class TestPlot2DSolutions:
 
         gp.set_topography_from_random(
             grid=one_fault_model.grid,
-            fractal_dimension=1.2,
+            fractal_dimension=1.8,
             d_z=np.array([600, 2000]),
             topography_resolution=np.array([60, 60])
         )
@@ -131,7 +131,7 @@ class TestPlot2DSolutions:
             model=one_fault_model_topo_solution,
             section_names=['section_SW-NE', 'section_NW-SE', 'topography'],
             direction=['x', 'y', 'y'], cell_number=['mid', 'mid', 'mid'],
-            show_lith=[False, False, False, True, True, True],
+            show_lith=[False, False, True, True, True, True],
             show_boundaries=[False, False, False, True, True, True],
             show_scalar=[False, False, False, False, True, True],
             series_n=[0, 0, 0, 0, 0, 1],

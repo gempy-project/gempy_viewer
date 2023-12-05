@@ -119,7 +119,7 @@ def _plot_mask_on_orthogonal_cross_section(ax, cell_number, direction, grid, reg
                        [ext[0], regular_grid.extent[5]],
                        [ext[0], a[:, 1][0]]))
         line = a.reshape(-1, 2)
-        ax.fill(line[:, 0], line[:, 1], color='k')
+        ax.fill(line[:, 0], line[:, 1], color='k', zorder=100)
     except IndexError:
         warnings.warn('Topography needs to be a raster to be able to plot it')
 
@@ -141,4 +141,4 @@ def _plot_mask_on_vertical_cross_section(ax, grid, regular_grid, section_name):
                      regular_grid.extent[5]],
                     [0, regular_grid.extent[5]],
                     [0, a[:, 1][0]])).reshape(-1, 2)
-    ax.fill(xy[:, 0], xy[:, 1], 'k', zorder=10)
+    ax.fill(xy[:, 0], xy[:, 1], 'k', zorder=100)

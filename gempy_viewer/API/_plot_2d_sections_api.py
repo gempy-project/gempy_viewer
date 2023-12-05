@@ -119,10 +119,15 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                     raise ValueError(f'Unknown section type: {section_data.section_type}')
 
         if data_to_show.show_topography[e] is True:
+            if data_to_show.show_lith[e] is True:
+                fill_contour = False
+            else:
+                fill_contour = kwargs_topography.get('fill_contour', True)
+            
             plot_topography(
                 gempy_model=gempy_model,
                 ax=temp_ax,
-                fill_contour=kwargs_topography.get('fill_contour', True),
+                fill_contour=fill_contour,
                 section_name=section_data.section_name,
                 **kwargs_topography
             )
