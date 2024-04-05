@@ -14,14 +14,14 @@ def plot_data(gempy_vista: GemPyToVista,
               **kwargs):
     plot_surface_points(
         gempy_vista=gempy_vista,
-        surface_points=model.surface_points,
+        surface_points=model.surface_points_copy,
         elements_colors=model.structural_frame.elements_colors_contacts,
         **kwargs
     )
 
     plot_orientations(
         gempy_vista=gempy_vista,
-        orientations=model.orientations,
+        orientations=model.orientations_copy,
         elements_colors=model.structural_frame.elements_colors_orientations,
         arrows_factor=arrows_factor,
         **kwargs
