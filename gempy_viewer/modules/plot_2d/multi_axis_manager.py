@@ -34,8 +34,8 @@ def sections_iterator(plot_2d: Plot2D, gempy_model: GeoModel, sections_names: li
         # endregion 
         slicer_data: SlicerData = _projection_params_section(
             grid=gempy_model.grid,
-            orientations=gempy_model.orientations.df.copy(),
-            points=gempy_model.surface_points.df.copy(),
+            orientations=gempy_model.orientations_copy.df.copy(),
+            points=gempy_model.surface_points_copy.df.copy(),
             projection_distance=projection_distance,
             section_name=sec_name
         )
@@ -76,8 +76,8 @@ def orthogonal_sections_iterator(initial_axis: int, plot_2d: Plot2D, gempy_model
         # endregion 
         slicer_data: SlicerData = _projection_params_regular_grid(
             regular_grid=gempy_model.grid.regular_grid,
-            orientations=gempy_model.orientations.df.copy(),
-            points=gempy_model.surface_points.df.copy(),
+            orientations=gempy_model.orientations_copy.df.copy(),
+            points=gempy_model.surface_points_copy.df.copy(),
             projection_distance=projection_distance,
             cell_number=cell_number[e],
             direction=direction[e]

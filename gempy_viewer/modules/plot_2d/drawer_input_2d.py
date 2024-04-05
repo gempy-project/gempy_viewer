@@ -21,8 +21,8 @@ def _plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, ce
         projection_distance = 0.2 * gempy_model.transform.isometric_scale
 
     # TODO: This are not here 
-    points = gempy_model.surface_points.df.copy()
-    orientations = gempy_model.orientations.df.copy()
+    points = gempy_model.surface_points_copy.df.copy()
+    orientations = gempy_model.orientations_copy.df.copy()
 
     # TODO: This is a weird check to do this deep
     section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
