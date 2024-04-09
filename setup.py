@@ -1,9 +1,13 @@
-﻿# setup.py for gempy_viewer. Requierements are numpy and matplotlib
+﻿from setuptools import setup, find_packages
 
-from setuptools import setup, find_packages
-import gempy 
-
-version = gempy.__version__
+# def read_version():
+#     with open('gempy/__init__.py', 'r', encoding='utf-8') as f:
+#         for line in f:
+#             if line.startswith('__version__'):
+#                 return line.split('=')[1].strip().strip("'").strip('"')
+# 
+# 
+# version = read_version()
 
 
 def read_requirements(file_name):
@@ -13,7 +17,7 @@ def read_requirements(file_name):
 
 setup(
     name='gempy_viewer',
-    version=version,
+    # version=version,
     packages=find_packages(),
     url='',
     license='EUPL',
@@ -32,5 +36,7 @@ setup(
         'Topic :: Scientific/Engineering :: GIS',
         'Programming Language :: Python :: 3.10'
     ],
-    python_requires='>=3.10'
+    python_requires='>=3.10',
+    setup_requires=['setuptools_scm'],
+    use_scm_version=True,
 )
