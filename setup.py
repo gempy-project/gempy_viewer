@@ -35,7 +35,7 @@ setup(
             "root"       : ".",
             "relative_to": __file__,
             "write_to"   : path.join("gempy_viewer", "_version.py"),
-            "fallback_version": "2024.1.1"
+            "fallback_version": "3.0.0"
     },
     zip_safe=False
 )
