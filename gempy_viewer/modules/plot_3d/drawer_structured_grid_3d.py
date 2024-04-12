@@ -60,6 +60,10 @@ def add_regular_grid_mesh(
         opacity: float,
         **kwargs
 ):
+    if isinstance(cmap, mcolors.Colormap):
+        _clim = (0, cmap.N - 1)
+    else:
+        _clim = None
     gempy_vista.regular_grid_actor = gempy_vista.p.add_mesh(
         mesh=structured_grid,
         cmap=cmap,
@@ -68,7 +72,7 @@ def add_regular_grid_mesh(
         scalar_bar_args=gempy_vista.scalar_bar_arguments,
         interpolate_before_map=True,
         opacity=opacity,
-        clim=(0, cmap.N - 1),
+        clim=_clim,
         **kwargs
     )
 

@@ -140,9 +140,9 @@ class TestPlot2DSolutions:
         )
 
     def test_ve(self, one_fault_model_topo_solution):
-        raise NotImplementedError('Not implemented yet (TODO)')
         # Test ve
-        p2d = gpv.plot_2d(one_fault_model_topo_solution, direction='x', cell_number='mid', show_topography=True, ve=3)
+        p2d = gpv.plot_2d(one_fault_model_topo_solution, direction='x', cell_number='mid', 
+                          show_topography=True, ve=1)
 
         plt.show()
 
