@@ -50,7 +50,6 @@ warnings.filterwarnings(
 
 try:
     import vtk
-    from vtk.util.numpy_support import numpy_to_vtk
 
     VTK_IMPORT = True
 except ImportError:
@@ -426,7 +425,7 @@ class __Vista:
 
             sel = np.round(self.model.solutions.geological_map[0]).astype(int)[0]
 
-            scalars_val = numpy_to_vtk(arr_[sel - 1], array_type=3)
+            scalars_val = pv.convert_array(arr_[sel - 1], array_type=3)
             cm = None
             rgb = True
 
@@ -1129,7 +1128,7 @@ class Vista:
 
             sel = np.round(self.model.solutions.geological_map[0]).astype(int)[0]
 
-            scalars_val = numpy_to_vtk(arr_[sel - 1], array_type=3)
+            scalars_val = pv.convert_array(arr_[sel - 1], array_type=3)
             cm = None
             rgb = True
         elif scalars == "topography":

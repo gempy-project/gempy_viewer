@@ -20,7 +20,6 @@ def plot_topography_3d(
         **kwargs
 ):
     pv = require_pyvista()
-    from vtkmodules.util.numpy_support import numpy_to_vtk
     
     rgb = False
 
@@ -43,7 +42,7 @@ def plot_topography_3d(
             colors_rgb = np.array(colors_rgb_) * 255  # Multiply by 255 to get RGB values in [0, 255]
             sel = np.round(geological_map).astype(int) - 1
             selected_colors = colors_rgb[sel]  # Use numpy advanced indexing to get the corresponding RGB values
-            scalars_val = numpy_to_vtk(selected_colors, array_type=3)  # Convert to vtk array
+            scalars_val = pv.convert_array(selected_colors, array_type=3)  # Convert to vtk array
 
             cm = mcolors.ListedColormap(elements_colors)
             rgb = True
