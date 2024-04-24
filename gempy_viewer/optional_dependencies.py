@@ -1,4 +1,11 @@
-﻿def require_gempy_plugins():
+﻿def require_liquid_earth_api():
+    try:
+        import liquid_earth_api
+    except ImportError:
+        raise ImportError("The liquid_earth_api package is required to run this function.")
+    return liquid_earth_api
+
+def require_gempy_plugins():
     try:
         import gempy.plugins
     except ImportError:
