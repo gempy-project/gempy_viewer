@@ -1,11 +1,29 @@
-﻿from os import path
+﻿import os
+from os import path
 
 from setuptools import setup, find_packages
 
 
-def read_requirements(file_name):
-    with open(file_name, "r", encoding="utf-8") as f:
-        return [line.strip() for line in f.readlines()]
+def read_requirements(file_name, base_path=""):
+    # Construct the full path to the requirements file
+    full_path = os.path.join(base_path, file_name)
+    requirements = []
+    with open(full_path, "r", encoding="utf-8") as f:
+        for line in f:
+            # Strip whitespace and ignore comments
+            line = line.strip()
+            if line.startswith("#") or not line:
+                continue
+
+            # Handle -r directive
+            if line.startswith("-r "):
+                referenced_file = line.split()[1]  # Extract the file name
+                # Recursively read the referenced file, making sure to include the base path
+                requirements.extend(read_requirements(referenced_file, base_path=base_path))
+            else:
+                requirements.append(line)
+
+    return requirements
 
 
 setup(
@@ -17,10 +35,10 @@ setup(
     author='Miguel de la Varga',
     author_email="miguel@terranigma-solutions.com",
     description='Viewer for the geological modeling package GemPy',
-    install_requires=read_requirements("requirements.txt"),
+    install_requires=read_requirements("requirements.txt", "requirements"),
     extras_require={
-            "opt": read_requirements("optional_requirements.txt"),
-            "dev": read_requirements("dev-requirements.txt"),
+            "opt": read_requirements("optional_requirements.txt", "requirements"),
+            "dev": read_requirements("dev-requirements.txt" , "requirements"),
     },
     classifiers=[
             'Development Status :: 3 - Alpha',
@@ -32,9 +50,9 @@ setup(
     python_requires='>=3.10',
     setup_requires=['setuptools_scm'],
     use_scm_version={
-            "root"       : ".",
-            "relative_to": __file__,
-            "write_to"   : path.join("gempy_viewer", "_version.py"),
+            "root"            : ".",
+            "relative_to"     : __file__,
+            "write_to"        : path.join("gempy_viewer", "_version.py"),
             "fallback_version": "3.0.0"
     },
     zip_safe=False

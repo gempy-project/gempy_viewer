@@ -1,0 +1,5 @@
+pyvista
+# for topography
+scipy 
+pooch
+pandas
