@@ -3,6 +3,7 @@
 import numpy as np
 from matplotlib import colors as mcolors
 
+import subsurface.core.structs.structured_elements.structured_grid
 from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.core.scalar_data_type import ScalarDataType
 from gempy.core.data.grid_modules import RegularGrid, Topography
@@ -21,7 +22,7 @@ def plot_structured_grid(
         **kwargs
 ):
     pv = require_pyvista()
-    structured_grid: pv.StructuredGrid | pv.PolyData = create_regular_mesh(gempy_vista, regular_grid)
+    structured_grid: subsurface.core.structs.structured_elements.structured_grid.StructuredGrid | pv.PolyData = create_regular_mesh(gempy_vista, regular_grid)
 
     # Set the scalar field-Activate it-getting cmap?
     structured_grid = set_scalar_data(
@@ -55,7 +56,7 @@ def plot_structured_grid(
 
 def add_regular_grid_mesh(
         gempy_vista: GemPyToVista,
-        structured_grid: 'pv.StructuredGrid',
+        structured_grid: 'import subsurface.core.structs.structured_elements.structured_grid,
         cmap: Union[mcolors.Colormap or str],
         opacity: float,
         **kwargs
