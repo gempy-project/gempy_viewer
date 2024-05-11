@@ -23,6 +23,7 @@ except ImportError:
     mplstereonet_import = False
 
 
+# noinspection t
 def plot_3d(
         model: GeoModel,
         plotter_type='basic',
@@ -156,15 +157,20 @@ def plot_3d(
         gempy_vista.p.show(screenshot=fig_path)
 
     if image is True:
-        gempy_vista.p.show(screenshot=True)
-        img = gempy_vista.p.last_image
-        plt.imshow(img)
-        plt.axis('off')
-        plt.show(block=False)
-        gempy_vista.p.close()
-        show= False
+        show = _plot_in_matplotlib(gempy_vista, show)
 
     if show is True:
         gempy_vista.p.show()
 
     return gempy_vista
+
+
+def _plot_in_matplotlib(gempy_vista, show):
+    gempy_vista.p.show(screenshot=True)
+    img = gempy_vista.p.last_image
+    plt.imshow(img)
+    plt.axis('off')
+    plt.show(block=False)
+    gempy_vista.p.close()
+    show = False
+    return show

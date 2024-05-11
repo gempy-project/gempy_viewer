@@ -56,7 +56,7 @@ def plot_structured_grid(
 
 def add_regular_grid_mesh(
         gempy_vista: GemPyToVista,
-        structured_grid: 'import subsurface.core.structs.structured_elements.structured_grid,
+        structured_grid: "pv.StructuredGrid",
         cmap: Union[mcolors.Colormap or str],
         opacity: float,
         **kwargs
