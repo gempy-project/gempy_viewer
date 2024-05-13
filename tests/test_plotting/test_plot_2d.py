@@ -108,8 +108,9 @@ class TestPlot2DSolutions:
 
         gp.set_section_grid(
             grid=one_fault_model.grid,
-            section_dict={'section_SW-NE': ([250, 250], [1750, 1750], [100, 100]),
-                          'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])}
+            section_dict={'section_SW-NE': ([250, 250], [250, 1750], [50, 50]),
+                          # 'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])
+                          }
         )
 
         gp.set_topography_from_random(
@@ -126,6 +127,14 @@ class TestPlot2DSolutions:
         print(one_fault_model_topo_solution.structural_frame)
         _: Plot2D = gpv.plot_2d(one_fault_model_topo_solution)
 
+    def test_plot_2d_section(self, one_fault_model_topo_solution):
+        _: Plot2D = gpv.plot_2d(
+            model=one_fault_model_topo_solution,
+            section_names=['section_SW-NE'],
+            show_boundaries=True,
+            show_topography=True
+        )
+
     def test_plot_2d_all_together(self, one_fault_model_topo_solution):
         gpv.plot_2d(
             model=one_fault_model_topo_solution,
@@ -141,7 +150,7 @@ class TestPlot2DSolutions:
 
     def test_ve(self, one_fault_model_topo_solution):
         # Test ve
-        p2d = gpv.plot_2d(one_fault_model_topo_solution, direction='x', cell_number='mid', 
+        p2d = gpv.plot_2d(one_fault_model_topo_solution, direction='x', cell_number='mid',
                           show_topography=True, ve=1)
 
         plt.show()
@@ -154,7 +163,7 @@ class TestPlot2DSolutionsOctrees:
         one_fault_model.grid.regular_grid.resolution = [2, 4, 2]
 
         one_fault_model.interpolation_options.number_octree_levels = 5
-        
+
         # TODO: Test octree regular grid with everything else combined
         gp.set_section_grid(
             grid=one_fault_model.grid,
@@ -178,7 +187,7 @@ class TestPlot2DSolutionsOctrees:
             model=one_fault_model_topo_solution_octrees,
             show_boundaries=True
         )
-    
+
     def test_plot_2d_solutions_scalar(self, one_fault_model_topo_solution_octrees):
         print(one_fault_model_topo_solution_octrees.structural_frame)
         _: Plot2D = gpv.plot_2d(
@@ -187,8 +196,7 @@ class TestPlot2DSolutionsOctrees:
             show_scalar=True,
             series_n=1
         )
-        
-        
+
     def test_plot_2d_all_together(self, one_fault_model_topo_solution_octrees):
         gpv.plot_2d(
             model=one_fault_model_topo_solution_octrees,

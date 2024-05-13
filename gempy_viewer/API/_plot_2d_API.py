@@ -12,6 +12,7 @@ from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, o
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
+# noinspection t
 def plot_2d(model: GeoModel,
             n_axis=None,
             section_names: list = None,

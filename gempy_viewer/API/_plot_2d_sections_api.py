@@ -16,6 +16,7 @@ from ..modules.plot_2d.drawer_traces_2d import plot_section_traces
 from ..modules.plot_2d.plot_2d_utils import get_geo_model_cmap, get_geo_model_norm
 
 
+# noinspection t
 def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], data_to_show: DataToShow,
                   ve: float = 1, series_n: Optional[list[int]] = None, override_regular_grid: Optional[np.ndarray] = None,
                   legend: bool = True,
