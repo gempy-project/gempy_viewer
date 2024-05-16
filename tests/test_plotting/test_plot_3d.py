@@ -10,12 +10,12 @@ from tests.conftest import _one_fault_model_generator
 
 class TestPlot3dInputData:
     def test_plot_3d_input_data(self, one_fault_model_no_interp):
-        gpv.plot_3d(one_fault_model_no_interp)
+        gpv.plot_3d(one_fault_model_no_interp, image=True)
 
 
 class TestPlot3DSolutions:
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution):
-        gpv.plot_3d(one_fault_model_topo_solution)
+        gpv.plot_3d(one_fault_model_topo_solution, image=True)
     
     def test_plot_3d_solutions(self, one_fault_model_topo_solution):
         gpv.plot_3d(
@@ -23,7 +23,8 @@ class TestPlot3DSolutions:
             show_scalar=False,
             show_lith=True,
             show_data=True,
-            show_boundaries=True
+            show_boundaries=True,
+            image=True
         )
     
     def test_plot_3d_scalar_field(self, one_fault_model_topo_solution):
@@ -31,14 +32,16 @@ class TestPlot3DSolutions:
             model=one_fault_model_topo_solution,
             active_scalar_field="sf_1",
             show_scalar=True,
-            show_lith=False
+            show_lith=False,
+            image=True
         )
     
     def test_plot_3d_solutions_topography(self, one_fault_model_topo_solution):
         gpv.plot_3d(
             model=one_fault_model_topo_solution,
             show_topography=True,
-            topography_scalar_type=TopographyDataType.TOPOGRAPHY
+            topography_scalar_type=TopographyDataType.TOPOGRAPHY,
+            image=True
         )
     
     def test_plot_3d_solutions_topography_geological_map(self, one_fault_model_topo_solution):
@@ -46,7 +49,8 @@ class TestPlot3DSolutions:
             model=one_fault_model_topo_solution,
             show_lith=True,
             show_topography=True,
-            topography_scalar_type=TopographyDataType.GEOMAP
+            topography_scalar_type=TopographyDataType.GEOMAP,
+            image=True
         )
 
 
@@ -77,4 +81,4 @@ class TestPlot2DSolutionsOctrees:
 
 
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution_octrees):
-        gpv.plot_3d(one_fault_model_topo_solution_octrees)
+        gpv.plot_3d(one_fault_model_topo_solution_octrees, image=True)

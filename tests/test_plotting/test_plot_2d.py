@@ -109,7 +109,7 @@ class TestPlot2DSolutions:
         gp.set_section_grid(
             grid=one_fault_model.grid,
             section_dict={'section_SW-NE': ([250, 250], [250, 1750], [50, 50]),
-                          # 'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])
+                          'section_NW-SE': ([250, 1750], [1750, 250], [100, 100])
                           }
         )
 
