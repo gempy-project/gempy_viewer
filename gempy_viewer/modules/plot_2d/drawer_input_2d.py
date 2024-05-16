@@ -117,9 +117,6 @@ def _draw_surface_points(ax, points, slicer_data, surface_points_colors):
 
 def _projection_params_regular_grid(regular_grid: RegularGrid, cell_number, direction, orientations, points,
                                     projection_distance) -> SlicerData:
-    # if cell_number is None or cell_number == "mid":
-    #     cell_number = int(regular_grid.resolution[0] / 2)
-
     if direction == 'x' or direction == 'X':
         arg_ = 0
         dx = regular_grid.dx
