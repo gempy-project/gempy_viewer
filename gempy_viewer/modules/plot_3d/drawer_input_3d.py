@@ -33,7 +33,7 @@ def plot_surface_points(
         surface_points: SurfacePointsTable,
         elements_colors: list[str],
         render_points_as_spheres=True,
-        point_size=10, **kwargs
+        point_size=10, 
 ):
     ids = surface_points.ids
     if ids.shape[0] == 0:
