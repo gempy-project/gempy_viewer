@@ -55,7 +55,8 @@ def plot_surface_points(
 
     cmap = get_geo_model_cmap(
         elements_colors=np.array(elements_colors),
-        reverse=False)
+        reverse=False
+    )
 
     gempy_vista.surface_points_mesh = poly
     gempy_vista.surface_points_actor = gempy_vista.p.add_mesh(

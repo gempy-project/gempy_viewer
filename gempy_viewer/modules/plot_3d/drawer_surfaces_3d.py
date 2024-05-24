@@ -30,6 +30,5 @@ def plot_surfaces(
             surf,
             pv.Color(element.color).float_rgb,
             show_scalar_bar=False,
-            # cmap=cmap,
             **kwargs
         )
