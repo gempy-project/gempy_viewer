@@ -717,7 +717,7 @@ class Vista:
 
         horizons = []
         if not value:
-            value = np.mean(self.model._grid.regular_grid.get_dx_dy_dz()[:2])
+            value = np.mean(self.model._grid.regular_grid.dx_dy_dz()[:2])
 
         # TODO: this somehow doesn't work properly with Gullfaks model
         horizons.append(
