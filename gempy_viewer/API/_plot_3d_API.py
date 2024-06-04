@@ -82,7 +82,7 @@ def plot_3d(
     else:
         solutions_raw_arrays = model.solutions.raw_arrays
 
-    extent: np.ndarray = model.grid.regular_grid.extent
+    extent: np.ndarray = model.grid.extent
 
     gempy_vista = GemPyToVista(
         extent=extent,
