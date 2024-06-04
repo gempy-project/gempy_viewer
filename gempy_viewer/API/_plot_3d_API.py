@@ -38,6 +38,7 @@ def plot_3d(
         kwargs_plot_surfaces=None,
         image=False,
         show=True,
+        transformed_data=False,
         **kwargs
 ) -> GemPyToVista:
     
@@ -117,6 +118,7 @@ def plot_3d(
             gempy_vista=gempy_vista,
             model=model,
             arrows_factor=arrow_size / (100 / min_axes),
+            transformed_data=transformed_data,
             **kwargs_plot_data
         )
 

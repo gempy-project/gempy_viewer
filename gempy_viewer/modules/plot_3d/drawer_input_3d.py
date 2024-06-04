@@ -11,10 +11,17 @@ from gempy_viewer.optional_dependencies import require_pyvista
 def plot_data(gempy_vista: GemPyToVista, 
               model: GeoModel,
               arrows_factor: float,
+              transformed_data: bool = False,
               **kwargs):
+    if transformed_data:
+        surface_points_copy = model.surface_points_copy_transformed
+        orientations_copy = model.orientations_copy_transformed
+    else:
+        surface_points_copy = model.surface_points_copy
+        
     plot_surface_points(
         gempy_vista=gempy_vista,
-        surface_points=model.surface_points_copy,
+        surface_points=surface_points_copy,
         elements_colors=model.structural_frame.elements_colors_contacts,
         **kwargs
     )
