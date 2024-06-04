@@ -139,7 +139,7 @@ def plot_2d(model: GeoModel,
         n_axis=n_axis,
         n_columns=n_columns,
         ve=ve,
-        projection_distance=kwargs.get('projection_distance', 0.2 * model.transform.isometric_scale)
+        projection_distance=kwargs.get('projection_distance', 0.2 * model.input_transform.isometric_scale)
     )
 
     orthogonal_section_data_list: list[SectionData2D] = orthogonal_sections_iterator(
@@ -151,7 +151,7 @@ def plot_2d(model: GeoModel,
         n_axis=n_axis,
         n_columns=n_columns,
         ve=ve,
-        projection_distance=kwargs.get('projection_distance', 0.2 * model.transform.isometric_scale)
+        projection_distance=kwargs.get('projection_distance', 0.2 * model.input_transform.isometric_scale)
     )
 
     section_data_list.extend(orthogonal_section_data_list)

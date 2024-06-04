@@ -18,7 +18,7 @@ def _plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, ce
     warnings.warn('This function is deprecated. Use plot_data instead', DeprecationWarning)
     if projection_distance is None:
         # TODO: This has to be updated to the new location
-        projection_distance = 0.2 * gempy_model.transform.isometric_scale
+        projection_distance = 0.2 * gempy_model.input_transform.isometric_scale
 
     # TODO: This are not here 
     points = gempy_model.surface_points_copy.df.copy()
