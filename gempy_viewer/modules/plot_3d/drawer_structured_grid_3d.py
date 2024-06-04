@@ -21,7 +21,7 @@ def plot_structured_grid(
         **kwargs
 ):
     pv = require_pyvista()
-    structured_grid: "subsurface.core.structs.structured_elements.structured_grid.StructuredGrid" | pv.PolyData = create_regular_mesh(gempy_vista, regular_grid)
+    structured_grid: pv.PolyData = create_regular_mesh(gempy_vista, regular_grid)
 
     # Set the scalar field-Activate it-getting cmap?
     structured_grid = set_scalar_data(

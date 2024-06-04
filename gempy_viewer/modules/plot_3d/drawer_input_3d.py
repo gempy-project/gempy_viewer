@@ -23,8 +23,7 @@ def plot_data(gempy_vista: GemPyToVista,
         gempy_vista=gempy_vista,
         orientations=model.orientations_copy,
         elements_colors=model.structural_frame.elements_colors_orientations,
-        arrows_factor=arrows_factor,
-        **kwargs
+        arrows_factor=arrows_factor
     )
 
 
@@ -34,6 +33,7 @@ def plot_surface_points(
         elements_colors: list[str],
         render_points_as_spheres=True,
         point_size=10, 
+        **kwargs
 ):
     ids = surface_points.ids
     if ids.shape[0] == 0:
@@ -74,17 +74,12 @@ def plot_orientations(
         orientations: OrientationsTable,
         elements_colors: list[str],
         arrows_factor: float,
-        **kwargs
 ):
     orientations_xyz = orientations.xyz
     orientations_grads = orientations.grads
     
     if orientations_xyz.shape[0] == 0:
         return
-    if transfromed_data := False:
-        orientations_xyz = orientations.model_transform.apply(orientations_xyz)
-        orientations_grads = orientations.model_transform.transform_gradient(orientations_grads)
-        arrows_factor /=  orientations.model_transform.isometric_scale
 
     pv = require_pyvista()
     poly = pv.PolyData(orientations_xyz)
