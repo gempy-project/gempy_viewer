@@ -104,9 +104,15 @@ def plot_3d(
         )
         
     if data_to_show.show_boundaries[0] is True and len(solutions_raw_arrays.vertices) != 0:
+        if transformed_data:
+            surfaces_transform = model.input_transform
+        else:
+            surfaces_transform = None
+            
         plot_surfaces(
             gempy_vista=gempy_vista,
             structural_elements_with_solution=model.structural_frame.structural_elements,
+            input_transform=surfaces_transform,
             **kwargs_plot_surfaces
         )
 

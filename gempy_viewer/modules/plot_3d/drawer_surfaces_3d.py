@@ -1,6 +1,7 @@
 ﻿import numpy as np
 
 from gempy.core.data.structural_element import StructuralElement
+from gempy_engine.core.data.transforms import Transform
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 from ...optional_dependencies import require_pyvista
 
@@ -8,6 +9,7 @@ from ...optional_dependencies import require_pyvista
 def plot_surfaces(
         gempy_vista: GemPyToVista,
         structural_elements_with_solution: list[StructuralElement],
+        input_transform: Transform = None,
         **kwargs
 ):
     pv = require_pyvista()
@@ -15,11 +17,16 @@ def plot_surfaces(
     
     topography_mesh = gempy_vista.surface_poly.get('topography', None)
     
+    if input_transform is None:
+        input_transform = Transform.init_neutral()
+    
     for element in structural_elements_with_solution:
         vertices_ = element.vertices
         edges_ = element.edges
         if vertices_ is None or vertices_.shape[0] == 0 or edges_.shape[0] == 0:
             continue
+        
+        vertices_ = input_transform.apply(vertices_)
         surf = pv.PolyData(vertices_, np.insert(edges_, 0, 3, axis=1).ravel())
         
         if topography_mesh is not None:
