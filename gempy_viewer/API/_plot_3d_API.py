@@ -122,10 +122,16 @@ def plot_3d(
             **kwargs_plot_data
         )
 
+    if transformed_data:
+        extent = model.extent_transformed
+    else:
+        extent = model.extent
+        
     if data_to_show.show_lith[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
-            regular_grid=model.grid.regular_grid,
+            extent=extent,
+            resolution=model.grid.regular_grid.resolution,
             scalar_data_type=ScalarDataType.LITHOLOGY,
             active_scalar_field="lith",
             solution=solutions_raw_arrays,
@@ -136,7 +142,8 @@ def plot_3d(
     if data_to_show.show_scalar[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
-            regular_grid=model.grid.regular_grid,
+            extent=extent,
+            resolution=model.grid.regular_grid.resolution,
             scalar_data_type=ScalarDataType.SCALAR_FIELD,
             active_scalar_field=active_scalar_field,
             solution=solutions_raw_arrays,

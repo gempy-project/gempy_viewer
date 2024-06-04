@@ -110,7 +110,6 @@ class GemPyToVista:
         self.orientations_widgets = {}
 
         # Private attributes
-        self._grid_values = None
         col = matplotlib.colormaps['viridis'](np.linspace(0, 1, 255)) * 255
         nv = pv.convert_array(col, array_type=3)
         self._cmaps = {'viridis': nv}

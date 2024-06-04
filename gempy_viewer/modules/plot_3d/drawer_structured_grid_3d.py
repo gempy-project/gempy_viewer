@@ -12,7 +12,8 @@ from gempy_viewer.optional_dependencies import require_pyvista
 
 def plot_structured_grid(
         gempy_vista: GemPyToVista,
-        regular_grid: RegularGrid,
+        extent: np.ndarray,
+        resolution: np.ndarray,
         scalar_data_type: ScalarDataType,
         solution: RawArraysSolution,
         cmap: Union[mcolors.Colormap or str],
@@ -21,13 +22,13 @@ def plot_structured_grid(
         **kwargs
 ):
     pv = require_pyvista()
-    structured_grid: pv.PolyData = create_regular_mesh(gempy_vista, regular_grid)
+    structured_grid: pv.PolyData = create_regular_mesh(extent, resolution)
 
     # Set the scalar field-Activate it-getting cmap?
     structured_grid = set_scalar_data(
         structured_grid=structured_grid,
         data=solution,
-        resolution = regular_grid.resolution,
+        resolution=resolution,
         scalar_data_type=scalar_data_type
     )
 
@@ -77,20 +78,15 @@ def add_regular_grid_mesh(
     )
 
 
-def create_regular_mesh(gempy_vista: GemPyToVista, regular_grid: RegularGrid) -> "pv.StructuredGrid":
-    gempy_vista._grid_values = regular_grid.values
+def create_regular_mesh(extent: np.ndarray, resolution:np.ndarray) -> "pv.StructuredGrid":
+    
+    x = np.linspace(extent[0], extent[1], resolution[0] + 1)
+    y = np.linspace(extent[2], extent[3], resolution[1] + 1)
+    z = np.linspace(extent[4], extent[5], resolution[2] + 1)
 
-    if False:
-        grid_3d = regular_grid.values.reshape(*regular_grid.resolution, 3).T
-        regular_grid_mesh = pv.StructuredGrid(*grid_3d)
-    else:
-        x = np.linspace(regular_grid.extent[0], regular_grid.extent[1], regular_grid.resolution[0] + 1)
-        y = np.linspace(regular_grid.extent[2], regular_grid.extent[3], regular_grid.resolution[1] + 1)
-        z = np.linspace(regular_grid.extent[4], regular_grid.extent[5], regular_grid.resolution[2] + 1)
-
-        x, y, z = np.meshgrid(x, y, z, indexing='ij')
-        pv = require_pyvista()
-        regular_grid_mesh = pv.StructuredGrid( x , y, z ) 
+    x, y, z = np.meshgrid(x, y, z, indexing='ij')
+    pv = require_pyvista()
+    regular_grid_mesh = pv.StructuredGrid(x, y, z)
     return regular_grid_mesh
 
 
@@ -115,9 +111,9 @@ def set_scalar_data(
         resolution: np.ndarray,
         scalar_data_type: ScalarDataType,
 ) -> "pv.StructuredGrid":
-    
     def _convert_sol_array_to_fortran_order(array: np.ndarray) -> np.ndarray:
         return array.reshape(*resolution, order='C').ravel(order='F')
+
     # Substitute the madness of the previous if with match
     match scalar_data_type:
         case ScalarDataType.LITHOLOGY | ScalarDataType.ALL:
@@ -151,4 +147,3 @@ def set_active_scalar_fields(structured_grid: "pv.StructuredGrid", active_scalar
         raise AttributeError('The scalar field provided does not exist. Please pass '
                              'a valid field: {}'.format(structured_grid.array_names))
     return structured_grid
-   
