@@ -18,6 +18,7 @@ def plot_data(gempy_vista: GemPyToVista,
         orientations_copy = model.orientations_copy_transformed
     else:
         surface_points_copy = model.surface_points_copy
+        orientations_copy = model.orientations_copy
         
     plot_surface_points(
         gempy_vista=gempy_vista,
@@ -28,7 +29,7 @@ def plot_data(gempy_vista: GemPyToVista,
 
     plot_orientations(
         gempy_vista=gempy_vista,
-        orientations=model.orientations_copy,
+        orientations=orientations_copy,
         elements_colors=model.structural_frame.elements_colors_orientations,
         arrows_factor=arrows_factor
     )
