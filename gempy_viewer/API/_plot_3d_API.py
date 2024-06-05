@@ -132,14 +132,14 @@ def plot_3d(
         )
 
     if transformed_data:
-        extent = model.extent_transformed
+        vtk_formated_regular_mesh = model.regular_grid_coordinates_transformed
     else:
-        extent = model.extent
-        
+        vtk_formated_regular_mesh = model.regular_grid_coordinates
+
     if data_to_show.show_lith[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
-            extent=extent,
+            vtk_formated_regular_mesh=vtk_formated_regular_mesh,
             resolution=model.grid.regular_grid.resolution,
             scalar_data_type=ScalarDataType.LITHOLOGY,
             active_scalar_field="lith",
@@ -151,7 +151,6 @@ def plot_3d(
     if data_to_show.show_scalar[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
-            extent=extent,
             resolution=model.grid.regular_grid.resolution,
             scalar_data_type=ScalarDataType.SCALAR_FIELD,
             active_scalar_field=active_scalar_field,

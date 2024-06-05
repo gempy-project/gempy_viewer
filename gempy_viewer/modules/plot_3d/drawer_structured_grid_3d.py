@@ -12,7 +12,7 @@ from gempy_viewer.optional_dependencies import require_pyvista
 
 def plot_structured_grid(
         gempy_vista: GemPyToVista,
-        extent: np.ndarray,
+        vtk_formated_regular_mesh: np.ndarray,
         resolution: np.ndarray,
         scalar_data_type: ScalarDataType,
         solution: RawArraysSolution,
@@ -22,7 +22,9 @@ def plot_structured_grid(
         **kwargs
 ):
     pv = require_pyvista()
-    structured_grid: pv.PolyData = create_regular_mesh(extent, resolution)
+
+    grid_3d = vtk_formated_regular_mesh.reshape(*(resolution + 1), 3).T
+    structured_grid = pv.StructuredGrid(*grid_3d)
 
     # Set the scalar field-Activate it-getting cmap?
     structured_grid = set_scalar_data(
@@ -78,18 +80,6 @@ def add_regular_grid_mesh(
     )
 
 
-def create_regular_mesh(extent: np.ndarray, resolution:np.ndarray) -> "pv.StructuredGrid":
-    
-    x = np.linspace(extent[0], extent[1], resolution[0] + 1)
-    y = np.linspace(extent[2], extent[3], resolution[1] + 1)
-    z = np.linspace(extent[4], extent[5], resolution[2] + 1)
-
-    x, y, z = np.meshgrid(x, y, z, indexing='ij')
-    pv = require_pyvista()
-    regular_grid_mesh = pv.StructuredGrid(x, y, z)
-    return regular_grid_mesh
-
-
 def _mask_topography(structured_grid: "pv.StructuredGrid", topography: Topography) -> "pv.StructuredGrid":
     # ? Obsolete? I am using pyvista clipping and seems to do the job very good.
     threshold = -100
@@ -112,7 +102,9 @@ def set_scalar_data(
         scalar_data_type: ScalarDataType,
 ) -> "pv.StructuredGrid":
     def _convert_sol_array_to_fortran_order(array: np.ndarray) -> np.ndarray:
-        return array.reshape(*resolution, order='C').ravel(order='F')
+        # ? (Miguel Jun 24) Is this function deprecated?
+        # return array.reshape(*resolution, order='C').ravel(order='F')
+        return array
 
     # Substitute the madness of the previous if with match
     match scalar_data_type:
