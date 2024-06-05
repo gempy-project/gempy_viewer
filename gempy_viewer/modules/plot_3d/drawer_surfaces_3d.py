@@ -10,23 +10,25 @@ def plot_surfaces(
         gempy_vista: GemPyToVista,
         structural_elements_with_solution: list[StructuralElement],
         input_transform: Transform = None,
+        grid_transform: Transform = None,
         **kwargs
 ):
+    # ? Probably would be better to do the transformation somewhere else. But we leave it like this for now
     pv = require_pyvista()
     # ! If the order of the meshes does not match the order of scalar_field_at_surface points we need to reorder them in 'multi_scalar_dual_contouring.py'
     
     topography_mesh = gempy_vista.surface_poly.get('topography', None)
-    
-    if input_transform is None:
-        input_transform = Transform.init_neutral()
     
     for element in structural_elements_with_solution:
         vertices_ = element.vertices
         edges_ = element.edges
         if vertices_ is None or vertices_.shape[0] == 0 or edges_.shape[0] == 0:
             continue
-        
-        vertices_ = input_transform.apply(vertices_)
+
+        if grid_transform is not None:
+            vertices_ = grid_transform.apply_with_cached_pivot(vertices_)
+        if input_transform is not None:
+            vertices_ = input_transform.apply(vertices_)
         surf = pv.PolyData(vertices_, np.insert(edges_, 0, 3, axis=1).ravel())
         
         if topography_mesh is not None:
