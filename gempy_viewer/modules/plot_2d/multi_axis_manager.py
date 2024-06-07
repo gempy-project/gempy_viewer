@@ -164,7 +164,12 @@ def create_axes_orthogonal(plot_2d: Plot2D, gempy_grid: Grid, cell_number,
 
 
 def _setup_orthogonal_section(ax, cell_number, direction, gempy_grid):
-    _a, _b, _c, extent_val, x, y = slice_cross_section(gempy_grid.regular_grid, direction, cell_number)[:-2]  # * This requires the grid object
+    _a, _b, _c, extent_val, x, y = slice_cross_section(
+        regular_grid=gempy_grid.regular_grid,
+        direction=direction,
+        cell_number=cell_number
+    )[:-2]  # * This requires the grid object
+    
     ax.set_xlabel(x)
     ax.set_ylabel(y)
     ax.set(title='Cell Number: ' + str(cell_number) + ' Direction: ' + str(direction))
