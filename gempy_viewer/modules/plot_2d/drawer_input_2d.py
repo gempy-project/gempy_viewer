@@ -13,68 +13,6 @@ from gempy.core.data import GeoModel
 from gempy.core.data.grid import Grid
 
 
-def _plot_data(plot_2d: Plot2D, gempy_model: GeoModel, ax, section_name=None, cell_number=None, direction='y',
-              legend=True, projection_distance=None):
-    warnings.warn('This function is deprecated. Use plot_data instead', DeprecationWarning)
-    if projection_distance is None:
-        # TODO: This has to be updated to the new location
-        projection_distance = 0.2 * gempy_model.input_transform.isometric_scale
-
-    # TODO: This are not here 
-    points = gempy_model.surface_points_copy.df.copy()
-    orientations = gempy_model.orientations_copy.df.copy()
-
-    # TODO: This is a weird check to do this deep
-    section_name, cell_number, direction = plot_2d._check_default_section(ax, section_name, cell_number, direction)
-
-    if section_name is not None:
-        slicer_data: SlicerData = _projection_params_section(
-            grid=gempy_model.grid,
-            orientations=orientations,
-            points=points,
-            projection_distance=projection_distance,
-            section_name=section_name
-        )
-    else:
-        slicer_data: SlicerData = _projection_params_regular_grid(
-            regular_grid=gempy_model.grid.regular_grid,
-            cell_number=cell_number,
-            direction=direction,
-            orientations=orientations,
-            points=points,
-            projection_distance=projection_distance
-        )
-
-    # ! Hack to keep the right X label. I think this has to be here before the plot
-    temp_label = copy.copy(ax.xaxis.label)
-    
-    draw_data(
-        ax=ax, 
-        surface_points_colors=gempy_model.structural_frame.surface_points_colors_per_item,
-        orientations_colors=gempy_model.structural_frame.orientations_colors_per_item,
-        orientations=orientations,
-        points=points,
-        slicer_data=slicer_data
-    )
-    
-    # region others
-    if plot_2d.fig.is_legend is False and legend is True or legend == 'force':
-        ax.legend(
-            handles=[plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in gempy_model.structural_frame.elements_colors][::-1],
-            labels=gempy_model.structural_frame.elements_names,
-            numpoints=1
-        )
-        plot_2d.fig.is_legend = True
-
-    ax.xaxis.label = temp_label
-    try:
-        ax.legend_.set_frame_on(True)
-        ax.legend_.set_zorder(10000)
-    except AttributeError:
-        pass
-    # endregion
-
-
 # TODO: This could be public and the slice just a class yes!
 def draw_data(ax, surface_points_colors: list[str], orientations_colors: list[str],
               orientations: 'pd.DataFrame', points: 'pd.DataFrame', slicer_data: SlicerData):

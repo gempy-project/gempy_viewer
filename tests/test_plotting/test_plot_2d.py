@@ -17,7 +17,6 @@ class TestPlot2DInputData:
     @pytest.fixture(scope='class')
     def one_fault_model_no_interp(self) -> gp.data.GeoModel:
         geo_data = _one_fault_model_generator()
-
         return geo_data
 
     def test_plot_2d_data_default(self, one_fault_model_no_interp):
