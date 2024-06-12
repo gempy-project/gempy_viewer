@@ -151,6 +151,7 @@ def plot_3d(
     if data_to_show.show_scalar[0] is True:
         plot_structured_grid(
             gempy_vista=gempy_vista,
+            vtk_formated_regular_mesh=vtk_formated_regular_mesh,
             resolution=model.grid.regular_grid.resolution,
             scalar_data_type=ScalarDataType.SCALAR_FIELD,
             active_scalar_field=active_scalar_field,
