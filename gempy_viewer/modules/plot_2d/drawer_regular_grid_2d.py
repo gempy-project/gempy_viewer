@@ -8,19 +8,18 @@ from gempy_viewer.core.slicer_data import SlicerData
 
 # TODO: This name seems bad. This is plotting area basically?
 def plot_regular_grid_area(ax, slicer_data: SlicerData, block: np.ndarray, resolution: iter,
-                      cmap: mcolors.Colormap, norm: mcolors.Normalize, imshow_kwargs: dict = None):
+                           cmap: mcolors.Colormap, norm: mcolors.Normalize, imshow_kwargs: dict = None):
     if imshow_kwargs is None:
         imshow_kwargs = dict()
 
     plot_grid = imshow_kwargs.pop('plot_grid', False)
-    
+
     plot_block = block.reshape(resolution)
     image = plot_block[
         slicer_data.regular_grid_x_idx,
         slicer_data.regular_grid_y_idx,
         slicer_data.regular_grid_z_idx].T
 
-    
     im = ax.imshow(
         image,
         origin='lower',
@@ -36,10 +35,10 @@ def plot_regular_grid_area(ax, slicer_data: SlicerData, block: np.ndarray, resol
         ticks_y = np.linspace(ax.get_ylim()[0], ax.get_ylim()[1], image.shape[0] + 1)
         ax.set_xticks(ticks_x, minor=True)
         ax.set_yticks(ticks_y, minor=True)
-        ax.grid(which="minor",linestyle='-', linewidth='3', color='grey', alpha=0.7)
-    
+        ax.grid(which="minor", linestyle='-', linewidth='3', color='grey', alpha=0.7)
+
     ax.figure.colorbar(im, ax=ax, shrink=0.5)
-    
+
     return im
 
 
@@ -60,7 +59,7 @@ def plot_section_area(gempy_model: GeoModel, ax, section_name: str, cmap: mcolor
 def _prepare_section_image(gempy_model: GeoModel, section_name: str):
     legacy_solutions: RawArraysSolution = gempy_model.solutions.raw_arrays
     grid: Grid = gempy_model.grid
-    
+
     if section_name == 'topography':
         try:
             image = legacy_solutions.geological_map.reshape(grid.topography.values_2d[:, :, 2].shape).T
