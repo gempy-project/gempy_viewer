@@ -1,4 +1,6 @@
-﻿import matplotlib.pyplot as plt
+﻿from typing import Optional
+
+import matplotlib.pyplot as plt
 import numpy as np
 
 from gempy.core.data import GeoModel
@@ -26,23 +28,43 @@ except ImportError:
 # noinspection t
 def plot_3d(
         model: GeoModel,
-        plotter_type='basic',
-        active_scalar_field: str = None,
-        ve=None,
+        plotter_type: str = 'basic',
+        active_scalar_field: Optional[str] = None,
+        ve: Optional[float] = None,
         topography_scalar_type: TopographyDataType = TopographyDataType.GEOMAP,
-        kwargs_pyvista_bounds=None,
-        kwargs_plot_structured_grid=None,
-        kwargs_plot_topography=None,
-        kwargs_plot_data=None,
-        kwargs_plotter=None,
-        kwargs_plot_surfaces=None,
-        image=False,
-        show=True,
-        transformed_data=False,
+        kwargs_pyvista_bounds: Optional[dict] = None,
+        kwargs_plot_structured_grid: Optional[dict] = None,
+        kwargs_plot_topography: Optional[dict] = None,
+        kwargs_plot_data: Optional[dict] = None,
+        kwargs_plotter: Optional[dict] = None,
+        kwargs_plot_surfaces: Optional[dict] = None,
+        image: bool = False,
+        show: bool = True,
+        transformed_data: bool = False,
         **kwargs
 ) -> GemPyToVista:
-    
-    """Plot 3-D geomodel."""
+    """Plot 3-D geomodel.
+
+    Args:
+        model (GeoModel): Geomodel object with solutions.
+        plotter_type (str): Type of plotter to use. Defaults to 'basic'.
+        active_scalar_field (Optional[str]): Active scalar field for the plot.
+        ve (Optional[float]): Vertical exaggeration.
+        topography_scalar_type (TopographyDataType): Type of topography scalar data. Defaults to TopographyDataType.GEOMAP.
+        kwargs_pyvista_bounds (Optional[dict]): Additional keyword arguments for PyVista bounds.
+        kwargs_plot_structured_grid (Optional[dict]): Additional keyword arguments for plotting the structured grid.
+        kwargs_plot_topography (Optional[dict]): Additional keyword arguments for plotting the topography.
+        kwargs_plot_data (Optional[dict]): Additional keyword arguments for plotting data.
+        kwargs_plotter (Optional[dict]): Additional keyword arguments for the plotter.
+        kwargs_plot_surfaces (Optional[dict]): Additional keyword arguments for plotting surfaces.
+        image (bool): If True, saves the plot as an image. Defaults to False.
+        show (bool): If True, displays the plot. Defaults to True.
+        transformed_data (bool): If True, uses transformed data for plotting. Defaults to False.
+        **kwargs: Additional keyword arguments.
+
+    Returns:
+        GemPyToVista: Object for 3D plotting in GemPy.
+    """
 
     from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
     from gempy_viewer.modules.plot_3d.drawer_structured_grid_3d import plot_structured_grid
