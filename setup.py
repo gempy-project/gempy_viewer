@@ -28,7 +28,6 @@ def read_requirements(file_name, base_path=""):
 
 setup(
     name='gempy_viewer',
-    # version=version,
     packages=find_packages(),
     url='',
     license='EUPL',
