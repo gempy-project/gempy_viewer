@@ -6,7 +6,7 @@ from gempy_viewer.core.slicer_data import SlicerData
 
 
 def plot_regular_grid_contacts(gempy_model: GeoModel, ax: matplotlib.axes.Axes, slicer_data: SlicerData, resolution: iter,
-                               only_faults: bool = False, **kwargs):
+                               only_faults: bool = False, kwargs=None):
     if only_faults:
         raise NotImplementedError('Only faults not implemented yet')
     #     contour_idx = list(self.model._faults.df[self.model._faults.df['isFault'] == True].index)
@@ -32,7 +32,7 @@ def plot_regular_grid_contacts(gempy_model: GeoModel, ax: matplotlib.axes.Axes, 
             slicer_data.regular_grid_z_idx
         ].T
 
-        ax.contour(
+        contour_set = ax.contour(
             image,
             0,
             levels=np.sort(level),
@@ -40,8 +40,10 @@ def plot_regular_grid_contacts(gempy_model: GeoModel, ax: matplotlib.axes.Axes, 
             linestyles='solid',
             origin='lower',
             extent=[*ax.get_xlim(), *ax.get_ylim()],
-            zorder=zorder - (e + len(level))
+            zorder=zorder - (e + len(level)),
+            **kwargs
         )
+
 
         c_id = c_id2
 

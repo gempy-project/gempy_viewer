@@ -26,6 +26,7 @@ def plot_2d(model: GeoModel,
             kwargs_topography=None,
             kwargs_lithology=None,
             kwargs_scalar_field=None,
+            kwargs_boundaries=None,
             **kwargs) -> Plot2D:
     """Plot 2-D sections of the geomodel.
 
@@ -168,7 +169,8 @@ def plot_2d(model: GeoModel,
         legend=legend,
         kwargs_topography=kwargs_topography,
         kwargs_scalar_field=kwargs_scalar_field,
-        kwargs_lithology=kwargs_lithology
+        kwargs_lithology=kwargs_lithology,
+        kwargs_boundaries=kwargs_boundaries
     )
     if show is True:
         p.fig.show()

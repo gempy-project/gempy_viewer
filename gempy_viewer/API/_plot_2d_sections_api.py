@@ -22,7 +22,8 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                   legend: bool = True,
                   kwargs_topography: dict = None,
                   kwargs_scalar_field: dict = None,
-                  kwargs_lithology: dict = None
+                  kwargs_lithology: dict = None,
+                  kwargs_boundaries: dict = None,
                   ):
     kwargs_lithology = kwargs_lithology if kwargs_lithology is not None else {}
     kwargs_scalar_field = kwargs_scalar_field if kwargs_scalar_field is not None else {}
@@ -114,7 +115,7 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                         slicer_data=section_data.slicer_data,
                         resolution=gempy_model.grid.regular_grid.resolution,
                         only_faults=False,
-                        kwargs=kwargs_topography
+                        kwargs=kwargs_boundaries 
                     )
                 case _:
                     raise ValueError(f'Unknown section type: {section_data.section_type}')
