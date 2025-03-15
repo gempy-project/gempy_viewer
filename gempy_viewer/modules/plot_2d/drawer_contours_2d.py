@@ -12,6 +12,8 @@ def plot_regular_grid_contacts(gempy_model: GeoModel, ax: matplotlib.axes.Axes, 
     #     contour_idx = list(self.model._faults.df[self.model._faults.df['isFault'] == True].index)
     # else:
     #     contour_idx = list(self.model._surfaces.df.index)
+    if kwargs is None:
+        kwargs = {}
 
     zorder = kwargs.get('zorder', 100)
 
