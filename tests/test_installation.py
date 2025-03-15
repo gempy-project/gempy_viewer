@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.mark.skipif(True, "Run explicitly to test installation")
+@pytest.mark.skipif(condition=True, reason="Run explicitly to test installation")
 def test_pyvista():
     import pyvista
 
