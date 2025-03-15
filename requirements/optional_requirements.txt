@@ -1,6 +1,7 @@
 -r requirements.txt
 
 pyvista
+skimage
 # for topography
 scipy 
 pooch
