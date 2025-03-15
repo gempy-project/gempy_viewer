@@ -8,8 +8,6 @@
 [![DOI](https://zenodo.org/badge/96211155.svg)](https://zenodo.org/badge/latestdoi/96211155)
 [![Build Status](http://terranigma-solutions.teamcity.com/app/rest/builds/buildType:(id:Gempy_TestingViewer)/statusIcon)](http://terranigma-solutions.teamcity.com/viewType.html?buildTypeId=Gempy_TestingViewer&guest=1)
 
-<p align="center"><img src="https://raw.githubusercontent.com/cgre-aachen/gempy/master/docs/source/images/model_examples.png" width="800"></p>
-
 ## Overview
 
 Package to visualize gempy models.
