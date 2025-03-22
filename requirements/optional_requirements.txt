@@ -6,3 +6,5 @@ scikit-image
 scipy 
 pooch
 pandas
+
+liquid-earth-sdk

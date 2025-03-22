@@ -1,9 +1,9 @@
-﻿def require_liquid_earth_api():
+﻿def require_liquid_earth_sdk():
     try:
-        import liquid_earth_api
+        import liquid_earth_sdk
     except ImportError:
-        raise ImportError("The liquid_earth_api package is required to run this function.")
-    return liquid_earth_api
+        raise ImportError("The liquid_earth_sdk package is required to run this function.")
+    return liquid_earth_sdk
 
 def require_gempy_plugins():
     try:

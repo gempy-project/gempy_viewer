@@ -1,7 +1,7 @@
 from typing import Optional
 
 import gempy
-from gempy_viewer.optional_dependencies import require_liquid_earth_api
+from gempy_viewer.optional_dependencies import require_liquid_earth_sdk
 
 
 def plot_to_liquid_earth(
@@ -10,7 +10,7 @@ def plot_to_liquid_earth(
         make_new_space: bool = False
 ):
     # if user_token is None Try to grab it from the environment
-    liquid_earth_api = require_liquid_earth_api()  # ! Order matters
+    liquid_earth_api = require_liquid_earth_sdk()  # ! Order matters
 
     if user_token is None:
         import os
