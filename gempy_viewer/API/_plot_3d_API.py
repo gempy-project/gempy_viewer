@@ -125,17 +125,25 @@ def plot_3d(
             **kwargs_plot_topography
         )
         
-    if data_to_show.show_boundaries[0] is True and len(solutions_raw_arrays.vertices) != 0:
+    if data_to_show.show_boundaries[0] is True:
+        # Check elements to plot .vertices are not empty
+        elements_to_plot = model.structural_frame.structural_elements
+        for element in elements_to_plot:
+            if element.vertices is None:
+                elements_to_plot.remove(element)
+        if len(elements_to_plot) == 0:
+            raise ValueError("No elements to plot. Please check the model.")
+        
         if transformed_data:
             surfaces_transform = model.input_transform
             grid_transform = model.grid.transform
         else:
             surfaces_transform = None
             grid_transform = None
-            
+
         plot_surfaces(
             gempy_vista=gempy_vista,
-            structural_elements_with_solution=model.structural_frame.structural_elements,
+            structural_elements_with_solution=elements_to_plot,
             input_transform=surfaces_transform,
             grid_transform=grid_transform,
             **kwargs_plot_surfaces
