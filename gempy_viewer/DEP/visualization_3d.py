@@ -30,9 +30,9 @@ import copy
 import pandas as pn
 import numpy as np
 import sys
-import gempy as gp
 import warnings
 
+from gempy_viewer import optional_dependencies
 
 warnings.filterwarnings("ignore",
                         message='.*Conversion of the second argument of issubdtype *.',
@@ -1116,6 +1116,7 @@ class vtkVisualization(object):
         if delete is True:
             self.delete_surfaces()
         try:
+            gp = optional_dependencies.require_gempy()
             gp.compute_model(self.geo_model, sort_surfaces=False, compute_mesh=True)
         except IndexError:
             print('IndexError: Model not computed. Laking data in some surface')

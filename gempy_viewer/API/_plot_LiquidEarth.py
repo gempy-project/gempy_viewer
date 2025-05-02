@@ -1,11 +1,10 @@
 from typing import Optional
 
-import gempy
 from gempy_viewer.optional_dependencies import require_liquid_earth_sdk
 
 
 def plot_to_liquid_earth(
-        geo_model: gempy.data.GeoModel, space_name: str,
+        geo_model: "gempy.data.GeoModel", space_name: str,
         file_name: str = "gempy_model", user_token: Optional[str] = None, grab_link=True,
         make_new_space: bool = False
 ):
