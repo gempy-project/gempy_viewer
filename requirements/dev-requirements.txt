@@ -1,3 +1,4 @@
--r optional_requirements.txt
+-r requirements.txt
 
 pytest
+gempy

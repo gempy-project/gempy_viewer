@@ -12,6 +12,13 @@ def require_gempy_plugins():
         raise ImportError("The gempy.plugins package is required to run this function.")
     return gempy.plugins
 
+def require_gempy():
+    try:
+        import gempy
+    except ImportError:
+        raise ImportError("The gempy package is required to run this function.")
+    return gempy
+
 
 def require_pyvista():
     try:

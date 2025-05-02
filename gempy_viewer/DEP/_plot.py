@@ -27,7 +27,8 @@
 # sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
 from typing import Set, Tuple, Dict, Union
-import gempy as _gempy
+
+from gempy_viewer import optional_dependencies
 from gempy_viewer.DEP._visualization_2d import PlotData2D, PlotSolution
 from gempy_viewer.DEP.visualization_3d import GemPyvtkInteract
 
@@ -99,6 +100,7 @@ def export_to_vtk(geo_data, path=None, name=None, voxels=True, block=None, surfa
                                                path=path)
     if surfaces is True:
         geo_data.solutions.compute_all_surfaces()
+        _gempy = optional_dependencies.require_gempy()
         ver, sim = _gempy.get_surfaces(geo_data)
         GemPyvtkInteract.export_vtk_surfaces(geo_data, ver, sim, path=path,
                                              name=name)
@@ -387,39 +389,3 @@ def plot_topology(
         edge_kwargs=edge_kwargs
     )
 
-
-def plot_ar(geo_model, path=None, project_name=None, api_token=None, secret=None):
-    """ Create, upload and retrieve tag to visualize the model in AR in rexview
-
-    https://www.rexos.org/getting-started/
-
-    Args:
-        geo_model (gempy.Model):
-        path: Location for rex files. Default cwd
-        project_name: Name of the project in rexos
-        api_token: rexos api token
-        secret: rexos secret
-
-    Returns:
-        gempy.addons.rex_api.Rextag
-    """
-    from gempy.addons.rex_api import upload_to_rexcloud
-    from gempy.addons.gempy_to_rexfile import write_rex, geomodel_to_rex
-    if project_name is None:
-        project_name = geo_model.meta.project_name
-
-    if path is None:
-        path = '/'
-
-    rex_bytes = geomodel_to_rex(geo_model)
-    files_path = write_rex(rex_bytes, path)
-    project_name_ = project_name
-    for i in range(40):
-        try:
-            tag = upload_to_rexcloud(files_path, project_name=project_name_, api_token=api_token, secret=secret)
-            break
-        except ConnectionError:
-            project_name_ = project_name + str(i)
-            pass
-
-    return tag

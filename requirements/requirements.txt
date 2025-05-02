@@ -1,3 +1,2 @@
-gempy~=2024.2.0
 matplotlib
 numpy
