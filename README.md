@@ -10,7 +10,7 @@
 
 ## Overview
 
-Package to visualize gempy models.
+Package to visualize gempy models. 
 
 
 ## TODO:
