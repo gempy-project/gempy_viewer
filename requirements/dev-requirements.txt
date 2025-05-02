@@ -1,4 +1,4 @@
--r requirements.txt
+-r optional_requirements.txt
 
 pytest
 gempy
