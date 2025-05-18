@@ -71,7 +71,7 @@ def add_regular_grid_mesh(
         mesh=structured_grid,
         cmap=cmap,
         # ? scalars=main_scalar, if we prepare the structured grid do we need this arg?
-        show_scalar_bar=True,
+        show_scalar_bar=False,
         scalar_bar_args=gempy_vista.scalar_bar_arguments,
         interpolate_before_map=True,
         opacity=opacity,

@@ -23,7 +23,7 @@ def plot_data(gempy_vista: GemPyToVista,
     plot_surface_points(
         gempy_vista=gempy_vista,
         surface_points=surface_points_copy,
-        elements_colors=model.structural_frame.elements_colors_contacts,
+        elements_colors=model.structural_frame.elements_colors,
         **kwargs
     )
 
@@ -61,15 +61,10 @@ def plot_surface_points(
     poly = pv.PolyData(xyz)
     poly['id'] = mapped_array
 
-    cmap = get_geo_model_cmap(
-        elements_colors=np.array(elements_colors),
-        reverse=False
-    )
 
     gempy_vista.surface_points_mesh = poly
     gempy_vista.surface_points_actor = gempy_vista.p.add_mesh(
         mesh=poly,
-        cmap=cmap,  # TODO: Add colors
         scalars='id',
         render_points_as_spheres=render_points_as_spheres,
         point_size=point_size,

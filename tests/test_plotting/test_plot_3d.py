@@ -7,6 +7,7 @@ from gempy.core.data import GeoModel
 from gempy_viewer.core.scalar_data_type import TopographyDataType
 from tests.conftest import _one_fault_model_generator
 
+np.random.seed(1234)
 
 class TestPlot3dInputData:
     def test_plot_3d_input_data(self, one_fault_model_no_interp):
@@ -15,11 +16,14 @@ class TestPlot3dInputData:
 
 class TestPlot3DSolutions:
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution):
+        print(one_fault_model_topo_solution.structural_frame)
         gpv.plot_3d(one_fault_model_topo_solution, image=True)
     
     def test_plot_3d_solutions(self, one_fault_model_topo_solution):
+        print(one_fault_model_topo_solution.structural_frame)
         gpv.plot_3d(
             model=one_fault_model_topo_solution,
+            show_topography=False,
             show_scalar=False,
             show_lith=True,
             show_data=True,

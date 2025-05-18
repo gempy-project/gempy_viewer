@@ -41,7 +41,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
 
     # Create annotations mapping integers to element names
     annotations = {}
-    for e, name in enumerate(elements_names[::-1]):
+    for e, name in enumerate(elements_names):
         # Convert integer to string for the annotation key
         annotations[str(e)] = name
 
@@ -50,7 +50,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
 
     # Set number of colors to match the number of categories
     n_colors = len(elements_names)
-    lut.n_values = n_colors
+    lut.n_values = n_colors - 1
 
     # Apply custom colors if provided
     if custom_colors is not None:
@@ -58,7 +58,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
         if len(custom_colors) < n_colors:
             raise ValueError(f"Not enough custom colors provided. Got {len(custom_colors)}, need {n_colors}")
 
-        custom_cmap = ListedColormap(custom_colors)
+        custom_cmap = ListedColormap(custom_colors).reversed()
 
         # Apply the custom colormap to the lookup table
         lut.apply_cmap(cmap=custom_cmap, n_values=n_colors)
@@ -69,11 +69,12 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
 
     # Configure scalar bar arguments
     sargs = gempy_vista.scalar_bar_arguments
+    min_id, max_id = surfaces_ids.min(), surfaces_ids.max()
+    mapper_actor.mapper.scalar_range = (min_id-.4 , max_id + .5)
     sargs["mapper"] = mapper_actor.mapper
+    sargs["n_labels"] = 0
 
     # Add scalar bar
     gempy_vista.p.add_scalar_bar(**sargs)
 
     # Update scalar bar range to match surface IDs range
-    min_id, max_id = surfaces_ids.min(), surfaces_ids.max()
-    gempy_vista.p.update_scalar_bar_range((min_id, max_id))
