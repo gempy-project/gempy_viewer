@@ -41,7 +41,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
 
     # Create annotations mapping integers to element names
     annotations = {}
-    for e, name in enumerate(elements_names):
+    for e, name in enumerate(elements_names[::-1]):
         # Convert integer to string for the annotation key
         annotations[str(e)] = name
 
@@ -58,8 +58,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
         if len(custom_colors) < n_colors:
             raise ValueError(f"Not enough custom colors provided. Got {len(custom_colors)}, need {n_colors}")
 
-        custom_cmap = ListedColormap(custom_colors).reversed()
-
+        custom_cmap = ListedColormap(custom_colors)
         # Apply the custom colormap to the lookup table
         lut.apply_cmap(cmap=custom_cmap, n_values=n_colors)
 

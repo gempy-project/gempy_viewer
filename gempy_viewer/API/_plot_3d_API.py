@@ -175,7 +175,7 @@ def plot_3d(
             scalar_data_type=ScalarDataType.LITHOLOGY,
             active_scalar_field="lith",
             solution=solutions_raw_arrays,
-            cmap=get_geo_model_cmap(structural_frame.elements_colors_volumes),
+            cmap=get_geo_model_cmap(structural_frame.elements_colors),
             **kwargs_plot_structured_grid
         )
 

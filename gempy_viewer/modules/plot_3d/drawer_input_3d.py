@@ -8,7 +8,7 @@ from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 from gempy_viewer.optional_dependencies import require_pyvista
 
 
-def plot_data(gempy_vista: GemPyToVista, 
+def plot_data(gempy_vista: GemPyToVista,
               model: GeoModel,
               arrows_factor: float,
               transformed_data: bool = False,
@@ -19,7 +19,7 @@ def plot_data(gempy_vista: GemPyToVista,
     else:
         surface_points_copy = model.surface_points_copy
         orientations_copy = model.orientations_copy
-        
+
     plot_surface_points(
         gempy_vista=gempy_vista,
         surface_points=surface_points_copy,
@@ -40,18 +40,9 @@ def plot_surface_points(
         surface_points: SurfacePointsTable,
         elements_colors: list[str],
         render_points_as_spheres=True,
-        point_size=10, 
+        point_size=10,
         **kwargs
 ):
-    ids = surface_points.ids
-    if ids.shape[0] == 0:
-        return
-    unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
-    unique_values_order = unique_values[np.argsort(first_indices)]  # Sort the unique values by their first appearance in `a`
-
-    mapping_dict = {value: i for i, value in enumerate(unique_values_order)}  # Use a dictionary to map the original numbers to new values
-    mapped_array = np.vectorize(mapping_dict.get)(ids)  # Map the original array to the new values
-
     # Selecting the surfaces to plot
     xyz = surface_points.xyz
     if transfromed_data := False:  # TODO: Expose this to user
@@ -59,8 +50,11 @@ def plot_surface_points(
 
     pv = require_pyvista()
     poly = pv.PolyData(xyz)
-    poly['id'] = mapped_array
 
+    ids = surface_points.ids
+    if ids.shape[0] == 0:
+        return
+    poly['id'] = _vectorize_ids(ids)
 
     gempy_vista.surface_points_mesh = poly
     gempy_vista.surface_points_actor = gempy_vista.p.add_mesh(
@@ -80,23 +74,16 @@ def plot_orientations(
 ):
     orientations_xyz = orientations.xyz
     orientations_grads = orientations.grads
-    
+
     if orientations_xyz.shape[0] == 0:
         return
 
     pv = require_pyvista()
     poly = pv.PolyData(orientations_xyz)
-    
-    ids = orientations.ids
-    if ids.shape[0] == 0:
-        return
-    unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
-    unique_values_order = unique_values[np.argsort(first_indices)]  # Sort the unique values by their first appearance in `a`
 
-    mapping_dict = {value: i for i, value in enumerate(unique_values_order)}  # Use a dictionary to map the original numbers to new values
-    mapped_array = np.vectorize(mapping_dict.get)(ids)  # Map the original array to the new values
-    
-    poly['id'] = mapped_array
+    ids = orientations.ids
+
+    poly['id'] = _vectorize_ids(ids)
     poly['vectors'] = orientations_grads
 
     # TODO: I am still trying to figure out colors and ids in orientations and surface points
@@ -117,3 +104,13 @@ def plot_orientations(
         show_scalar_bar=False
     )
     gempy_vista.orientations_mesh = arrows
+
+
+def _vectorize_ids(ids):
+    unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
+    unique_values_order = unique_values[np.argsort(first_indices)]  # Sort the unique values by their first appearance in `a`
+    # Flip order to please pyvista vertical scalarbar
+    unique_values_order = unique_values_order[::-1]
+    mapping_dict = {value: i + 1 for i, value in enumerate(unique_values_order)}  # Use a dictionary to map the original numbers to new values
+    mapped_array = np.vectorize(mapping_dict.get)(ids)  # Map the original array to the new values
+    return mapped_array

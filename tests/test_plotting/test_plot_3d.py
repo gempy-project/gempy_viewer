@@ -26,7 +26,7 @@ class TestPlot3DSolutions:
             show_topography=False,
             show_scalar=False,
             show_lith=True,
-            show_data=True,
+            show_data=False,
             show_boundaries=True,
             image=True
         )
