@@ -26,6 +26,17 @@ def select_surfaces_data(data_df: pd.DataFrame, surfaces: Union[str, list[str]] 
 
 def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
                    surfaces_ids: np.ndarray, custom_colors: list = None):
+    """
+   
+    LookupTable (0x7f3d1dc62e00)
+      Table Range:                (0.0, 2.0)
+      N Values:                   256
+      Above Range Color:          None
+      Below Range Color:          None
+      NAN Color:                  Color(name='darkgray', hex='#a9a9a9ff', opacity=255)
+      Log Scale:                  False
+      Color Map:                  "viridis"
+    """ 
     import pyvista as pv
 
     # Get mapper actor 
@@ -60,7 +71,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
 
         custom_cmap = ListedColormap(custom_colors)
         # Apply the custom colormap to the lookup table
-        lut.apply_cmap(cmap=custom_cmap, n_values=n_colors)
+        lut.apply_cmap(cmap=custom_cmap, n_values=n_colors, flip=True)
 
     else:
         # Apply a default colormap if no custom colors are provided
@@ -69,7 +80,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
     # Configure scalar bar arguments
     sargs = gempy_vista.scalar_bar_arguments
     min_id, max_id = surfaces_ids.min(), surfaces_ids.max()
-    mapper_actor.mapper.scalar_range = (min_id-.4 , max_id + .5)
+    mapper_actor.mapper.scalar_range = (min_id - .4, max_id + .5)
     sargs["mapper"] = mapper_actor.mapper
     sargs["n_labels"] = 0
 

@@ -187,7 +187,7 @@ def plot_3d(
             scalar_data_type=ScalarDataType.SCALAR_FIELD,
             active_scalar_field=active_scalar_field,
             solution=solutions_raw_arrays,
-            cmap='viridis',
+            cmap='magma',
             **kwargs_plot_structured_grid
         )
 

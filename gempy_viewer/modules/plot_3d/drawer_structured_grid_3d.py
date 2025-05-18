@@ -68,14 +68,10 @@ def add_regular_grid_mesh(
         _clim = None
     gempy_vista.regular_grid_actor = gempy_vista.p.add_mesh(
         mesh=structured_grid,
-        # cmap=cmap,
         # ? scalars=main_scalar, if we prepare the structured grid do we need this arg?
         show_scalar_bar=False,
-        # scalar_bar_args=gempy_vista.scalar_bar_arguments,
         interpolate_before_map=True,
         opacity=opacity,
-        # flip_scalars=True,
-        # clim=(4,0),
         **kwargs
     )
 
@@ -104,8 +100,9 @@ def set_scalar_data(
     # Substitute the madness of the previous if with match
     match scalar_data_type:
         case ScalarDataType.LITHOLOGY | ScalarDataType.ALL:
-            max_lith = data.n_surfaces # (for basement)
-            structured_grid.cell_data['id'] = max_lith - (data.lith_block - 1)
+            max_lith = data.n_surfaces + 1 # (for basement)
+            block_ = max_lith - (data.lith_block - 1)
+            structured_grid.cell_data['id'] = block_
         case ScalarDataType.SCALAR_FIELD | ScalarDataType.ALL:
             scalar_field_ = 'sf_'
             for e in range(data.scalar_field_matrix.shape[0]):

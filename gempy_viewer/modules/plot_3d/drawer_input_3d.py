@@ -22,15 +22,13 @@ def plot_data(gempy_vista: GemPyToVista,
 
     plot_surface_points(
         gempy_vista=gempy_vista,
-        surface_points=surface_points_copy,
-        elements_colors=model.structural_frame.elements_colors,
-        **kwargs
+        surface_points=surface_points_copy
     )
 
     plot_orientations(
         gempy_vista=gempy_vista,
         orientations=orientations_copy,
-        elements_colors=model.structural_frame.elements_colors_orientations,
+        surface_points=surface_points_copy,
         arrows_factor=arrows_factor
     )
 
@@ -38,10 +36,8 @@ def plot_data(gempy_vista: GemPyToVista,
 def plot_surface_points(
         gempy_vista: GemPyToVista,
         surface_points: SurfacePointsTable,
-        elements_colors: list[str],
         render_points_as_spheres=True,
-        point_size=10,
-        **kwargs
+        point_size=10
 ):
     # Selecting the surfaces to plot
     xyz = surface_points.xyz
@@ -54,7 +50,8 @@ def plot_surface_points(
     ids = surface_points.ids
     if ids.shape[0] == 0:
         return
-    poly['id'] = _vectorize_ids(ids)
+    vectorize_ids = _vectorize_ids(ids, ids)
+    poly['id'] = vectorize_ids
 
     gempy_vista.surface_points_mesh = poly
     gempy_vista.surface_points_actor = gempy_vista.p.add_mesh(
@@ -62,14 +59,15 @@ def plot_surface_points(
         scalars='id',
         render_points_as_spheres=render_points_as_spheres,
         point_size=point_size,
-        show_scalar_bar=False
+        show_scalar_bar=False,
+        # clim=(0, ids.max())
     )
 
 
 def plot_orientations(
         gempy_vista: GemPyToVista,
         orientations: OrientationsTable,
-        elements_colors: list[str],
+        surface_points: SurfacePointsTable,
         arrows_factor: float,
 ):
     orientations_xyz = orientations.xyz
@@ -81,16 +79,11 @@ def plot_orientations(
     pv = require_pyvista()
     poly = pv.PolyData(orientations_xyz)
 
-    ids = orientations.ids
-
-    poly['id'] = _vectorize_ids(ids)
-    poly['vectors'] = orientations_grads
-
-    # TODO: I am still trying to figure out colors and ids in orientations and surface points
-    cmap = get_geo_model_cmap(
-        elements_colors=np.array(elements_colors),
-        reverse=False
+    poly['id'] = _vectorize_ids(
+        mapping_ids=surface_points.ids,
+        ids_to_map=orientations.ids
     )
+    poly['vectors'] = orientations_grads
 
     arrows = poly.glyph(
         orient='vectors',
@@ -100,17 +93,21 @@ def plot_orientations(
 
     gempy_vista.orientations_actor = gempy_vista.p.add_mesh(
         mesh=arrows,
-        cmap=cmap,
+        scalars='id',
         show_scalar_bar=False
     )
     gempy_vista.orientations_mesh = arrows
 
 
-def _vectorize_ids(ids):
-    unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
-    unique_values_order = unique_values[np.argsort(first_indices)]  # Sort the unique values by their first appearance in `a`
-    # Flip order to please pyvista vertical scalarbar
-    unique_values_order = unique_values_order[::-1]
-    mapping_dict = {value: i + 1 for i, value in enumerate(unique_values_order)}  # Use a dictionary to map the original numbers to new values
-    mapped_array = np.vectorize(mapping_dict.get)(ids)  # Map the original array to the new values
+def _vectorize_ids(mapping_ids, ids_to_map):
+    def _mapping_dict(ids):
+        unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
+        unique_values_order = unique_values[np.argsort(first_indices)]  # Sort the unique values by their first appearance in `a`
+        # Flip order to please pyvista vertical scalarbar
+        unique_values_order = unique_values_order[::-1]
+        mapping_dict = {value: i + 1 for i, value in enumerate(unique_values_order)}  # Use a dictionary to map the original numbers to new values
+        return mapping_dict
+
+    mapping_dict = _mapping_dict(mapping_ids)
+    mapped_array = np.vectorize(mapping_dict.get)(ids_to_map)  # Map the original array to the new values
     return mapped_array
