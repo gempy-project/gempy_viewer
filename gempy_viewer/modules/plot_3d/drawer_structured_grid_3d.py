@@ -100,7 +100,7 @@ def set_scalar_data(
     # Substitute the madness of the previous if with match
     match scalar_data_type:
         case ScalarDataType.LITHOLOGY | ScalarDataType.ALL:
-            max_lith = data.n_surfaces + 1 # (for basement)
+            max_lith = data.n_surfaces # (for basement)
             block_ = max_lith - (data.lith_block - 1)
             structured_grid.cell_data['id'] = block_
         case ScalarDataType.SCALAR_FIELD | ScalarDataType.ALL:

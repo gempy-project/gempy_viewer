@@ -40,10 +40,10 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
     import pyvista as pv
 
     # Get mapper actor 
-    if gempy_vista.surface_points_actor is not None:
-        mapper_actor: pv.Actor = gempy_vista.surface_points_actor
-    elif gempy_vista.regular_grid_actor is not None:
+    if gempy_vista.regular_grid_actor is not None:
         mapper_actor = gempy_vista.regular_grid_actor
+    elif gempy_vista.surface_points_actor is not None:
+        mapper_actor: pv.Actor = gempy_vista.surface_points_actor
     else:
         return None  # * Not a good mapper for the scalar bar
 
@@ -71,7 +71,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
 
         custom_cmap = ListedColormap(custom_colors)
         # Apply the custom colormap to the lookup table
-        lut.apply_cmap(cmap=custom_cmap, n_values=n_colors, flip=True)
+        lut.apply_cmap(cmap=custom_cmap, n_values=n_colors, flip=False)
 
     else:
         # Apply a default colormap if no custom colors are provided
@@ -81,6 +81,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
     sargs = gempy_vista.scalar_bar_arguments
     min_id, max_id = surfaces_ids.min(), surfaces_ids.max()
     mapper_actor.mapper.scalar_range = (min_id - .4, max_id + .5)
+
     sargs["mapper"] = mapper_actor.mapper
     sargs["n_labels"] = 0
 

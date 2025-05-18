@@ -3,6 +3,8 @@
 from gempy.core.data import GeoModel
 from gempy.core.data.orientations import OrientationsTable
 from gempy.core.data.surface_points import SurfacePointsTable
+from matplotlib.colors import ListedColormap
+
 from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 from gempy_viewer.optional_dependencies import require_pyvista
@@ -22,7 +24,8 @@ def plot_data(gempy_vista: GemPyToVista,
 
     plot_surface_points(
         gempy_vista=gempy_vista,
-        surface_points=surface_points_copy
+        surface_points=surface_points_copy,
+        element_colors=model.structural_frame.elements_colors
     )
 
     plot_orientations(
@@ -37,6 +40,7 @@ def plot_surface_points(
         gempy_vista: GemPyToVista,
         surface_points: SurfacePointsTable,
         render_points_as_spheres=True,
+        element_colors=None,
         point_size=10
 ):
     # Selecting the surfaces to plot
@@ -53,6 +57,8 @@ def plot_surface_points(
     vectorize_ids = _vectorize_ids(ids, ids)
     poly['id'] = vectorize_ids
 
+    custom_cmap = ListedColormap(element_colors)
+    
     gempy_vista.surface_points_mesh = poly
     gempy_vista.surface_points_actor = gempy_vista.p.add_mesh(
         mesh=poly,
@@ -60,7 +66,8 @@ def plot_surface_points(
         render_points_as_spheres=render_points_as_spheres,
         point_size=point_size,
         show_scalar_bar=False,
-        # clim=(0, ids.max())
+        cmap=custom_cmap,
+        clim=(0, np.unique(vectorize_ids).shape[0])
     )
 
 
