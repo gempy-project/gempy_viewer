@@ -114,20 +114,21 @@ def plot_3d(
         **kwargs_plotter
     )
 
+    structural_frame = model.structural_frame
     if data_to_show.show_topography[0] is True and model.grid.topography is not None:
         plot_topography_3d(
             gempy_vista=gempy_vista,
             topography=model.grid.topography,
             solution=solutions_raw_arrays,
             topography_scalar_type=topography_scalar_type,
-            elements_colors=model.structural_frame.elements_colors[::-1],
+            elements_colors=structural_frame.elements_colors[::-1],
             contours=kwargs_plot_topography.get('contours', True),
             **kwargs_plot_topography
         )
         
     if data_to_show.show_boundaries[0] is True:
         # Check elements to plot .vertices are not empty
-        elements_to_plot = model.structural_frame.structural_elements
+        elements_to_plot = structural_frame.structural_elements
         for element in elements_to_plot:
             if element.vertices is None:
                 elements_to_plot.remove(element)
@@ -174,7 +175,7 @@ def plot_3d(
             scalar_data_type=ScalarDataType.LITHOLOGY,
             active_scalar_field="lith",
             solution=solutions_raw_arrays,
-            cmap=get_geo_model_cmap(model.structural_frame.elements_colors_volumes),
+            cmap=get_geo_model_cmap(structural_frame.elements_colors_volumes),
             **kwargs_plot_structured_grid
         )
 
@@ -190,11 +191,12 @@ def plot_3d(
             **kwargs_plot_structured_grid
         )
 
-    if True: 
+    if True:
         set_scalar_bar(
             gempy_vista=gempy_vista,
-            elements_names = model.structural_frame.elements_names,
-            surfaces_ids=model.structural_frame.elements_ids - 1
+            elements_names=structural_frame.elements_names,
+            surfaces_ids=structural_frame.elements_ids - 1,
+            custom_colors=structural_frame.elements_colors_volumes
         )
 
     if ve is not None:
