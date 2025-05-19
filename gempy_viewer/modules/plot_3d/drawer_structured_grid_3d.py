@@ -45,35 +45,25 @@ def plot_structured_grid(
             crinkle=False,
             invert=True
         )
-
-    add_regular_grid_mesh(
-        gempy_vista=gempy_vista,
-        structured_grid=structured_grid,
-        cmap=cmap,
-        opacity=opacity,  # BUG pass this as an argument
-        **kwargs
-    )
-
-
-def add_regular_grid_mesh(
-        gempy_vista: GemPyToVista,
-        structured_grid: "pv.StructuredGrid",
-        cmap: Union[mcolors.Colormap or str],
-        opacity: float,
-        **kwargs
-):
-    if isinstance(cmap, mcolors.Colormap):
-        _clim = (0, cmap.N)
+        
+    if active_scalar_field == 'lith':
+        gempy_vista.regular_grid_actor = gempy_vista.p.add_mesh(
+            mesh=structured_grid,
+            show_scalar_bar=False,
+            interpolate_before_map=True,
+            opacity=opacity,
+            **kwargs
+        )
     else:
-        _clim = None
-    gempy_vista.regular_grid_actor = gempy_vista.p.add_mesh(
-        mesh=structured_grid,
-        # ? scalars=main_scalar, if we prepare the structured grid do we need this arg?
-        show_scalar_bar=False,
-        interpolate_before_map=True,
-        opacity=opacity,
-        **kwargs
-    )
+        gempy_vista.regular_grid_actor = gempy_vista.p.add_mesh(
+            mesh=structured_grid,
+            cmap=cmap,
+            show_scalar_bar=True,
+            interpolate_before_map=True,
+            opacity=opacity,
+            **kwargs
+        )
+    
 
 
 def _mask_topography(structured_grid: "pv.StructuredGrid", topography: Topography) -> "pv.StructuredGrid":

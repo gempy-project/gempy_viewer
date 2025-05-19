@@ -180,6 +180,7 @@ def plot_3d(
         )
 
     if data_to_show.show_scalar[0] is True:
+        # TODO: Make sure that when we are ere we do not change the scalar_bar
         plot_structured_grid(
             gempy_vista=gempy_vista,
             vtk_formated_regular_mesh=vtk_formated_regular_mesh,
@@ -190,8 +191,7 @@ def plot_3d(
             cmap='magma',
             **kwargs_plot_structured_grid
         )
-
-    if True:
+    else: # * If it is not a scalar field, we use the structural frame bar
         set_scalar_bar(
             gempy_vista=gempy_vista,
             elements_names=structural_frame.elements_names,
@@ -207,7 +207,7 @@ def plot_3d(
         gempy_vista.p.show(screenshot=fig_path)
 
     if image is True:
-        show = _plot_in_matplotlib(gempy_vista, show)
+        show = _plot_in_matplotlib(gempy_vista)
 
     if show is True:
         gempy_vista.p.show()
@@ -215,7 +215,7 @@ def plot_3d(
     return gempy_vista
 
 
-def _plot_in_matplotlib(gempy_vista, show):
+def _plot_in_matplotlib(gempy_vista):
     gempy_vista.p.show(screenshot=True)
     img = gempy_vista.p.last_image
     plt.imshow(img)
