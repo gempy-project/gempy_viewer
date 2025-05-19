@@ -5,7 +5,7 @@ import gempy_viewer as gpv
 import gempy as gp
 from gempy.core.data import GeoModel
 from gempy_viewer.core.scalar_data_type import TopographyDataType
-from test_plotting.util_tests import check_image_hash
+from tests.util_tests import check_image_hash
 from tests.conftest import _one_fault_model_generator
 
 np.random.seed(1234)
