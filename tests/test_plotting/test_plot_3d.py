@@ -5,6 +5,7 @@ import gempy_viewer as gpv
 import gempy as gp
 from gempy.core.data import GeoModel
 from gempy_viewer.core.scalar_data_type import TopographyDataType
+from tests.util_tests import check_image_hash
 from tests.conftest import _one_fault_model_generator
 
 np.random.seed(1234)
@@ -19,10 +20,11 @@ class TestPlot3DSolutions:
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution):
         print(one_fault_model_topo_solution.structural_frame)
         gpv.plot_3d(one_fault_model_topo_solution, image=True)
+        
 
     def test_plot_3d_solutions(self, one_fault_model_topo_solution):
         print(one_fault_model_topo_solution.structural_frame)
-        gpv.plot_3d(
+        plot3d = gpv.plot_3d(
             model=one_fault_model_topo_solution,
             show_topography=True,
             show_scalar=False,
@@ -32,9 +34,14 @@ class TestPlot3DSolutions:
             image=True
         )
 
+        check_image_hash(
+            plot3d=plot3d,
+            hash='07040030001'
+        )
+
     def test_plot_3d_solutions_volume_and_input(self, one_fault_model_topo_solution):
         print(one_fault_model_topo_solution.structural_frame)
-        gpv.plot_3d(
+        plot3d = gpv.plot_3d(
             model=one_fault_model_topo_solution,
             show_topography=False,
             show_scalar=False,
@@ -45,9 +52,15 @@ class TestPlot3DSolutions:
             kwargs_plot_structured_grid = {'opacity': 0.5}
         )
 
+
+        check_image_hash(
+            plot3d=plot3d,
+            hash='07400018000'
+        )
+
     def test_plot_3d_solutions_only_volume(self, one_fault_model_topo_solution):
         print(one_fault_model_topo_solution.structural_frame)
-        gpv.plot_3d(
+        plot3d =gpv.plot_3d(
             model=one_fault_model_topo_solution,
             show_topography=False,
             show_scalar=False,
@@ -57,9 +70,14 @@ class TestPlot3DSolutions:
             image=True
         )
 
+        check_image_hash(
+            plot3d=plot3d,
+            hash='07c00000000'
+        )
+
     def test_plot_3d_solutions_only_input(self, one_fault_model_topo_solution):
         print(one_fault_model_topo_solution.structural_frame)
-        gpv.plot_3d(
+        plot3d =gpv.plot_3d(
             model=one_fault_model_topo_solution,
             show_topography=False,
             show_scalar=False,
@@ -69,30 +87,51 @@ class TestPlot3DSolutions:
             image=True
         )
 
+        check_image_hash(
+            plot3d=plot3d,
+            hash='06000038040'
+        )
+
     def test_plot_3d_scalar_field(self, one_fault_model_topo_solution):
-        gpv.plot_3d(
+        plot3d = gpv.plot_3d(
             model=one_fault_model_topo_solution,
             active_scalar_field="sf_1",
             show_scalar=True,
             show_lith=False,
+            show_topography=False,
             image=True
         )
 
+        check_image_hash(
+            plot3d=plot3d,
+            hash='07600210000'
+        )
+
     def test_plot_3d_solutions_topography(self, one_fault_model_topo_solution):
-        gpv.plot_3d(
+        plot3d =gpv.plot_3d(
             model=one_fault_model_topo_solution,
             show_topography=True,
             topography_scalar_type=TopographyDataType.TOPOGRAPHY,
             image=True
         )
 
+        check_image_hash(
+            plot3d=plot3d,
+            hash='06480000000'
+        )
+
     def test_plot_3d_solutions_topography_geological_map(self, one_fault_model_topo_solution):
-        gpv.plot_3d(
+        plot3d =gpv.plot_3d(
             model=one_fault_model_topo_solution,
             show_lith=True,
             show_topography=True,
             topography_scalar_type=TopographyDataType.GEOMAP,
             image=True
+        )
+
+        check_image_hash(
+            plot3d=plot3d,
+            hash='07040030001'
         )
 
 
