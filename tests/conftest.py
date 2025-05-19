@@ -32,7 +32,7 @@ def one_fault_model_topo_solution() -> GeoModel:
         topography_resolution=np.array([60, 60])
     )
     
-    gp.compute_model(one_fault_model)
+    gp.compute_model(one_fault_model, gp.data.GemPyEngineConfig(backend=gp.data.AvailableBackends.numpy))
     return one_fault_model
 
 
@@ -43,7 +43,7 @@ def _one_fault_model_generator():
         project_name='fault',
         extent=[0, 2000, 0, 2000, 0, 1000],
         resolution=[20, 5, 20],
-        refinement=4,
+        refinement=1,
         importer_helper=ImporterHelper(
             path_to_surface_points=path_to_data + "model5_surface_points.csv",
             path_to_orientations=path_to_data + "model5_orientations.csv",

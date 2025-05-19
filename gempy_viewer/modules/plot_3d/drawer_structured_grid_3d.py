@@ -5,7 +5,7 @@ from matplotlib import colors as mcolors
 
 from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.core.scalar_data_type import ScalarDataType
-from gempy.core.data.grid_modules import RegularGrid, Topography
+from gempy.core.data.grid_modules import Topography
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 from gempy_viewer.optional_dependencies import require_pyvista
 
@@ -30,7 +30,6 @@ def plot_structured_grid(
     structured_grid = set_scalar_data(
         structured_grid=structured_grid,
         data=solution,
-        resolution=resolution,
         scalar_data_type=scalar_data_type
     )
 
@@ -64,18 +63,15 @@ def add_regular_grid_mesh(
         **kwargs
 ):
     if isinstance(cmap, mcolors.Colormap):
-        _clim = (0, cmap.N - 1)
+        _clim = (0, cmap.N)
     else:
         _clim = None
     gempy_vista.regular_grid_actor = gempy_vista.p.add_mesh(
         mesh=structured_grid,
-        cmap=cmap,
         # ? scalars=main_scalar, if we prepare the structured grid do we need this arg?
-        show_scalar_bar=True,
-        scalar_bar_args=gempy_vista.scalar_bar_arguments,
+        show_scalar_bar=False,
         interpolate_before_map=True,
         opacity=opacity,
-        clim=_clim,
         **kwargs
     )
 
@@ -98,27 +94,26 @@ def _mask_topography(structured_grid: "pv.StructuredGrid", topography: Topograph
 def set_scalar_data(
         data: RawArraysSolution,
         structured_grid: "pv.StructuredGrid",
-        resolution: np.ndarray,
         scalar_data_type: ScalarDataType,
 ) -> "pv.StructuredGrid":
-    def _convert_sol_array_to_fortran_order(array: np.ndarray) -> np.ndarray:
-        # ? (Miguel Jun 24) Is this function deprecated?
-        # return array.reshape(*resolution, order='C').ravel(order='F')
-        return array
-
+    
     # Substitute the madness of the previous if with match
     match scalar_data_type:
         case ScalarDataType.LITHOLOGY | ScalarDataType.ALL:
-            structured_grid.cell_data['id'] = _convert_sol_array_to_fortran_order(data.lith_block - 1)
+            max_lith = data.n_surfaces # (for basement)
+            block_ = max_lith - (data.lith_block - 1)
+            structured_grid.cell_data['id'] = block_
         case ScalarDataType.SCALAR_FIELD | ScalarDataType.ALL:
             scalar_field_ = 'sf_'
             for e in range(data.scalar_field_matrix.shape[0]):
                 # TODO: Ideally we will have the group name instead the enumeration
-                structured_grid[scalar_field_ + str(e)] = _convert_sol_array_to_fortran_order(data.scalar_field_matrix[e])
+                array1 = data.scalar_field_matrix[e]
+                structured_grid[scalar_field_ + str(e)] = array1
         case ScalarDataType.VALUES | ScalarDataType.ALL:
             scalar_field_ = 'values_'
             for e in range(data.values_matrix.shape[0]):
-                structured_grid[scalar_field_ + str(e)] = _convert_sol_array_to_fortran_order(data.values_matrix[e])
+                array2 = data.values_matrix[e]
+                structured_grid[scalar_field_ + str(e)] = array2
         case _:
             raise ValueError(f'Unknown scalar data type: {scalar_data_type}')
 

@@ -126,13 +126,14 @@ class GemPyToVista:
         sargs = dict(
             title_font_size=20,
             label_font_size=16,
-            shadow=True,
+            shadow=False,
             italic=True,
+            bold=True,
             font_family="arial",
             height=0.25,
             vertical=True,
-            position_x=0.15,
-            title="id",
+            position_x=0.1,
+            title="Elements",
             fmt="%.0f",
         )
         return sargs

@@ -7,6 +7,8 @@ from gempy.core.data import GeoModel
 from gempy_viewer.core.scalar_data_type import TopographyDataType
 from tests.conftest import _one_fault_model_generator
 
+np.random.seed(1234)
+
 
 class TestPlot3dInputData:
     def test_plot_3d_input_data(self, one_fault_model_no_interp):
@@ -15,18 +17,58 @@ class TestPlot3dInputData:
 
 class TestPlot3DSolutions:
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution):
+        print(one_fault_model_topo_solution.structural_frame)
         gpv.plot_3d(one_fault_model_topo_solution, image=True)
-    
+
     def test_plot_3d_solutions(self, one_fault_model_topo_solution):
+        print(one_fault_model_topo_solution.structural_frame)
         gpv.plot_3d(
             model=one_fault_model_topo_solution,
+            show_topography=True,
             show_scalar=False,
             show_lith=True,
             show_data=True,
             show_boundaries=True,
             image=True
         )
-    
+
+    def test_plot_3d_solutions_volume_and_input(self, one_fault_model_topo_solution):
+        print(one_fault_model_topo_solution.structural_frame)
+        gpv.plot_3d(
+            model=one_fault_model_topo_solution,
+            show_topography=False,
+            show_scalar=False,
+            show_lith=True,
+            show_data=True,
+            show_boundaries=True,
+            image=True,
+            kwargs_plot_structured_grid = {'opacity': 0.5}
+        )
+
+    def test_plot_3d_solutions_only_volume(self, one_fault_model_topo_solution):
+        print(one_fault_model_topo_solution.structural_frame)
+        gpv.plot_3d(
+            model=one_fault_model_topo_solution,
+            show_topography=False,
+            show_scalar=False,
+            show_lith=True,
+            show_data=False,
+            show_boundaries=False,
+            image=True
+        )
+
+    def test_plot_3d_solutions_only_input(self, one_fault_model_topo_solution):
+        print(one_fault_model_topo_solution.structural_frame)
+        gpv.plot_3d(
+            model=one_fault_model_topo_solution,
+            show_topography=False,
+            show_scalar=False,
+            show_lith=False,
+            show_data=True,
+            show_boundaries=True,
+            image=True
+        )
+
     def test_plot_3d_scalar_field(self, one_fault_model_topo_solution):
         gpv.plot_3d(
             model=one_fault_model_topo_solution,
@@ -35,7 +77,7 @@ class TestPlot3DSolutions:
             show_lith=False,
             image=True
         )
-    
+
     def test_plot_3d_solutions_topography(self, one_fault_model_topo_solution):
         gpv.plot_3d(
             model=one_fault_model_topo_solution,
@@ -43,7 +85,7 @@ class TestPlot3DSolutions:
             topography_scalar_type=TopographyDataType.TOPOGRAPHY,
             image=True
         )
-    
+
     def test_plot_3d_solutions_topography_geological_map(self, one_fault_model_topo_solution):
         gpv.plot_3d(
             model=one_fault_model_topo_solution,
@@ -78,7 +120,6 @@ class TestPlot2DSolutionsOctrees:
 
         gp.compute_model(one_fault_model)
         return one_fault_model
-
 
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution_octrees):
         gpv.plot_3d(one_fault_model_topo_solution_octrees, image=True)
