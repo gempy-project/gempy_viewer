@@ -5,11 +5,10 @@ import matplotlib.colors as mcolors
 
 from gempy.core.data import Grid
 from gempy.core.data.core_utils import calculate_line_coordinates_2points, interpolate_zvals_at_xy
-from gempy.core.data.grid_modules import grid_types
 from gempy.core.data.grid_modules import Sections, RegularGrid
 
 
-def slice_cross_section(regular_grid: grid_types.RegularGrid, direction: str, cell_number: int or str):
+def slice_cross_section(regular_grid: RegularGrid, direction: str, cell_number: int or str):
     """
     Slice the 3D array (blocks or scalar field) in the specific direction selected in the plot functions
 
