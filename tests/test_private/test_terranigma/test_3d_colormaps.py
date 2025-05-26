@@ -55,5 +55,24 @@ def test_3d_volume_mesh():
     )
 
 
+def test_3d_volume_mesh_and_data():
+    geo_model: gp.data.GeoModel = load_model(path + "/nugget_effect_optimization.gempy")
+    print(geo_model)
+    gp.compute_model(
+        gempy_model=geo_model,
+        engine_config=gp.data.GemPyEngineConfig(
+            backend=gp.data.AvailableBackends.PYTORCH,
+        ),
+        validate_serialization=True
+    )
+
+    plot_3d(
+        geo_model,
+        image=False,
+        show_data=True,
+        show_lith=False
+    )
+
+
 def test_3d_orientations():
     pass

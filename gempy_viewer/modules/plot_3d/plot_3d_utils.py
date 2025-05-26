@@ -44,6 +44,8 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
         mapper_actor = gempy_vista.regular_grid_actor
     elif gempy_vista.surface_points_actor is not None:
         mapper_actor: pv.Actor = gempy_vista.surface_points_actor
+    elif gempy_vista.surface_actors is not None:
+        mapper_actor: pv.Actor = next(iter(gempy_vista.surface_actors.values()))
     else:
         return None  # * Not a good mapper for the scalar bar
 
