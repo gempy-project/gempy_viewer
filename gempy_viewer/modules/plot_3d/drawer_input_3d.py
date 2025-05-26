@@ -67,7 +67,7 @@ def plot_surface_points(
         point_size=point_size,
         show_scalar_bar=False,
         cmap=custom_cmap,
-        clim=(0, np.unique(vectorize_ids).shape[0])
+        clim=(-0.5, np.unique(vectorize_ids).shape[0]+.5)
     )
 
 
