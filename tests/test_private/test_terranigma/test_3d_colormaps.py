@@ -38,7 +38,7 @@ def computed_model(geo_model):
 class Test3DColormaps:
     def test_3d_volume_input(self, geo_model):
         """Simply plot without computing or data overlays."""
-        plot3d = plot_3d(geo_model, image=True)
+        plot3d = plot_3d(geo_model, image=False, show_topography=False)
 
         check_image_hash(
             plot3d=plot3d,

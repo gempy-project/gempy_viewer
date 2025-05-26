@@ -70,6 +70,22 @@ def plot_surface_points(
     )
 
 
+    nugget_effect = surface_points.nugget
+    poly2 = pv.PolyData(xyz)
+    poly2['Nugget (smoother)'] = nugget_effect
+    # normalize nugget to [0,1]
+    mn, mx = nugget_effect.min(), nugget_effect.max()
+    gempy_vista.p.add_mesh(
+        poly2,
+        scalars='Nugget (smoother)',
+        cmap='inferno',
+        style='points_gaussian',
+        log_scale=True, 
+        point_size=10,
+        opacity=((nugget_effect - mn) / (mx - mn))
+    )
+
+
 def plot_orientations(
         gempy_vista: GemPyToVista,
         orientations: OrientationsTable,
