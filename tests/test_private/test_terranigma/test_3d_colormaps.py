@@ -6,6 +6,8 @@ import gempy as gp
 from gempy.modules.serialization.save_load import load_model
 from gempy_viewer import plot_3d
 
+from tests.util_tests import check_image_hash
+
 dotenv.load_dotenv()
 
 @pytest.fixture(scope="module")
@@ -36,12 +38,27 @@ def computed_model(geo_model):
 class Test3DColormaps:
     def test_3d_volume_input(self, geo_model):
         """Simply plot without computing or data overlays."""
-        plot_3d(geo_model, image=False)
+        plot3d = plot_3d(geo_model, image=True)
+
+        check_image_hash(
+            plot3d=plot3d,
+            hash='06088000400'
+        )
 
     def test_3d_volume_vol(self, computed_model):
         """Plot after compute_model, showing data."""
-        plot_3d(computed_model, image=False, show_data=True)
+        plot3d = plot_3d(computed_model, image=True, show_data=True)
+
+        check_image_hash(
+            plot3d=plot3d,
+            hash='070000b0000'
+        )
 
     def test_3d_volume_mesh_and_data(self, computed_model):
         """Plot after compute_model, showing data but no lithology."""
-        plot_3d(computed_model, image=False, show_data=True, show_lith=False)
+        plot3d = plot_3d(computed_model, image=True, show_data=True, show_lith=False)
+
+        check_image_hash(
+            plot3d=plot3d,
+            hash='06000030000'
+        )
