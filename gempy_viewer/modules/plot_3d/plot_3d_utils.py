@@ -85,7 +85,7 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
     mapper_actor.mapper.scalar_range = (min_id - .5, max_id + .5)
 
     sargs["mapper"] = mapper_actor.mapper
-    sargs["n_labels"] = 10
+    sargs["n_labels"] = 0
 
     # Add scalar bar
     gempy_vista.p.add_scalar_bar(**sargs)

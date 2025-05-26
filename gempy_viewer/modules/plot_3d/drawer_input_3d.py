@@ -102,7 +102,7 @@ def plot_orientations(
     gempy_vista.orientations_actor = gempy_vista.p.add_mesh(
         mesh=arrows,
         scalars='id',
-        show_scalar_bar=True,
+        show_scalar_bar=False,
         cmap=(ListedColormap(element_colors)),
         clim=(-0.5, np.unique(surface_points.ids).shape[0] + .5)
     )

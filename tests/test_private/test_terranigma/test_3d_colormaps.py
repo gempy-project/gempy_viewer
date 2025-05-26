@@ -1,59 +1,47 @@
 import os
-
+import pytest
 import dotenv
+
 import gempy as gp
 from gempy.modules.serialization.save_load import load_model
 from gempy_viewer import plot_3d
 
 dotenv.load_dotenv()
 
-path = os.getenv("PATH_TO_NUGGET_TEST_MODEL")
+@pytest.fixture(scope="module")
+def model_path():
+    path = os.getenv("PATH_TO_NUGGET_TEST_MODEL")
+    if not path:
+        pytest.skip("Environment variable PATH_TO_NUGGET_TEST_MODEL is not set")
+    return path
 
-def test_3d_volume_input():
-    geo_model: gp.data.GeoModel = load_model(path + "/nugget_effect_optimization.gempy")
+@pytest.fixture
+def geo_model(model_path):
+    """Load the raw GemPy model from disk."""
+    model_file = os.path.join(model_path, "nugget_effect_optimization.gempy")
+    return load_model(model_file)
 
-    plot_3d(
-        geo_model,
-        image=False,
-    )
-
-def test_3d_volume_vol():
-    geo_model:gp.data.GeoModel = load_model(path + "/nugget_effect_optimization.gempy")
-    print(geo_model)
+@pytest.fixture
+def computed_model(geo_model):
+    """Run gp.compute_model on the loaded model and return it."""
     gp.compute_model(
         gempy_model=geo_model,
         engine_config=gp.data.GemPyEngineConfig(
             backend=gp.data.AvailableBackends.PYTORCH,
         ),
-        validate_serialization=True
+        validate_serialization=True,
     )
+    return geo_model
 
-    plot_3d(
-        geo_model, 
-        image=False, 
-        show_data=True
-    )
-    pass
+class Test3DColormaps:
+    def test_3d_volume_input(self, geo_model):
+        """Simply plot without computing or data overlays."""
+        plot_3d(geo_model, image=False)
 
+    def test_3d_volume_vol(self, computed_model):
+        """Plot after compute_model, showing data."""
+        plot_3d(computed_model, image=False, show_data=True)
 
-def test_3d_volume_mesh_and_data():
-    geo_model: gp.data.GeoModel = load_model(path + "/nugget_effect_optimization.gempy")
-    print(geo_model)
-    gp.compute_model(
-        gempy_model=geo_model,
-        engine_config=gp.data.GemPyEngineConfig(
-            backend=gp.data.AvailableBackends.PYTORCH,
-        ),
-        validate_serialization=True
-    )
-
-    plot_3d(
-        geo_model,
-        image=False,
-        show_data=True,
-        show_lith=False
-    )
-
-
-def test_3d_orientations():
-    pass
+    def test_3d_volume_mesh_and_data(self, computed_model):
+        """Plot after compute_model, showing data but no lithology."""
+        plot_3d(computed_model, image=False, show_data=True, show_lith=False)
