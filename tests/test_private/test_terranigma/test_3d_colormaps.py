@@ -29,7 +29,7 @@ def computed_model(geo_model):
     gp.compute_model(
         gempy_model=geo_model,
         engine_config=gp.data.GemPyEngineConfig(
-            backend=gp.data.AvailableBackends.PYTORCH,
+            backend=gp.data.AvailableBackends.numpy,
         ),
         validate_serialization=True,
     )
