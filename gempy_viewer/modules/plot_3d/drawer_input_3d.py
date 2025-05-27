@@ -32,7 +32,8 @@ def plot_data(gempy_vista: GemPyToVista,
         gempy_vista=gempy_vista,
         orientations=orientations_copy,
         surface_points=surface_points_copy,
-        arrows_factor=arrows_factor
+        arrows_factor=arrows_factor,
+        element_colors=model.structural_frame.elements_colors
     )
 
 
@@ -57,8 +58,6 @@ def plot_surface_points(
     vectorize_ids = _vectorize_ids(ids, ids)
     poly['id'] = vectorize_ids
 
-    custom_cmap = ListedColormap(element_colors)
-    
     gempy_vista.surface_points_mesh = poly
     gempy_vista.surface_points_actor = gempy_vista.p.add_mesh(
         mesh=poly,
@@ -66,8 +65,8 @@ def plot_surface_points(
         render_points_as_spheres=render_points_as_spheres,
         point_size=point_size,
         show_scalar_bar=False,
-        cmap=custom_cmap,
-        clim=(0, np.unique(vectorize_ids).shape[0])
+        cmap=(ListedColormap(element_colors)),
+        clim=(-0.5, np.unique(vectorize_ids).shape[0] + .5)
     )
 
 
@@ -76,6 +75,7 @@ def plot_orientations(
         orientations: OrientationsTable,
         surface_points: SurfacePointsTable,
         arrows_factor: float,
+        element_colors=None,
 ):
     orientations_xyz = orientations.xyz
     orientations_grads = orientations.grads
@@ -86,10 +86,11 @@ def plot_orientations(
     pv = require_pyvista()
     poly = pv.PolyData(orientations_xyz)
 
-    poly['id'] = _vectorize_ids(
+    vectorize_ids = _vectorize_ids(
         mapping_ids=surface_points.ids,
         ids_to_map=orientations.ids
     )
+    poly['id'] = vectorize_ids
     poly['vectors'] = orientations_grads
 
     arrows = poly.glyph(
@@ -101,7 +102,9 @@ def plot_orientations(
     gempy_vista.orientations_actor = gempy_vista.p.add_mesh(
         mesh=arrows,
         scalars='id',
-        show_scalar_bar=False
+        show_scalar_bar=False,
+        cmap=(ListedColormap(element_colors)),
+        clim=(-0.5, np.unique(surface_points.ids).shape[0] + .5)
     )
     gempy_vista.orientations_mesh = arrows
 
