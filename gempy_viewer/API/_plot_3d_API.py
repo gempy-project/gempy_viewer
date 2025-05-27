@@ -41,29 +41,50 @@ def plot_3d(
         image: bool = False,
         show: bool = True,
         transformed_data: bool = False,
+        show_nugget_effect: bool = False,
         **kwargs
 ) -> GemPyToVista:
-    """Plot 3-D geomodel.
+    """
+    Plots a 3D visualization of a geological model using the GemPy framework and PyVista.
 
-    Args:
-        model (GeoModel): Geomodel object with solutions.
-        plotter_type (str): Type of plotter to use. Defaults to 'basic'.
-        active_scalar_field (Optional[str]): Active scalar field for the plot.
-        ve (Optional[float]): Vertical exaggeration.
-        topography_scalar_type (TopographyDataType): Type of topography scalar data. Defaults to TopographyDataType.GEOMAP.
-        kwargs_pyvista_bounds (Optional[dict]): Additional keyword arguments for PyVista bounds.
-        kwargs_plot_structured_grid (Optional[dict]): Additional keyword arguments for plotting the structured grid.
-        kwargs_plot_topography (Optional[dict]): Additional keyword arguments for plotting the topography.
-        kwargs_plot_data (Optional[dict]): Additional keyword arguments for plotting data.
-        kwargs_plotter (Optional[dict]): Additional keyword arguments for the plotter.
-        kwargs_plot_surfaces (Optional[dict]): Additional keyword arguments for plotting surfaces.
-        image (bool): If True, saves the plot as an image. Defaults to False.
-        show (bool): If True, displays the plot. Defaults to True.
-        transformed_data (bool): If True, uses transformed data for plotting. Defaults to False.
-        **kwargs: Additional keyword arguments.
+    This function generates a 3D visual representation of geological data, including topography, 
+    scalar fields, lithology, and structural surfaces. It provides options for customizing the 
+    visualization settings using various keyword arguments. The user can control aspects such as 
+    whether to plot nugget effects, show scalar fields, enable vertical exaggeration, and much 
+    more. The resulting visualization can be displayed interactively or exported as an image.
 
-    Returns:
-        GemPyToVista: Object for 3D plotting in GemPy.
+    :param model: The geological model (GeoModel) to visualize, which includes information on 
+        grid topology, geological structures, and solutions (if available).
+    :param plotter_type: The type of PyVista plotter to use. Default is 'basic'.
+    :param active_scalar_field: The scalar field to set as the active field for visualization. 
+        Defaults to None.
+    :param ve: Vertical exaggeration factor for z-axis scaling. Defaults to None.
+    :param topography_scalar_type: Type of scalar data to classify topography, defined as 
+        TopographyDataType.
+    :param kwargs_pyvista_bounds: Optional dictionary of keyword arguments to customize PyVista 
+        bounds.
+    :param kwargs_plot_structured_grid: Optional dictionary of keyword arguments to customize 
+        the plotting of structured grid data.
+    :param kwargs_plot_topography: Optional dictionary of keyword arguments to customize 
+        topography visualization.
+    :param kwargs_plot_data: Optional dictionary of keyword arguments to customize data visualizations, 
+        such as arrows and nugget effects.
+    :param kwargs_plotter: Optional dictionary of keyword arguments passed directly to the PyVista 
+        plotter.
+    :param kwargs_plot_surfaces: Optional dictionary of keyword arguments for customizing the 
+        visualization of structural surfaces.
+    :param image: Boolean flag to enable saving as an image. If set to True, the visualization will 
+        render off-screen. Defaults to False.
+    :param show: Boolean flag for displaying the visualization. If False, the visualization is created 
+        but not displayed. Defaults to True.
+    :param transformed_data: Boolean flag to use transformed (projected) data for visualization instead 
+        of raw data. Defaults to False.
+    :param show_nugget_effect: Boolean flag that determines if the nugget effect data should be visualized. 
+        Defaults to False.
+    :param kwargs: Additional keyword arguments for extended functionality. Optional dictionary 
+        of miscellaneous settings or configurations.
+    :return: A GemPyToVista object containing the generated visualization configuration and state.
+
     """
 
     from gempy_viewer.modules.plot_3d.drawer_input_3d import plot_data
@@ -158,9 +179,12 @@ def plot_3d(
             gempy_vista=gempy_vista,
             model=model,
             arrows_factor=arrow_size / (100 / min_axes),
+            show_nugget_effect=show_nugget_effect,
             transformed_data=transformed_data,
             **kwargs_plot_data
         )
+    elif show_nugget_effect is True:
+        raise ValueError("Data plotting is disabled. Please set show_data=True to plot nugget.")
 
     if transformed_data:
         vtk_formated_regular_mesh = model.regular_grid_coordinates_transformed

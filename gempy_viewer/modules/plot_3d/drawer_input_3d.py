@@ -13,6 +13,7 @@ from gempy_viewer.optional_dependencies import require_pyvista
 def plot_data(gempy_vista: GemPyToVista,
               model: GeoModel,
               arrows_factor: float,
+              show_nugget_effect: bool,
               transformed_data: bool = False,
               **kwargs):
     if transformed_data:
@@ -25,7 +26,8 @@ def plot_data(gempy_vista: GemPyToVista,
     plot_surface_points(
         gempy_vista=gempy_vista,
         surface_points=surface_points_copy,
-        element_colors=model.structural_frame.elements_colors
+        element_colors=model.structural_frame.elements_colors,
+        show_nugget_effect=show_nugget_effect
     )
 
     plot_orientations(
@@ -42,7 +44,8 @@ def plot_surface_points(
         surface_points: SurfacePointsTable,
         render_points_as_spheres=True,
         element_colors=None,
-        point_size=10
+        point_size=10,
+        show_nugget_effect: bool = False,
 ):
     # Selecting the surfaces to plot
     xyz = surface_points.xyz
@@ -68,6 +71,23 @@ def plot_surface_points(
         cmap=(ListedColormap(element_colors)),
         clim=(-0.5, np.unique(vectorize_ids).shape[0] + .5)
     )
+
+
+    if show_nugget_effect is True:
+        nugget_effect = surface_points.nugget
+        poly2 = pv.PolyData(xyz)
+        poly2['Nugget (smoother)'] = nugget_effect
+        # normalize nugget to [0,1]
+        mn, mx = nugget_effect.min(), nugget_effect.max()
+        gempy_vista.p.add_mesh(
+            poly2,
+            scalars='Nugget (smoother)',
+            cmap='inferno',
+            style='points_gaussian',
+            log_scale=True, 
+            point_size=10,
+            opacity=((nugget_effect - mn) / (mx - mn))
+        )
 
 
 def plot_orientations(
