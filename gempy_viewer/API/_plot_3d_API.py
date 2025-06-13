@@ -126,8 +126,8 @@ def plot_3d(
     else:
         solutions_raw_arrays = model.solutions.raw_arrays
 
-    extent: np.ndarray = model.grid.extent
-
+        
+    extent = model.grid.extent if transformed_data is False else model.extent_transformed_transformed_by_input
     gempy_vista = GemPyToVista(
         extent=extent,
         plotter_type=plotter_type,
