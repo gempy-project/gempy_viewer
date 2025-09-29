@@ -128,7 +128,6 @@ def plot_orientations(
     )
     gempy_vista.orientations_mesh = arrows
 
-
 def _vectorize_ids(mapping_ids, ids_to_map):
     def _mapping_dict(ids):
         unique_values, first_indices = np.unique(ids, return_index=True)  # Find the unique elements and their first indices
@@ -139,5 +138,14 @@ def _vectorize_ids(mapping_ids, ids_to_map):
         return mapping_dict
 
     mapping_dict = _mapping_dict(mapping_ids)
-    mapped_array = np.vectorize(mapping_dict.get)(ids_to_map)  # Map the original array to the new values
+
+    # Filter out invalid IDs or provide a default value
+    # Option 1: Filter out IDs that don't exist in mapping_dict
+    valid_mask = np.isin(ids_to_map, list(mapping_dict.keys()))
+    if not np.all(valid_mask):
+        print(f"Warning: Found {np.sum(~valid_mask)} orientation IDs that don't exist in surface points. These will be assigned a default value of 0.")
+
+    # Option 2: Use a default value (0) for missing IDs
+    mapped_array = np.vectorize(lambda x: mapping_dict.get(x, 0))(ids_to_map)
+
     return mapped_array
