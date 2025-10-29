@@ -96,6 +96,11 @@ def plot_orientations(
         surface_points: SurfacePointsTable,
         arrows_factor: float,
         element_colors=None,
+        arrow_scale_mode='fixed',  # 'fixed' or 'vector'
+        arrow_opacity=1.0,
+        show_arrow_outline=True,
+        outline_color='white',
+        outline_width=1,
 ):
     orientations_xyz = orientations.xyz
     orientations_grads = orientations.grads
@@ -113,18 +118,49 @@ def plot_orientations(
     poly['id'] = vectorize_ids
     poly['vectors'] = orientations_grads
 
-    arrows = poly.glyph(
-        orient='vectors',
-        scale=False,
-        factor=arrows_factor,
-    )
+    # Determine scaling mode
+    if arrow_scale_mode == 'vector':
+        # Scale arrows by their magnitude
+        arrows = poly.glyph(
+            orient='vectors',
+            scale='vectors',
+            factor=arrows_factor,
+        )
+    else:
+        # Fixed scale (original behavior)
+        arrows = poly.glyph(
+            orient='vectors',
+            scale=False,
+            factor=arrows_factor,
+        )
 
+    # Optional: Add outlined arrows for better visibility
+    if show_arrow_outline:
+        # Create a slightly larger version for the outline
+        arrows_outline = poly.glyph(
+            orient='vectors',
+            scale=False if arrow_scale_mode == 'fixed' else 'vectors',
+            factor=arrows_factor 
+        )
+        
+        # Add outline FIRST (behind)
+        gempy_vista.p.add_mesh(
+            mesh=arrows_outline,
+            color=outline_color,
+            style='wireframe',  # This is the key!
+            line_width=outline_width,
+            opacity=arrow_opacity,
+        )
+
+    # Add main colored arrows SECOND (in front)
     gempy_vista.orientations_actor = gempy_vista.p.add_mesh(
         mesh=arrows,
         scalars='id',
         show_scalar_bar=False,
         cmap=(ListedColormap(element_colors)),
-        clim=(-0.5, np.unique(surface_points.ids).shape[0] + .5)
+        clim=(-0.5, np.unique(surface_points.ids).shape[0] + .5),
+        opacity=arrow_opacity,
+        smooth_shading=True,
     )
     gempy_vista.orientations_mesh = arrows
 
