@@ -24,10 +24,14 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                   kwargs_scalar_field: dict = None,
                   kwargs_lithology: dict = None,
                   kwargs_boundaries: dict = None,
+                  kwargs_surface_points: dict = None,
+                  kwargs_orientations: dict = None,
                   ):
     kwargs_lithology = kwargs_lithology if kwargs_lithology is not None else {}
     kwargs_scalar_field = kwargs_scalar_field if kwargs_scalar_field is not None else {}
     kwargs_topography = kwargs_topography if kwargs_topography is not None else {}
+    kwargs_surface_points = kwargs_surface_points if kwargs_surface_points is not None else {}
+    kwargs_orientations = kwargs_orientations if kwargs_orientations is not None else {}
     
     series_n = series_n if series_n is not None else [0]
     
@@ -43,7 +47,9 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                 orientations_colors=gempy_model.structural_frame.orientations_colors_per_item,
                 orientations=gempy_model.orientations_copy.df.copy(),
                 points=gempy_model.surface_points_copy.df.copy(),
-                slicer_data=section_data.slicer_data
+                slicer_data=section_data.slicer_data,
+                kwargs_surface_points=kwargs_surface_points,
+                kwargs_orientations=kwargs_orientations,
             )
 
         if data_to_show.show_lith[e] is True:
