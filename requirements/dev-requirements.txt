@@ -5,5 +5,4 @@ gempy
 imagehash
 pillow
 pydantic
-gempy_engine>=2025.2.0dev0,<2025.3.0
 gempy>=2025.2.0dev0,<2025.3.0

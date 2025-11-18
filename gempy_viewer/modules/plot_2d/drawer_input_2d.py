@@ -15,41 +15,60 @@ from gempy.core.data.grid import Grid
 
 # TODO: This could be public and the slice just a class yes!
 def draw_data(ax, surface_points_colors: list[str], orientations_colors: list[str],
-              orientations: 'pd.DataFrame', points: 'pd.DataFrame', slicer_data: SlicerData):
+              orientations: 'pd.DataFrame', points: 'pd.DataFrame', slicer_data: SlicerData,
+              kwargs_surface_points: dict = None,
+              kwargs_orientations: dict = None):
     
-    _draw_surface_points(ax, points, slicer_data, surface_points_colors)
-    _draw_orientations(ax, orientations, orientations_colors, slicer_data)
+    kwargs_surface_points = kwargs_surface_points if kwargs_surface_points is not None else {}
+    kwargs_orientations = kwargs_orientations if kwargs_orientations is not None else {}
+    
+    _draw_surface_points(ax, points, slicer_data, surface_points_colors, **kwargs_surface_points)
+    _draw_orientations(ax, orientations, orientations_colors, slicer_data, **kwargs_orientations)
 
 
-def _draw_orientations(ax, orientations, orientations_colors, slicer_data):
+def _draw_orientations(ax, orientations, orientations_colors, slicer_data, **kwargs):
     sel_ori = orientations[slicer_data.select_projected_o]
     aspect = np.subtract(*ax.get_ylim()) / np.subtract(*ax.get_xlim())
     min_axis = 'width' if aspect < 1 else 'height'
+    
+    # Default values that can be overridden by kwargs
+    default_kwargs = {
+        'pivot': 'tail',
+        'scale_units': min_axis,
+        'scale': 30,
+        'color': np.array(orientations_colors)[slicer_data.select_projected_o],
+        'edgecolor': 'k',
+        'headwidth': 8,
+        'linewidths': 1,
+        'zorder': 102
+    }
+    default_kwargs.update(kwargs)
+    
     ax.quiver(
         sel_ori[slicer_data.x],
         sel_ori[slicer_data.y],
         sel_ori[slicer_data.Gx],
         sel_ori[slicer_data.Gy],
-        pivot="tail",
-        scale_units=min_axis,
-        scale=30,
-        color=np.array(orientations_colors)[slicer_data.select_projected_o],
-        edgecolor='k',
-        headwidth=8,
-        linewidths=1,
-        zorder=102
+        **default_kwargs
     )
 
 
-def _draw_surface_points(ax, points, slicer_data, surface_points_colors):
+def _draw_surface_points(ax, points, slicer_data, surface_points_colors, **kwargs):
     points_df = points[slicer_data.select_projected_p]
+    
+    # Default values that can be overridden by kwargs
+    default_kwargs = {
+        'c': np.array(surface_points_colors)[slicer_data.select_projected_p],
+        's': 70,
+        'edgecolors': 'white',
+        'zorder': 102
+    }
+    default_kwargs.update(kwargs)
+    
     ax.scatter(
         points_df[slicer_data.x],
         points_df[slicer_data.y],
-        c=(np.array(surface_points_colors)[slicer_data.select_projected_p]),
-        s=70,
-        edgecolors='white',
-        zorder=102
+        **default_kwargs
     )
 
 

@@ -16,10 +16,11 @@ def plot_regular_grid_contacts(gempy_model: GeoModel, ax: matplotlib.axes.Axes, 
         kwargs = {}
 
     zorder = kwargs.get('zorder', 100)
+    contour_colors = kwargs.get('contour_colors', None)
 
     shape = resolution
     c_id = 0  # * color id startpoint
-    all_colors = gempy_model.structural_frame.elements_colors_contacts
+    all_colors = contour_colors if contour_colors is not None else gempy_model.structural_frame.elements_colors_contacts
 
     for e, block in enumerate(gempy_model.solutions.raw_arrays.scalar_field_matrix):
         _scalar_field_per_surface = np.where(gempy_model.solutions.raw_arrays.scalar_field_at_surface_points[e] != 0)
