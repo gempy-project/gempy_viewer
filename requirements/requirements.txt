@@ -1,3 +1,2 @@
 matplotlib
 numpy
-gempy_engine>=2025.3dev0
