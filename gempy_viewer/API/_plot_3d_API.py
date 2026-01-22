@@ -7,6 +7,7 @@ from gempy.core.data import GeoModel
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.scalar_data_type import ScalarDataType, TopographyDataType
 from gempy_viewer.modules.plot_2d.plot_2d_utils import get_geo_model_cmap
+from gempy_viewer.modules.plot_3d.plot_octree_gizmos import plot_octree_gizmos
 from gempy_viewer.modules.plot_3d.vista import GemPyToVista
 
 try:
@@ -225,6 +226,12 @@ def plot_3d(
 
     if ve is not None:
         gempy_vista.p.set_scale(zscale=ve)
+
+    if kwargs.get('show_octree', False):
+        plot_octree_gizmos(
+            model=model, 
+            pd3=gempy_vista
+        )
 
     fig_path: str = kwargs.get('fig_path', None)
     if fig_path is not None:
