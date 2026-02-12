@@ -14,9 +14,12 @@ def plot_octree_gizmos(model: GeoModel, pd3: GemPyToVista):
         # Map the current level (i) to a 0.0 - 1.0 range for the colormap
         level_color = cmap(i / max(1, n_levels - 1))[:3]
 
+        corners_grid = octree_level.grid_centers.corners_grid
+        if corners_grid is None:
+            continue
         _plot_octree_gizmos(
             model=model,
-            numbers=octree_level.grid_centers.corners_grid.values,
+            numbers=corners_grid.values,
             pd3=pd3,
             color=level_color
         )
