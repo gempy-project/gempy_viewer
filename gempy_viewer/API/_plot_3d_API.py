@@ -34,6 +34,7 @@ def plot_3d(
         ve: Optional[float] = None,
         topography_scalar_type: TopographyDataType = TopographyDataType.GEOMAP,
         kwargs_pyvista_bounds: Optional[dict] = None,
+        kwargs_pyvista_camera: Optional[dict] = None,
         kwargs_plot_structured_grid: Optional[dict] = None,
         kwargs_plot_topography: Optional[dict] = None,
         kwargs_plot_data: Optional[dict] = None,
@@ -115,6 +116,7 @@ def plot_3d(
     kwargs_plotter = kwargs_plotter or {}
     kwargs_plot_surfaces = kwargs_plot_surfaces or {}
     kwargs_pyvista_bounds = kwargs_pyvista_bounds or {}
+    kwargs_pyvista_camera = kwargs_pyvista_camera or {}
 
     if image is True:
         show = True
@@ -133,6 +135,7 @@ def plot_3d(
         extent=extent,
         plotter_type=plotter_type,
         pyvista_bounds_kwargs=kwargs_pyvista_bounds,
+        pyvista_camera_kwargs=kwargs_pyvista_camera,
         **kwargs_plotter
     )
 

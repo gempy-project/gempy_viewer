@@ -45,11 +45,10 @@ except ImportError:
 from gempy_viewer.optional_dependencies import require_pyvista
 
 
-
 class GemPyToVista:
 
     def __init__(self, extent: Union[np.ndarray | list[float]], plotter_type: str = 'basic',
-                 live_updating=False, pyvista_bounds_kwargs: Optional[dict] = None, **kwargs):
+                 live_updating=False, pyvista_bounds_kwargs: Optional[dict] = None, pyvista_camera_kwargs: Optional[dict] = None, **kwargs):
         """GemPy 3-D visualization using pyVista.
 
         Args:
@@ -65,7 +64,7 @@ class GemPyToVista:
         """
 
         pv = require_pyvista()
-        
+
         if pyvista_bounds_kwargs is None:
             pyvista_bounds_kwargs = {}
 
@@ -92,7 +91,10 @@ class GemPyToVista:
 
         # Default camera and bounds
         self.set_bounds(extent, **pyvista_bounds_kwargs)
-        self.p.view_isometric(negative=False)
+        camera_position = pyvista_camera_kwargs.get('position', None)
+        if camera_position is not None:
+            self.p.camera_position = camera_position
+        
 
         # Actors containers
         self.surface_actors = {}
