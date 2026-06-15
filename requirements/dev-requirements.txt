@@ -1,8 +1,7 @@
 -r optional_requirements.txt
 
 pytest
-gempy
 imagehash
 pillow
 pydantic
-gempy>=2025.2.0dev0,<2025.3.0
+gempy>=2025.2.0dev0
