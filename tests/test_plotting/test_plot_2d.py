@@ -159,7 +159,10 @@ class TestPlot2DSolutionsOctrees:
     @pytest.fixture(scope='class')
     def one_fault_model_topo_solution_octrees(self) -> gp.data.GeoModel:
         one_fault_model = _one_fault_model_generator()
-        one_fault_model.grid.regular_grid.resolution = [2, 4, 2]
+        one_fault_model.grid.regular_grid.set_regular_grid(
+            extent=one_fault_model.grid.regular_grid.extent,
+            resolution=np.array([2, 4, 2])
+        )
 
         one_fault_model.interpolation_options.number_octree_levels = 5
 
