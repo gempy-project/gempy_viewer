@@ -223,7 +223,7 @@ def plot_3d(
         set_scalar_bar(
             gempy_vista=gempy_vista,
             elements_names=structural_frame.elements_names,
-            surfaces_ids=structural_frame.elements_ids - 1,
+            surfaces_ids=structural_frame.elements_enumerator,
             custom_colors=structural_frame.elements_colors_volumes
         )
 

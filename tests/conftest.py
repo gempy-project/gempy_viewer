@@ -32,7 +32,11 @@ def one_fault_model_topo_solution() -> GeoModel:
         topography_resolution=np.array([60, 60])
     )
     
-    gp.compute_model(one_fault_model, gp.data.GemPyEngineConfig(backend=gp.data.AvailableBackends.numpy))
+    gp.compute_model(
+        one_fault_model,
+        gp.data.GemPyEngineConfig(backend=gp.data.AvailableBackends.numpy),
+        validate_serialization=True
+    )
     return one_fault_model
 
 

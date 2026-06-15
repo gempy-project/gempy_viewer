@@ -52,18 +52,17 @@ def set_scalar_bar(gempy_vista: GemPyToVista, elements_names: list[str],
     # Get the lookup table from the mapper
     lut = mapper_actor.mapper.lookup_table
 
-    # Create annotations mapping integers to element names
+    # Create annotations mapping surface IDs to element names
     annotations = {}
-    for e, name in enumerate(elements_names[::-1]):
-        # Convert integer to string for the annotation key
-        annotations[str(e)] = name
+    for surface_id, name in zip(surfaces_ids, elements_names[::-1]):
+        annotations[str(surface_id)] = name
 
     # Apply annotations to the lookup table
     lut.annotations = annotations
 
     # Set number of colors to match the number of categories
     n_colors = len(elements_names)
-    lut.n_values = n_colors - 1
+    lut.n_values = n_colors
 
     # Apply custom colors if provided
     if custom_colors is not None:
