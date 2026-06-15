@@ -48,7 +48,7 @@ class Test3DColormaps:
 
         check_image_hash(
             plot3d=plot3d,
-            hash='0700001a000'
+            hash='07000019001'
         )
 
     def test_3d_volume_vol(self, computed_model):
