@@ -254,7 +254,8 @@ def _plot_in_matplotlib(gempy_vista):
     img = gempy_vista.p.last_image
     plt.imshow(img)
     plt.axis('off')
-    plt.show(block=False)
+    if plt.get_backend().lower() != "agg":
+        plt.show(block=False)
     gempy_vista.p.close()
     show = False
     return show
