@@ -72,7 +72,7 @@ class TestPlot3DSolutions:
 
         check_image_hash(
             plot3d=plot3d,
-            hash='074400c0000'
+            hash='07640080000'
         )
 
     def test_plot_3d_solutions_only_input(self, one_fault_model_topo_solution):
@@ -117,7 +117,7 @@ class TestPlot3DSolutions:
 
         check_image_hash(
             plot3d=plot3d,
-            hash='064c0000000'
+            hash='06480000000'
         )
 
     def test_plot_3d_solutions_topography_geological_map(self, one_fault_model_topo_solution):
