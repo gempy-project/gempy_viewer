@@ -172,7 +172,7 @@ def plot_2d(model: GeoModel,
         kwargs_lithology=kwargs_lithology,
         kwargs_boundaries=kwargs_boundaries
     )
-    if show is True:
+    if show is True and plt.get_backend().lower() != "agg":
         p.fig.show()
 
     return p

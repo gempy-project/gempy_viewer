@@ -158,12 +158,12 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
         # endregion
 
         if legend and not legend_already_added:
-            colors = gempy_model.structural_frame.elements_colors_contacts
-
-            markers = [plt.Line2D([0, 0], [0, 0], color=color, marker='o', linestyle='') for color in colors]
+            elements_with_sp = [e for e in gempy_model.structural_frame.structural_elements if len(e.surface_points) > 0]
+            markers = [plt.Line2D([0, 0], [0, 0], color=e.color, marker='o', linestyle='') for e in elements_with_sp]
+            labels = [e.name for e in elements_with_sp]
             temp_ax.legend(
                 markers,
-                gempy_model.structural_frame.elements_names,
+                labels,
                 numpoints=1
             )
             legend_already_added = True
