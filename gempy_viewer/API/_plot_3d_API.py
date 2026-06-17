@@ -203,7 +203,7 @@ def plot_3d(
             scalar_data_type=ScalarDataType.LITHOLOGY,
             active_scalar_field="lith",
             solution=solutions_raw_arrays,
-            cmap=get_geo_model_cmap(structural_frame.elements_colors),
+            cmap=get_geo_model_cmap(structural_frame.volume_elements_colors, reverse=False),
             **kwargs_plot_structured_grid
         )
 
@@ -220,12 +220,20 @@ def plot_3d(
             **kwargs_plot_structured_grid
         )
     else: # * If it is not a scalar field, we use the structural frame bar
-        set_scalar_bar(
-            gempy_vista=gempy_vista,
-            elements_names=structural_frame.elements_names,
-            surfaces_ids=structural_frame.elements_enumerator,
-            custom_colors=structural_frame.elements_colors_volumes
-        )
+        if data_to_show.show_lith[0] is True:
+            set_scalar_bar(
+                gempy_vista=gempy_vista,
+                elements_names=structural_frame.volume_elements_names[::-1],
+                surfaces_ids=structural_frame.volume_elements_enumerator,
+                custom_colors=structural_frame.volume_elements_colors
+            )
+        else:
+            set_scalar_bar(
+                gempy_vista=gempy_vista,
+                elements_names=structural_frame.elements_names,
+                surfaces_ids=structural_frame.elements_enumerator,
+                custom_colors=structural_frame.elements_colors_volumes
+            )
 
     if ve is not None:
         gempy_vista.p.set_scale(zscale=ve)

@@ -90,8 +90,9 @@ def set_scalar_data(
     # Substitute the madness of the previous if with match
     match scalar_data_type:
         case ScalarDataType.LITHOLOGY | ScalarDataType.ALL:
-            max_lith = data.n_surfaces # (for basement)
-            block_ = max_lith - (data.lith_block - 1)
+            unique_vals = np.sort(np.unique(data.lith_block))
+            lith_to_id = {int(v): i + 1 for i, v in enumerate(unique_vals)}
+            block_ = np.array([lith_to_id[int(v)] for v in data.lith_block.ravel()])
             structured_grid.cell_data['id'] = block_
         case ScalarDataType.SCALAR_FIELD | ScalarDataType.ALL:
             scalar_field_ = 'sf_'
