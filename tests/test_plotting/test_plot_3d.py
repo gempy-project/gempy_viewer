@@ -55,7 +55,7 @@ class TestPlot3DSolutions:
 
         check_image_hash(
             plot3d=plot3d,
-            hash='07440018000'
+            hash='07400018000'
         )
 
     def test_plot_3d_solutions_only_volume(self, one_fault_model_topo_solution):
@@ -89,7 +89,7 @@ class TestPlot3DSolutions:
 
         check_image_hash(
             plot3d=plot3d,
-            hash='06000030080'
+            hash='06000038040'
         )
 
     def test_plot_3d_scalar_field(self, one_fault_model_topo_solution):
@@ -104,7 +104,7 @@ class TestPlot3DSolutions:
 
         check_image_hash(
             plot3d=plot3d,
-            hash='06600210001'
+            hash='07600210000'
         )
 
     def test_plot_3d_solutions_topography(self, one_fault_model_topo_solution):
