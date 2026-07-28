@@ -8,7 +8,7 @@ from gempy.core.data.grid_modules import RegularGrid
 from gempy_viewer.API._plot_2d_sections_api import plot_sections
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D
-from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, orthogonal_sections_iterator
+from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, orthogonal_sections_iterator, equalize_axes_scale
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
@@ -172,6 +172,7 @@ def plot_2d(model: GeoModel,
         kwargs_lithology=kwargs_lithology,
         kwargs_boundaries=kwargs_boundaries
     )
+    equalize_axes_scale(p.fig, list(p.axes))
     if show is True and plt.get_backend().lower() != "agg":
         p.fig.show()
 

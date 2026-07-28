@@ -148,6 +148,9 @@ def create_axes_orthogonal(plot_2d: Plot2D, gempy_grid: Grid, cell_number,
     ax.set_xlim(extent_val[0], extent_val[1])
     ax.set_ylim(extent_val[2], extent_val[3])
 
+    ax.set_aspect('equal')
+    ax.set_aspect(ve)
+
     # Adding some properties to the axes to make easier to plot
     ax.cell_number = cell_number
     ax.direction = direction
@@ -189,3 +192,48 @@ def _setup_topography_section(ax):
     ax.set_title('Geological map')
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
+
+
+def equalize_axes_scale(fig, axes: list[Axes]) -> None:
+    """Make every axis in ``axes`` render at the same data-units-per-inch scale.
+
+    Each axis already enforces its own equal (or ve-scaled) aspect ratio, so a km on its
+    own x-axis already equals a km on its own y-axis. But matplotlib's tight-layout engine
+    allocates each axis' box based on the actual tight bounding box of whatever is drawn on
+    it (e.g. an ``imshow`` image vs. ``contour``/``contourf`` lines measure differently),
+    so two axes showing the exact same section at the exact same aspect can still end up
+    rendered at different absolute sizes. This reconciles them to a common scale, using the
+    most-constrained axis (the smallest achieved scale) as the target so nothing overflows
+    its allotted space, then freezes the figure's layout engine so a later ``savefig``/
+    ``show`` cannot silently re-trigger the same content-dependent reflow and undo this.
+    """
+    axes = [ax for ax in axes if ax.get_aspect() != 'auto']
+    if len(axes) < 2:
+        return
+
+    fig_w_in, fig_h_in = fig.get_size_inches()
+    scales = []
+    for ax in axes:
+        pos = ax.get_position()  # triggers apply_aspect() with current content already drawn
+        xlim = ax.get_xlim()
+        data_w = abs(xlim[1] - xlim[0])
+        scales.append(pos.width * fig_w_in / data_w if data_w else None)
+
+    valid_scales = [s for s in scales if s]
+    if not valid_scales:
+        return
+    target_scale = min(valid_scales)
+
+    for ax, scale in zip(axes, scales):
+        if scale is None:
+            continue
+        pos = ax.get_position()
+        xlim = ax.get_xlim()
+        data_w = abs(xlim[1] - xlim[0])
+        new_w = target_scale * data_w / fig_w_in
+        new_h = new_w * (pos.height / pos.width)
+        cx = pos.x0 + pos.width / 2
+        cy = pos.y0 + pos.height / 2
+        ax.set_position([cx - new_w / 2, cy - new_h / 2, new_w, new_h])
+
+    fig.set_layout_engine('none')
