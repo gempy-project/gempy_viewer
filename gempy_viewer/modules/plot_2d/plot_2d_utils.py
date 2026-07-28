@@ -126,6 +126,35 @@ def calculate_p1p2(regular_grid: RegularGrid, direction, cell_number):
     return p1, p2
 
 
+def position_to_cell_number(regular_grid: RegularGrid, direction: str, position: float) -> int:
+    """Convert a real-world coordinate along `direction` to the regular grid cell index
+    closest to it, clamping to the grid's valid range if the position falls outside its
+    extent (with a warning, since that usually signals a mistake rather than intent).
+
+    This lets plot_2d be called with e.g. position=500 instead of having to work out the
+    corresponding cell_number by hand from extent/resolution/refinement -- see
+    https://github.com/gempy-project/gempy/issues/882.
+    """
+    if direction == 'x':
+        lo, hi, d, res = regular_grid.extent[0], regular_grid.extent[1], regular_grid.dx, regular_grid.resolution[0]
+    elif direction == 'y':
+        lo, hi, d, res = regular_grid.extent[2], regular_grid.extent[3], regular_grid.dy, regular_grid.resolution[1]
+    elif direction == 'z':
+        lo, hi, d, res = regular_grid.extent[4], regular_grid.extent[5], regular_grid.dz, regular_grid.resolution[2]
+    else:
+        raise AttributeError(str(direction) + " must be a cartesian direction, i.e. xyz")
+
+    if not (lo <= position <= hi):
+        import warnings
+        warnings.warn(
+            f"position={position} is outside the model extent [{lo}, {hi}] for direction "
+            f"'{direction}'; clamping to the nearest edge."
+        )
+
+    cell_number = int(round((position - lo) / d))
+    return int(np.clip(cell_number, 0, res - 1))
+
+
 def get_geo_model_cmap(elements_colors: Sequence[str], reverse: bool = True) -> mcolors.ListedColormap:
     if reverse:
         return mcolors.ListedColormap(elements_colors).reversed()

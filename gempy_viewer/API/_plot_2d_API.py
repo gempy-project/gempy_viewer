@@ -9,6 +9,7 @@ from gempy_viewer.API._plot_2d_sections_api import plot_sections
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D
 from gempy_viewer.modules.plot_2d.multi_axis_manager import sections_iterator, orthogonal_sections_iterator, equalize_axes_scale
+from gempy_viewer.modules.plot_2d.plot_2d_utils import position_to_cell_number
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
@@ -17,6 +18,7 @@ def plot_2d(model: GeoModel,
             n_axis=None,
             section_names: list = None,
             cell_number: Optional[Union[int | list[int] | str | list[str]]] = None,
+            position: Optional[Union[float | list[float]]] = None,
             direction: Optional[Union[str | list[str]]] = 'y',
             series_n: Union[int, List[int]] = 0,
             legend: bool = True,
@@ -39,6 +41,10 @@ def plot_2d(model: GeoModel,
         n_axis (Optional[int]): Subplot axis for multiple sections.
         section_names (Optional[List[str]]): Names of predefined custom section traces.
         cell_number (Optional[Union[int, List[int], str, List[str]]]): Position of the array to plot.
+        position (Optional[Union[float, List[float]]]): Real-world coordinate (in the same
+            units as the model extent) to slice at, along `direction` -- an alternative to
+            `cell_number` that doesn't require knowing the grid's resolution. Mutually
+            exclusive with `cell_number`.
         direction (Optional[Union[str, List[str]]]): Cartesian direction to be plotted (xyz).
         series_n (Union[int, List[int]]): Number of the scalar field.
         legend (bool): If True, plot legend. Defaults to True.
@@ -76,6 +82,17 @@ def plot_2d(model: GeoModel,
         kwargs_topography = dict()
     if kwargs_scalar_field is None:
         kwargs_scalar_field = dict()
+
+    if position is not None:
+        if cell_number is not None:
+            raise ValueError("Pass either `cell_number` or `position`, not both.")
+        position_list = position if type(position) == list else [position]
+        direction_list = direction if type(direction) == list else [direction] * len(position_list)
+        cell_number = [
+            position_to_cell_number(model.grid.regular_grid, d, pos)
+            for d, pos in zip(direction_list, position_list)
+        ]
+        direction = direction_list
 
     if section_names is None and cell_number is None and direction is not None:
         cell_number = ['mid']
