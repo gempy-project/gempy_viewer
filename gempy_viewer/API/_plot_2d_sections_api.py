@@ -1,5 +1,4 @@
-﻿import warnings
-from typing import Optional
+﻿from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,7 +6,7 @@ import numpy as np
 from gempy.core.data import GeoModel
 from gempy_viewer.core.data_to_show import DataToShow
 from gempy_viewer.core.section_data_2d import SectionData2D, SectionType
-from ..modules.plot_2d.drawer_contours_2d import plot_regular_grid_contacts
+from ..modules.plot_2d.drawer_contours_2d import plot_regular_grid_contacts, plot_section_contacts
 from ..modules.plot_2d.drawer_input_2d import draw_data
 from ..modules.plot_2d.drawer_regular_grid_2d import plot_section_area, plot_regular_grid_area
 from ..modules.plot_2d.drawer_scalar_field_2d import plot_section_scalar_field, plot_regular_grid_scalar_field
@@ -109,11 +108,12 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
         if data_to_show.show_boundaries[e] is True:
             match section_data.section_type:
                 case SectionType.SECTION:
-                    warnings.warn(
-                        message='Section contacts not implemented yet. We need to pass scalar field for the sections grid',
-                        category=UserWarning
+                    plot_section_contacts(
+                        gempy_model=gempy_model,
+                        ax=temp_ax,
+                        section_name=section_data.section_name,
+                        kwargs=kwargs_boundaries
                     )
-                    pass
                 case SectionType.ORTHOGONAL:
                     plot_regular_grid_contacts(
                         gempy_model=gempy_model,
