@@ -6,7 +6,9 @@ from gempy_engine.core.data.raw_arrays_solution import RawArraysSolution
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 
 
-def plot_regular_grid_scalar_field(ax, slicer_data: SlicerData, block: np.ndarray, resolution: iter, kwargs: dict):
+def plot_regular_grid_scalar_field(ax, slicer_data: SlicerData, block: np.ndarray, resolution: iter, kwargs: dict = None):
+    kwargs = dict(kwargs) if kwargs else {}
+    cmap = kwargs.pop('cmap', 'autumn')
     extent_val = [*ax.get_xlim(), *ax.get_ylim()]
 
     plot_block = block.reshape(resolution)
@@ -19,7 +21,7 @@ def plot_regular_grid_scalar_field(ax, slicer_data: SlicerData, block: np.ndarra
 
     ax.contour(
         image,
-        cmap='autumn',
+        cmap=cmap,
         extent=extent_val,
         zorder=8,
         **kwargs
@@ -28,7 +30,7 @@ def plot_regular_grid_scalar_field(ax, slicer_data: SlicerData, block: np.ndarra
         kwargs.pop('N')
     ax.contourf(
         image,
-        cmap='autumn',
+        cmap=cmap,
         extent=extent_val,
         zorder=7,
         alpha=.8,
@@ -38,14 +40,16 @@ def plot_regular_grid_scalar_field(ax, slicer_data: SlicerData, block: np.ndarra
     return ax
 
 
-def plot_section_scalar_field(gempy_model: GeoModel, ax, section_name=None, series_n: int = 0, **kwargs):
+def plot_section_scalar_field(gempy_model: GeoModel, ax, section_name=None, series_n: int = 0, kwargs: dict = None):
+    kwargs = dict(kwargs) if kwargs else {}
+    cmap = kwargs.pop('cmap', 'autumn')
     extent_val = [*ax.get_xlim(), *ax.get_ylim()]
 
     image = _prepare_section_image(gempy_model, section_name, series_n=series_n)
 
     ax.contour(
         image,
-        cmap='autumn',
+        cmap=cmap,
         extent=extent_val,
         zorder=8,
         **kwargs
@@ -54,7 +58,7 @@ def plot_section_scalar_field(gempy_model: GeoModel, ax, section_name=None, seri
         kwargs.pop('N')
     ax.contourf(
         image,
-        cmap='autumn',
+        cmap=cmap,
         extent=extent_val,
         zorder=7,
         alpha=.8,
