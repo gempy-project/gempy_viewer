@@ -90,6 +90,10 @@ def _plot_top_down_topography(altdeg, ax, azdeg, cmap, height_contours, fill_con
 
 
 def _plot_mask_on_orthogonal_cross_section(ax, cell_number, direction, grid, regular_grid):
+    if direction == 'z':
+        _plot_mask_on_horizontal_cross_section(ax, cell_number, grid, regular_grid)
+        return
+
     p1, p2 = calculate_p1p2(
         regular_grid=regular_grid,
         direction=direction,
@@ -122,6 +126,31 @@ def _plot_mask_on_orthogonal_cross_section(ax, cell_number, direction, grid, reg
         ax.fill(line[:, 0], line[:, 1], color='k', zorder=100)
     except IndexError:
         warnings.warn('Topography needs to be a raster to be able to plot it')
+
+
+def _plot_mask_on_horizontal_cross_section(ax, cell_number, grid, regular_grid):
+    """Mask out, in black, the area of a fixed-Z (direction='z') orthogonal cut that lies
+    above the topographic surface -- i.e. where this depth is in open air rather than rock.
+
+    Unlike the 'x'/'y' cases (a 1-D topography profile along the cut line, masked above it up
+    to the model's Z top), a 'z' cut is a horizontal X-Y plane, so it needs the full 2-D
+    topography height raster compared against this cut's Z value instead of a line profile.
+    """
+    topo = grid.topography
+    cell_number = int(regular_grid.resolution[2] / 2) if cell_number == 'mid' else cell_number
+    z_cut = regular_grid.extent[4] + regular_grid.dz * cell_number
+
+    topo_z = topo.values_2d[:, :, 2].T
+    above_ground = topo_z < z_cut
+
+    mask_rgba = np.zeros((*above_ground.shape, 4))
+    mask_rgba[..., 3] = above_ground.astype(float)
+    ax.imshow(
+        mask_rgba,
+        origin='lower',
+        extent=topo.extent[:4],
+        zorder=100
+    )
 
 
 def _plot_mask_on_vertical_cross_section(ax, grid, regular_grid, section_name):

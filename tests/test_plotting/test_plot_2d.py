@@ -147,6 +147,17 @@ class TestPlot2DSolutions:
             show_section_traces=True  # TODO: Test this one
         )
 
+    def test_plot_2d_topography_z_direction(self, one_fault_model_topo_solution):
+        # Regression test for https://github.com/gempy-project/gempy/issues/1088:
+        # show_topography used to only mask 'x'/'y' orthogonal cuts, raising
+        # NotImplementedError for a fixed-Z ('z' direction) cut.
+        gpv.plot_2d(
+            model=one_fault_model_topo_solution,
+            direction=['z'],
+            cell_number=['mid'],
+            show_topography=True
+        )
+
     def test_ve(self, one_fault_model_topo_solution):
         # Test ve
         p2d = gpv.plot_2d(one_fault_model_topo_solution, direction='x', cell_number='mid',
