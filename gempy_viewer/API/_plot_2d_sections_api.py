@@ -33,8 +33,6 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
     kwargs_orientations = kwargs_orientations if kwargs_orientations is not None else {}
     
     series_n = series_n if series_n is not None else [0]
-    
-    legend_already_added = False
 
     for e, section_data in enumerate(sections_data):
         temp_ax = section_data.ax
@@ -157,7 +155,7 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
         
         # endregion
 
-        if legend and not legend_already_added:
+        if legend and data_to_show.show_data[e] is True:
             elements_with_sp = [e for e in gempy_model.structural_frame.structural_elements if len(e.surface_points) > 0]
             markers = [plt.Line2D([0, 0], [0, 0], color=e.color, marker='o', linestyle='') for e in elements_with_sp]
             labels = [e.name for e in elements_with_sp]
@@ -166,7 +164,6 @@ def plot_sections(gempy_model: GeoModel, sections_data: list[SectionData2D], dat
                 labels,
                 numpoints=1
             )
-            legend_already_added = True
 
             try:
                 temp_ax.legend_.set_frame_on(True)
