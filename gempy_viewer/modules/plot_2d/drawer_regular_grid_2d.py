@@ -37,8 +37,6 @@ def plot_regular_grid_area(ax, slicer_data: SlicerData, block: np.ndarray, resol
         ax.set_yticks(ticks_y, minor=True)
         ax.grid(which="minor", linestyle='-', linewidth='3', color='grey', alpha=0.7)
 
-    ax.figure.colorbar(im, ax=ax, shrink=0.5)
-
     return im
 
 
