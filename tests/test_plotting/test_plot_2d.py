@@ -147,6 +147,52 @@ class TestPlot2DSolutions:
             show_section_traces=True  # TODO: Test this one
         )
 
+    def test_plot_2d_topography_z_direction(self, one_fault_model_topo_solution):
+        # Regression test for https://github.com/gempy-project/gempy/issues/1088:
+        # show_topography used to only mask 'x'/'y' orthogonal cuts, raising
+        # NotImplementedError for a fixed-Z ('z' direction) cut.
+        gpv.plot_2d(
+            model=one_fault_model_topo_solution,
+            direction=['z'],
+            cell_number=['mid'],
+            show_topography=True
+        )
+
+    def test_plot_2d_position(self, one_fault_model_topo_solution):
+        # Regression test for https://github.com/gempy-project/gempy/issues/882: slice by a
+        # real-world coordinate instead of having to work out the matching cell_number.
+        regular_grid = one_fault_model_topo_solution.grid.regular_grid
+        p2d = gpv.plot_2d(
+            model=one_fault_model_topo_solution,
+            position=[500, 750],
+            direction=['x', 'y'],
+            show=False
+        )
+        expected_x = int(round((500 - regular_grid.extent[0]) / regular_grid.dx))
+        expected_y = int(round((750 - regular_grid.extent[2]) / regular_grid.dy))
+        assert p2d.axes[0].cell_number == expected_x
+        assert p2d.axes[1].cell_number == expected_y
+
+    def test_plot_2d_position_and_cell_number_mutually_exclusive(self, one_fault_model_topo_solution):
+        with pytest.raises(ValueError):
+            gpv.plot_2d(
+                model=one_fault_model_topo_solution,
+                position=[500],
+                cell_number=['mid'],
+                show=False
+            )
+
+    def test_plot_2d_position_out_of_extent_clamps_with_warning(self, one_fault_model_topo_solution):
+        regular_grid = one_fault_model_topo_solution.grid.regular_grid
+        with pytest.warns(UserWarning, match="outside the model extent"):
+            p2d = gpv.plot_2d(
+                model=one_fault_model_topo_solution,
+                position=999_999,
+                direction='x',
+                show=False
+            )
+        assert p2d.axes[0].cell_number == regular_grid.resolution[0] - 1
+
     def test_ve(self, one_fault_model_topo_solution):
         # Test ve
         p2d = gpv.plot_2d(one_fault_model_topo_solution, direction='x', cell_number='mid',
