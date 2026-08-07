@@ -1,9 +1,12 @@
+from types import SimpleNamespace
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
 import gempy as gp
 import gempy_viewer as gpv
+from gempy_viewer.modules.plot_2d import drawer_contours_2d
 from gempy_viewer.modules.plot_2d.visualization_2d import Plot2D
 from tests.conftest import _one_fault_model_generator
 
@@ -133,6 +136,40 @@ class TestPlot2DSolutions:
             show_boundaries=True,
             show_topography=True
         )
+
+    def test_plot_section_contacts_converts_torch_image_to_numpy(self, monkeypatch):
+        torch = pytest.importorskip('torch')
+        torch_image = torch.ones((2, 2), device='cuda' if torch.cuda.is_available() else 'cpu')
+        contour_images = []
+        gempy_model = SimpleNamespace(
+            solutions=SimpleNamespace(
+                raw_arrays=SimpleNamespace(
+                    scalar_field_matrix=[np.zeros(4)],
+                    scalar_field_at_surface_points=[np.array([1.0])]
+                )
+            ),
+            structural_frame=SimpleNamespace(elements_colors_contacts=np.array(['red']))
+        )
+
+        monkeypatch.setattr(drawer_contours_2d, '_prepare_section_image', lambda *args, **kwargs: torch_image)
+        monkeypatch.setattr(
+            drawer_contours_2d.BackendTensor.t,
+            'to_numpy',
+            lambda tensor: tensor.cpu().detach().numpy()
+        )
+
+        fig, ax = plt.subplots()
+        monkeypatch.setattr(ax, 'contour', lambda image, *args, **kwargs: contour_images.append(image))
+
+        drawer_contours_2d.plot_section_contacts(
+            gempy_model=gempy_model,
+            ax=ax,
+            section_name='section_SW-NE'
+        )
+
+        assert contour_images
+        assert all(isinstance(image, np.ndarray) for image in contour_images)
+        plt.close(fig)
 
     def test_plot_2d_all_together(self, one_fault_model_topo_solution):
         gpv.plot_2d(

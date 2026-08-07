@@ -2,6 +2,7 @@
 import numpy as np
 
 from gempy.core.data import GeoModel
+from gempy_engine.core.backend_tensor import BackendTensor
 from gempy_viewer.core.slicer_data import SlicerData
 from gempy_viewer.modules.plot_2d.drawer_scalar_field_2d import _prepare_section_image
 
@@ -73,6 +74,7 @@ def plot_section_contacts(gempy_model: GeoModel, ax: matplotlib.axes.Axes, secti
 
         if len(level) > 0:
             image = _prepare_section_image(gempy_model, section_name, series_n=e)
+            image = BackendTensor.t.to_numpy(image)
 
             ax.contour(
                 image,
