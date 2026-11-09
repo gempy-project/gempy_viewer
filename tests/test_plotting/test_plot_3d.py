@@ -208,3 +208,19 @@ class TestPlot3DThinModelTopography:
         # With the old fixed offset the volume ended ~10 units below the topography (z <= 10)
         assert volume_z_max >= topography_z_min
         plot3d.p.close()
+
+
+class TestPlot3DUnknownKwargs:
+    def test_unknown_kwarg_warns_with_suggestion(self, one_fault_model_topo_solution):
+        with pytest.warns(UserWarning, match="unknown keyword argument 'show_lithology'.*Did you mean 'show_lith'"):
+            plot3d = gpv.plot_3d(one_fault_model_topo_solution, show_lithology=True, show=False,
+                                 kwargs_plotter={'off_screen': True})
+        plot3d.p.close()
+
+    def test_known_kwargs_do_not_warn(self, one_fault_model_topo_solution):
+        import warnings
+        with warnings.catch_warnings():
+            warnings.filterwarnings('error', message='plot_3d got an unknown keyword')
+            plot3d = gpv.plot_3d(one_fault_model_topo_solution, show_lith=True, show_topography=True,
+                                 show_data=False, show=False, kwargs_plotter={'off_screen': True})
+        plot3d.p.close()
