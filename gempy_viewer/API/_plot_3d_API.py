@@ -1,4 +1,6 @@
-﻿from typing import Optional
+﻿import difflib
+import warnings
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,6 +26,21 @@ try:
     mplstereonet_import = True
 except ImportError:
     mplstereonet_import = False
+
+# Keyword arguments plot_3d reads from **kwargs. Anything else is ignored, so we warn about it.
+_PLOT_3D_KNOWN_KWARGS = (
+    'show_data', 'show_results', 'show_surfaces', 'show_lith', 'show_scalar', 'show_boundaries',
+    'show_topography', 'show_section_traces', 'show_values', 'show_block', 'show_octree', 'fig_path',
+)
+
+
+def _warn_unknown_kwargs(kwargs: dict) -> None:
+    for key in kwargs:
+        if key in _PLOT_3D_KNOWN_KWARGS:
+            continue
+        suggestion = difflib.get_close_matches(key, _PLOT_3D_KNOWN_KWARGS, n=1)
+        hint = f" Did you mean '{suggestion[0]}'?" if suggestion else ""
+        warnings.warn(f"plot_3d got an unknown keyword argument '{key}', which is ignored.{hint}", UserWarning, stacklevel=3)
 
 
 # noinspection t
@@ -94,7 +111,9 @@ def plot_3d(
     from gempy_viewer.modules.plot_3d.drawer_surfaces_3d import plot_surfaces
     from gempy_viewer.modules.plot_3d.drawer_topography_3d import plot_topography_3d
     from gempy_viewer.modules.plot_3d.plot_3d_utils import set_scalar_bar
-    
+
+    _warn_unknown_kwargs(kwargs)
+
     # * Grab from kwargs all the show arguments and create the proper class. This is for backwards compatibility
     can_show_results = model.solutions is not None  # and model.solutions.lith_block.shape[0] != 0
     data_to_show = DataToShow(

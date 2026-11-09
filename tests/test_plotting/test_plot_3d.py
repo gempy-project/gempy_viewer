@@ -117,7 +117,7 @@ class TestPlot3DSolutions:
 
         check_image_hash(
             plot3d=plot3d,
-            hash='06480000000'
+            hash='07440001000'
         )
 
     def test_plot_3d_solutions_topography_geological_map(self, one_fault_model_topo_solution):
@@ -165,3 +165,62 @@ class TestPlot2DSolutionsOctrees:
 
     def test_plot_3d_solutions_default(self, one_fault_model_topo_solution_octrees):
         gpv.plot_3d(one_fault_model_topo_solution_octrees, image=True)
+
+
+class TestPlot3DThinModelTopography:
+    """Regression: the lithology volume used to be clipped a fixed 10 model units below
+    the topography, which removed most of the volume in thin models."""
+
+    @pytest.fixture(scope='class')
+    def thin_model(self) -> GeoModel:
+        rng_state = np.random.get_state()
+        np.random.seed(1234)
+        geo_model = gp.create_geomodel(
+            project_name='thin_model',
+            extent=[0, 100, 0, 100, 0, 20],
+            resolution=[10, 10, 10],
+            structural_frame=gp.data.StructuralFrame.from_data_tables(
+                surface_points=gp.data.SurfacePointsTable.from_arrays(
+                    x=np.array([10., 50., 90., 50.]), y=np.array([50., 10., 50., 90.]),
+                    z=np.array([8., 8., 8., 8.]), names='layer'
+                ),
+                orientations=gp.data.OrientationsTable.from_arrays(
+                    x=np.array([50.]), y=np.array([50.]), z=np.array([8.]),
+                    G_x=np.array([0.]), G_y=np.array([0.]), G_z=np.array([1.]), names='layer'
+                )
+            )
+        )
+        gp.set_topography_from_random(
+            grid=geo_model.grid,
+            fractal_dimension=1.2,
+            d_z=np.array([12, 20]),
+            topography_resolution=np.array([20, 20])
+        )
+        np.random.set_state(rng_state)
+        gp.compute_model(geo_model)
+        return geo_model
+
+    def test_lith_volume_reaches_topography(self, thin_model):
+        plot3d = gpv.plot_3d(thin_model, show_topography=True, show_lith=True, show=False,
+                             kwargs_plotter={'off_screen': True})
+        volume_z_max = plot3d.regular_grid_actor.mapper.dataset.bounds[5]
+        topography_z_min = thin_model.grid.topography.values[:, 2].min()
+        # With the old fixed offset the volume ended ~10 units below the topography (z <= 10)
+        assert volume_z_max >= topography_z_min
+        plot3d.p.close()
+
+
+class TestPlot3DUnknownKwargs:
+    def test_unknown_kwarg_warns_with_suggestion(self, one_fault_model_topo_solution):
+        with pytest.warns(UserWarning, match="unknown keyword argument 'show_lithology'.*Did you mean 'show_lith'"):
+            plot3d = gpv.plot_3d(one_fault_model_topo_solution, show_lithology=True, show=False,
+                                 kwargs_plotter={'off_screen': True})
+        plot3d.p.close()
+
+    def test_known_kwargs_do_not_warn(self, one_fault_model_topo_solution):
+        import warnings
+        with warnings.catch_warnings():
+            warnings.filterwarnings('error', message='plot_3d got an unknown keyword')
+            plot3d = gpv.plot_3d(one_fault_model_topo_solution, show_lith=True, show_topography=True,
+                                 show_data=False, show=False, kwargs_plotter={'off_screen': True})
+        plot3d.p.close()
