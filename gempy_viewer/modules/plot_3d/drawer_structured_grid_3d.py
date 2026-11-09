@@ -39,9 +39,11 @@ def plot_structured_grid(
     )
     topography_polydata: pv.PolyData = gempy_vista.surface_poly.get('topography', None)
     if topography_polydata is not None:
+        # Clip exactly at the topography. A fixed offset (previously -10) is in model
+        # units and removes a large part of the volume in thin models.
         structured_grid = structured_grid.clip_surface(
             surface=topography_polydata,
-            value=-10,
+            value=0,
             crinkle=False,
             invert=True
         )
